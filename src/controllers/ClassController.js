@@ -51,7 +51,7 @@ class ClassController {
                     }
                 })
                 console.log("filter", fil)
-                if(fil.length == [1]) {    
+                if(fil.length > 0) {    
                     return res.status(422).json({ msg: "Essa truma ja esta cadastrada!" });
                 }
             }
