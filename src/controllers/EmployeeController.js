@@ -33,10 +33,31 @@ class EmployeeController {
         }
 
         // check if user exists
-        const userExists = await User.findOne({ cpf: cpf });
+        const school = await School.findOne({ _id: id });
 
-        if (userExists) {
-            return res.status(422).json({ msg: "Por favor, utilize outro cpf!" });
+        const Employee = await User.find({ _id: school.id_employee });
+
+        if (Employee) {
+
+            const Res = Employee.map( result => {
+                if(result.cpf == cpf) {
+                    return result.cpf
+                }
+            })
+
+            if (Res) { 
+                const fil = Res.filter((fill) => {
+                    if(fill == cpf) {
+                        return fill
+                    }
+                })
+                console.log("filter", fil)
+                if(fil.length > 0) {    
+                    return res.status(422).json({ msg: "Essa cpf ja esta cadastrado nesta Escola!" });
+                }
+                
+            }
+
         }
 
         // create password

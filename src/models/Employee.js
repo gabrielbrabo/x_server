@@ -9,7 +9,6 @@ const employeeschema = new mongoose.Schema(
         cpf: {
             type: String,
             required: true,
-            unique: true
         },
         password: {
             type: String,
