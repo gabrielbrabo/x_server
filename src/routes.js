@@ -2,6 +2,7 @@ const SchoolController = require( "./controllers/SchoolController")
 const SessionsController = require( "./controllers/SessionsController")
 const EmployeeController = require( "./controllers/EmployeeController")
 const ClassController = require( "./controllers/ClassController")
+const StudentController = require( "./controllers/StudentController")
 
 const auth = require ("./middlewares/auth")
 
@@ -16,5 +17,6 @@ routes.use(auth)
 
 routes.post('/register/employee/:id', EmployeeController.create)
 routes.post('/register/class/:id', ClassController.create)
+routes.post('/register/student/:id', StudentController.create)
 
 module.exports = routes

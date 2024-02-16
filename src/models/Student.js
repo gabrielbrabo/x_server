@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 
 const studentschema = new mongoose.Schema(
     {
-        id: {
+        registerStudent: {
             type: String,
             required: true,
             unique: true
@@ -11,7 +11,7 @@ const studentschema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        cpf: {
+        rg: {
             type: String,
             unique: true
         },
