@@ -1,5 +1,7 @@
 const Class = require( "../models/Class")
 const School = require( "../models/School")
+const Student = require( "../models/Student")
+const Employee = require( "../models/Employee")
 
 class ClassController {
   
@@ -77,6 +79,134 @@ class ClassController {
             }, {
                 $push: {
                     id_class: newClass._id      
+                }
+            })
+            res.status(200).json({
+                msg: 'Turma cadastrado com sucesso.'
+            })
+
+        } catch (err){
+            res.status(500).json({
+                msg: 'Error ao cadastra uma turma.'
+            })
+        }
+    }
+
+    async addStudent(req, res) {
+        const { id_student, id_class } = req.body;
+
+        // validations
+        if (!id_student) {
+            return res.status(422).json({ msg: "O id do estudante é obrigatório!" });
+        }
+
+        if (!id_class) {
+            return res.status(422).json({ msg: "A id da turma é obrigatório!" });
+        }
+
+        // Check if the student is already registered in a class
+        const student = await Student.find({ _id: id_student });
+
+        if(student){
+            const stdt = student.map(clss =>{
+                return clss.id_class
+            })
+            
+            const filter = stdt.filter(fill => {
+                return fill
+            })
+
+            if(filter.length > 0){
+                const CLASS = await Class.find({ _id: filter });
+
+                const result = CLASS.map(clss =>{
+                    return clss.serie
+                })
+                console.log("filter", result)
+                return res.status(422).json({result, msg: "Esse aluno ja esta cadastrado em uma turma!" });                
+            }
+        }
+
+        try {
+            
+            await Student.updateOne({
+                _id: id_student
+            }, {
+                $push: {
+                    id_class: id_class      
+                }
+            })
+
+            await Class.updateOne({
+                _id: id_class
+            }, {
+                $push: {
+                    id_student: id_student      
+                }
+            })
+            res.status(200).json({
+                msg: 'Turma cadastrado com sucesso.'
+            })
+
+        } catch (err){
+            res.status(500).json({
+                msg: 'Error ao cadastra uma turma.'
+            })
+        }
+    }
+
+    async addTeacher(req, res) {
+        const { id_employee, id_class } = req.body;
+
+        // validations
+        if (!id_employee) {
+            return res.status(422).json({ msg: "O id do estudante é obrigatório!" });
+        }
+
+        if (!id_class) {
+            return res.status(422).json({ msg: "A id da turma é obrigatório!" });
+        }
+
+        // Check if the student is already registered in a class
+        const employee = await Employee.find({ _id: id_employee });
+
+        if(employee){
+
+            console.log("employee", employee)
+            /*const stdt = student.map(clss =>{
+                return clss.id_class
+            })
+            
+            const filter = stdt.filter(fill => {
+                return fill
+            })
+
+            if(filter.length > 0){
+                const CLASS = await Class.find({ _id: filter });
+
+                const result = CLASS.map(clss =>{
+                    return clss.serie
+                })
+                console.log("filter", result)
+                return res.status(422).json({result, msg: "Esse aluno ja esta cadastrado em uma turma!" });                
+            }*/
+        }
+
+        try {
+            
+            await Employee.updateOne({
+                _id: id_employee
+            }, {
+                $push: {
+                    id_class: id_class      
+                }
+            })
+
+            await Class.updateOne({
+                _id: id_class
+            }, {
+                $push: {
+                    id_employee: id_employee      
                 }
             })
             res.status(200).json({

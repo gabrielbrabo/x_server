@@ -18,5 +18,7 @@ routes.use(auth)
 routes.post('/register/employee/:id', EmployeeController.create)
 routes.post('/register/class/:id', ClassController.create)
 routes.post('/register/student/:id', StudentController.create)
+routes.post('/add/student', ClassController.addStudent)
+routes.post('/add/teacher', ClassController.addTeacher)
 
 module.exports = routes

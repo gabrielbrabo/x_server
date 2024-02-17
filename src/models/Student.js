@@ -34,12 +34,10 @@ const studentschema = new mongoose.Schema(
                 ref: 'Responsible_for_the_student'
             }
         ],
-        id_class: [
-            {
-                type: mongoose.Types.ObjectId,
-                ref: 'class'
-            }
-        ],
+        id_class: {
+            type: mongoose.Types.ObjectId,
+            ref: 'class'
+        },           
         id_reporter_card: [
             {
                 type: mongoose.Types.ObjectId,
