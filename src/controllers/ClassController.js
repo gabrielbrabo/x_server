@@ -1,7 +1,9 @@
 const Class = require( "../models/Class")
 const School = require( "../models/School")
 const Student = require( "../models/Student")
-const Employee = require( "../models/Employee")
+const Employee = require( "../models/Employee");
+const modelClass = require("../models/Class");
+const Matter = require("../models/Matter");
 
 class ClassController {
   
@@ -36,7 +38,7 @@ class ClassController {
         // check if class exists
         const school = await School.findOne({ _id: id });
 
-        const clss = await Class.find({ _id: school.id_class });
+        const clss = await modelClass.find({ _id: school.id_class });
 
         if (clss) {
 
@@ -117,9 +119,9 @@ class ClassController {
             })
 
             if(filter.length > 0){
-                const CLASS = await Class.find({ _id: filter });
+                const cla = await modelClass.find({ _id: filter });
 
-                const result = CLASS.map(clss =>{
+                const result = cla.map(clss =>{
                     return clss.serie
                 })
                 console.log("filter", result)
@@ -137,7 +139,7 @@ class ClassController {
                 }
             })
 
-            await Class.updateOne({
+            await modelClass.updateOne({
                 _id: id_class
             }, {
                 $push: {
@@ -156,7 +158,7 @@ class ClassController {
     }
 
     async addTeacher(req, res) {
-        const { id_employee, id_class } = req.body;
+        const { id_employee, id_class, id_matter } = req.body;
 
         // validations
         if (!id_employee) {
@@ -167,29 +169,33 @@ class ClassController {
             return res.status(422).json({ msg: "A id da turma é obrigatório!" });
         }
 
+        if (!id_matter) {
+            return res.status(422).json({ msg: "A id da turma é obrigatório!" });
+        }
+
         // Check if the student is already registered in a class
-        const employee = await Employee.find({ _id: id_employee });
+        const clss = await Class.find({ _id: id_class});
+        
+        if (clss) {
 
-        if(employee){
-
-            console.log("employee", employee)
-            /*const stdt = student.map(clss =>{
-                return clss.id_class
-            })
-            
-            const filter = stdt.filter(fill => {
-                return fill
+            const matter = clss.find( mat => {
+                return  mat
             })
 
-            if(filter.length > 0){
-                const CLASS = await Class.find({ _id: filter });
+            const matt = matter.id_matter.map( mat => {
+                return  mat
+            })
 
-                const result = CLASS.map(clss =>{
-                    return clss.serie
-                })
-                console.log("filter", result)
-                return res.status(422).json({result, msg: "Esse aluno ja esta cadastrado em uma turma!" });                
-            }*/
+            const fil = matt.filter((fill) => {
+                if(fill == id_matter) {
+                    return fill
+                }
+            })
+
+            if(fil.length > 0) { 
+                console.log("filter", fil)   
+                return res.status(422).json({ msg: "Essa materia ja esta cadastrada!" });
+            }
         }
 
         try {
@@ -202,13 +208,30 @@ class ClassController {
                 }
             })
 
-            await Class.updateOne({
+            await modelClass.updateOne({
                 _id: id_class
             }, {
                 $push: {
                     id_employee: id_employee      
                 }
             })
+
+            await Matter.updateOne({
+                _id: id_matter
+            }, {
+                $push: {
+                    id_class: id_class      
+                }
+            })
+
+            await Class.updateOne({
+                _id: id_class
+            }, {
+                $push: {
+                    id_matter: id_matter      
+                }
+            })
+
             res.status(200).json({
                 msg: 'Turma cadastrado com sucesso.'
             })

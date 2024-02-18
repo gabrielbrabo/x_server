@@ -17,6 +17,12 @@ const matterschema = new mongoose.Schema(
                 ref: 'employee'
             }
         ],
+        id_class: [
+            {
+                type: mongoose.Types.ObjectId,
+                ref: 'class'
+            }
+        ],
         id_reporter_card: [
             {
                 type: mongoose.Types.ObjectId,

@@ -3,6 +3,7 @@ const SessionsController = require( "./controllers/SessionsController")
 const EmployeeController = require( "./controllers/EmployeeController")
 const ClassController = require( "./controllers/ClassController")
 const StudentController = require( "./controllers/StudentController")
+const MatterController = require( "./controllers/MatterContoller")
 
 const auth = require ("./middlewares/auth")
 
@@ -20,5 +21,6 @@ routes.post('/register/class/:id', ClassController.create)
 routes.post('/register/student/:id', StudentController.create)
 routes.post('/add/student', ClassController.addStudent)
 routes.post('/add/teacher', ClassController.addTeacher)
+routes.post('/register/matter/:id', MatterController.create)
 
 module.exports = routes

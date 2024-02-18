@@ -37,7 +37,13 @@ const classschema = new mongoose.Schema(
                 type: mongoose.Types.ObjectId,
                 ref: 'employee'
             }
-        ]
+        ],
+        id_matter: [
+            {
+                type: mongoose.Types.ObjectId,
+                ref: 'matter'
+            }
+        ],
     },
     {
         timestamps: true
