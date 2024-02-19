@@ -22,5 +22,6 @@ routes.post('/register/student/:id', StudentController.create)
 routes.post('/add/student', ClassController.addStudent)
 routes.post('/add/teacher', ClassController.addTeacher)
 routes.post('/register/matter/:id', MatterController.create)
+routes.post('/add/matter', MatterController.addMatter)
 
 module.exports = routes
