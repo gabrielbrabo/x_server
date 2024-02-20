@@ -18,12 +18,10 @@ const report_cardschema = new mongoose.Schema(
         IV_th_quarter: {
             type: String,
         },
-        id_matter: [
-            {
-                type: mongoose.Types.ObjectId,
-                ref: 'matter'
-            }
-        ],
+        id_matter: {
+            type: mongoose.Types.ObjectId,
+            ref: 'matter'
+        },
         id_student: [
             {
                 type: mongoose.Types.ObjectId,
