@@ -36,18 +36,16 @@ class StudentController {
                 if(result.year == year) {
                     return result.id_matter
                 }
-            })
-
-            const mttr = Res.map( result => {
+            }).map( result => {
                 if(result == id_matter) {
                     return result
                 }
             }).filter((fill) => {
                 return fill
             })
-            console.log("filter", mttr)
-            if(mttr.length > 0) {    
-                return res.status(422).json({mttr, msg: "Essa truma ja esta cadastrada!" });
+            
+            if(Res.length > 0) {    
+                return res.status(422).json({Res, msg: "Essa truma ja esta cadastrada!" });
             }
         }
 
