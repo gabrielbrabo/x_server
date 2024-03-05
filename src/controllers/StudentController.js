@@ -47,6 +47,7 @@ class StudentController {
         const user = new Student({
             name: name.toUpperCase(),
             rg: rg,
+            type: "student",
             registerStudent: registerStudent,
             id_school: id,
             password: passwordHash

@@ -19,6 +19,10 @@ const employeeschema = new mongoose.Schema(
             type: String,
             ref: 'PostFile',
         },
+        type: {
+            type: String,
+            required: true
+        },
         position_at_school: {
             type: String,
             required: true

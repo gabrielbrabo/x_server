@@ -25,9 +25,9 @@ routes.post('/add/teacher', ClassController.addTeacher)
 routes.post('/register/matter/:id', MatterController.create)
 routes.post('/add/matter', MatterController.addMatter)
 routes.post('/register/card', ReportCardController.create)
-routes.post('/upload/card/I_st_quarter', ReportCardController.I_st_quarter)
-routes.post('/upload/card/II_nd_quarter', ReportCardController.II_nd_quarter)
-routes.post('/upload/card/III_rd_quarter', ReportCardController.III_rd_quarter)
-routes.post('/upload/card/IV_th_quarter', ReportCardController.IV_th_quarter)
+routes.post('/card/I_st_quarter', ReportCardController.I_st_quarter)
+routes.post('/card/II_nd_quarter', ReportCardController.II_nd_quarter)
+routes.post('/card/III_rd_quarter', ReportCardController.III_rd_quarter)
+routes.post('/card/IV_th_quarter', ReportCardController.IV_th_quarter)
 
 module.exports = routes

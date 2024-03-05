@@ -34,6 +34,7 @@ class SessionController {
         const name = user.name
         const { id } = user
         const id_employee = user.id_employee
+        const type = user.type
         const id_matter = user.id_matter
         const id_class = user.id_class
         
@@ -42,6 +43,7 @@ class SessionController {
             id,
             email,
             name,
+            type,
             id_employee,
             id_matter,
             id_class,
@@ -83,6 +85,7 @@ class SessionController {
         const name = user.name
         const { CPF } = user
         const position_at_school = user.position_at_school
+        const type = user.type
         const id_school = user.id_school
         const id_matter = user.id_matter
         const id_class = user.id_class
@@ -94,6 +97,7 @@ class SessionController {
             CPF,
             name,
             position_at_school,
+            type,
             id_school,
             id_matter,
             id_class,

@@ -11,6 +11,10 @@ const Responsible_for_the_studentschema = new mongoose.Schema(
             required: true,
             unique: true
         },
+        type: {
+            type: String,
+            required: true
+        },
         password: {
             type: String,
             required: true,

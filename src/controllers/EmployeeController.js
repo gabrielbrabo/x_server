@@ -47,6 +47,7 @@ class EmployeeController {
         const user = new User({
             name: name.toUpperCase(),
             cpf,
+            type: 'employee',
             position_at_school: position_at_school.toUpperCase(),
             id_school: id,
             password: passwordHash

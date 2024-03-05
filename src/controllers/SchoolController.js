@@ -42,6 +42,7 @@ class SchoolController {
         const user = new User({
             name,
             email,
+            type: "school",
             password: passwordHash
         });
 

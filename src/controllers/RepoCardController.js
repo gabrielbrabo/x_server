@@ -127,6 +127,7 @@ class StudentController {
             return res.status(500).json({ error: "Internal Server Error" });
         }
     }
+
     async II_nd_quarter(req, res) {
         try {
             const { id_reporter_card, id_student, id_employee, II_nd_quarter } = req.body;
@@ -158,6 +159,7 @@ class StudentController {
             return res.status(500).json({ error: "Internal Server Error" });
         }
     }
+
     async III_rd_quarter(req, res) {
         try {
             const { id_reporter_card, id_student, id_employee, III_rd_quarter } = req.body;
@@ -189,6 +191,7 @@ class StudentController {
             return res.status(500).json({ error: "Internal Server Error" });
         }
     }
+    
     async IV_th_quarter(req, res) {
         try {
             const { id_reporter_card, id_student, id_employee, IV_th_quarter } = req.body;
