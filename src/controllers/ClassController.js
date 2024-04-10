@@ -94,6 +94,29 @@ class ClassController {
         }
     }
 
+    async index(req, res) {
+
+        const {idSchool} = req.body;
+
+        try {
+            const clss = await School.findById({
+                _id: idSchool
+            }).populate('id_class')
+
+            if (clss) {
+                return res.json({
+                    data: clss.id_class,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+
     async addStudent(req, res) {
         const { id_student, id_class } = req.body;
 
@@ -117,15 +140,22 @@ class ClassController {
             const filter = stdt.filter(fill => {
                 return fill
             })
-
+           
             if(filter.length > 0){
                 const cla = await modelClass.find({ _id: filter });
+                
+                //const date = new Date();
+                const currentYear = new Date().getFullYear();
 
                 const result = cla.map(clss =>{
-                    return clss.serie
+                    return clss.year
                 })
-                console.log("filter", result)
-                return res.status(422).json({result, msg: "Esse aluno ja esta cadastrado em uma turma!" });                
+
+                if(currentYear == result) {
+                    //console.log("currentYear", currentYear)
+                    //console.log("filter", result)
+                    return res.status(422).json({result, msg: "Esse aluno ja esta cadastrado em uma turma!" }); 
+                }               
             }
         }
 

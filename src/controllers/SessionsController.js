@@ -80,10 +80,11 @@ class SessionController {
         if (!checkPassword) {
             return res.status(422).json({ msg: "Senha inválida" });
         }
+        
         console.log(user)
         const id = user._id
         const name = user.name
-        const { CPF } = user
+        const CPF  = user.cpf
         const position_at_school = user.position_at_school
         const type = user.type
         const id_school = user.id_school

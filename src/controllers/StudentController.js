@@ -74,6 +74,29 @@ class StudentController {
             })
         }
     }
+
+    async index(req, res) {
+
+        const {idSchool} = req.body;
+
+        try {
+            const student = await School.findById({
+                _id: idSchool
+            }).populate('id_student')
+
+            if (student) {
+                return res.json({
+                    data: student.id_student,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
   
     async update(req, res) {
         try {

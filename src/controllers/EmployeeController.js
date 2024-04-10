@@ -74,6 +74,29 @@ class EmployeeController {
             })
         }
     }
+
+    async index(req, res) {
+
+        const {idSchool} = req.body;
+
+        try {
+            const employee = await School.findById({
+                _id: idSchool
+            }).populate('id_employee')
+
+            if (employee) {
+                return res.json({
+                    data: employee.id_employee,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
   
     async update(req, res) {
         try {
