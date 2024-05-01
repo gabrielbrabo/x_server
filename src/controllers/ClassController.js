@@ -192,7 +192,7 @@ class ClassController {
 
         // validations
         if (!id_employee) {
-            return res.status(422).json({ msg: "O id do estudante é obrigatório!" });
+            return res.status(422).json({ msg: "O id do prefessor é obrigatório!" });
         }
 
         if (!id_class) {

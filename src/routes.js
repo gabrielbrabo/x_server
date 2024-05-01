@@ -33,5 +33,9 @@ routes.post('/card/IV_th_quarter', ReportCardController.IV_th_quarter)
 routes.post('/employee', EmployeeController.index)
 routes.post('/student', StudentController.index)
 routes.post('/class', ClassController.index)
+routes.post('/matter', MatterController.index)
+
+routes.post('/student/info/:id', StudentController.InfoIndex)
+routes.post('/employee/info/:id', EmployeeController.InfoIndex)
 
 module.exports = routes

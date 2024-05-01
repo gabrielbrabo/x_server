@@ -67,6 +67,29 @@ class MatterController {
         }
     }
 
+    async index(req, res) {
+
+        const {idSchool} = req.body;
+
+        try {
+            const matter = await School.findById({
+                _id: idSchool
+            }).populate('id_matter')
+
+            if (matter) {
+                return res.json({
+                    data: matter.id_matter,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+
     async addMatter(req, res) {
         const { id_employee, id_matter } = req.body;
 
@@ -117,7 +140,7 @@ class MatterController {
                 }
             })
             res.status(200).json({
-                msg: 'Turma cadastrado com sucesso.'
+                msg: 'Materia adicionada com sucesso.'
             })
 
         } catch (err){

@@ -1,3 +1,4 @@
+const Employee = require("../models/Employee");
 const User = require( "../models/Employee")
 const School = require( "../models/School")
 const bcrypt = require('bcryptjs')
@@ -65,6 +66,8 @@ class EmployeeController {
                 }
             })
             res.status(200).json({
+                name_employee: employee.name,
+                id_employee: employee._id,
                 msg: 'Conta profissional cadastrado com sucesso.'
             })
 
@@ -87,6 +90,29 @@ class EmployeeController {
             if (employee) {
                 return res.json({
                     data: employee.id_employee,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+
+    async InfoIndex(req, res) {
+
+        const { id } = req.params;
+
+        try {
+            const employee = await Employee.findById({
+                _id: id
+            }).populate('id_matter').populate('id_class')
+            
+            if (employee) {
+                return res.json({
+                    data: [employee],
                     message: 'Sucess'
                 })
             }
