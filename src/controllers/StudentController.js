@@ -93,7 +93,7 @@ class StudentController {
         } catch (err) {
             console.log(err)
             res.status(500).json({
-                message: 'there was an error on server side!'
+                message: 'there was an error on server side!' 
             })
         }
     }

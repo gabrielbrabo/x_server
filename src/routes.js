@@ -37,5 +37,9 @@ routes.post('/matter', MatterController.index)
 
 routes.post('/student/info/:id', StudentController.InfoIndex)
 routes.post('/employee/info/:id', EmployeeController.InfoIndex)
+routes.post('/class/info/:id', ClassController.InfoIndex)
+
+routes.post('/remove/student', ClassController.removeStudent)
+routes.post('/remove/teacher', ClassController.removeTeacher)
 
 module.exports = routes

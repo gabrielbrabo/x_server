@@ -38,6 +38,12 @@ const classschema = new mongoose.Schema(
                 ref: 'employee'
             }
         ],
+        addTeacher: [
+            {
+                type: mongoose.Types.ObjectId,
+                ref: 'addTeacher'
+            }
+        ],
         id_matter: [
             {
                 type: mongoose.Types.ObjectId,
