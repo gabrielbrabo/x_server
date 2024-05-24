@@ -10,6 +10,10 @@ const addTeacherschema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        year: {
+            type: String,
+            required: true,
+        },
         id_class: {
             type: mongoose.Types.ObjectId, 
             ref: 'class',

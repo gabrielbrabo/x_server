@@ -348,9 +348,16 @@ class ClassController {
 
         // Check if the student is already registered in a class
         const clss = await Class.find({ _id: id_class});
-        
+        const currentYear = new Date().getFullYear()
         if (clss) {
-
+            const cl = clss.map(result => {
+                return result.year
+            })
+            if(cl != currentYear) {
+                return res.status(422).json({ msg: "Essa turma não e atual!" });
+            }
+            console.log("cl", cl)
+            console.log("currentYear", currentYear)
             const matter = clss.find( mat => {
                 return  mat
             })
@@ -377,6 +384,7 @@ class ClassController {
         const newteacher = new AddTeacher({
             name_teacher: colectionTeacher.name,
             name_matter: colectionMatter.name,
+            year: currentYear,
             id_class: id_class,
             id_teacher: id_employee,
             id_matter: id_matter

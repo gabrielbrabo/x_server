@@ -1,6 +1,7 @@
 const Employee = require("../models/Employee");
 const User = require( "../models/Employee")
 const School = require( "../models/School")
+const AddTeacher = require( "../models/AddTeacher")
 const bcrypt = require('bcryptjs')
 
 class EmployeeController {
@@ -109,8 +110,18 @@ class EmployeeController {
             const employee = await Employee.findById({
                 _id: id
             }).populate('id_matter').populate('id_class')
-            
-            if (employee) {
+
+            const info = await AddTeacher.find({
+                id_teacher: id
+            }).populate('id_class')
+            console.log("info", info)
+            if (employee && info) {
+                return res.json({
+                    data: [employee],
+                    info: [info],
+                    message: 'Sucess'
+                })
+            } else {
                 return res.json({
                     data: [employee],
                     message: 'Sucess'
