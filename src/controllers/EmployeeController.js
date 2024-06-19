@@ -134,6 +134,37 @@ class EmployeeController {
             })
         }
     }
+    
+    async MyClassIndex(req, res) {
+
+        const {id_class, id_teacher} = req.body;
+
+        const clss = await AddTeacher.find({ id_class: id_class });
+        const result = clss.map(res => {
+            if(res.id_teacher == id_teacher) {
+                return res
+            }
+        })
+
+        try {
+            if(result) {
+                const filter = result.filter(res => {
+                    if(res !== null) {
+                        return res
+                    }
+                })
+                return res.json({
+                    data: filter,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
   
     async update(req, res) {
         try {
