@@ -1,5 +1,6 @@
 const School = require( "../models/School")
 const Student = require( "../models/Student")
+const Attendance = require( "../models/Attendance")
 const bcrypt = require('bcryptjs')
 
 class StudentController {
@@ -120,6 +121,101 @@ class StudentController {
             })
         }
     }
+
+    async AttendanceIndex(req, res) {
+
+        const { month, year, id_student, id_matter } = req.body;
+
+        const attendance = await Attendance.find({ id_student: id_student });
+
+        try {
+            if (attendance) {
+                const attdc = attendance.map( res => {
+                    if(res.year == year) {
+                        if(res.month == month) {
+                            if(res.id_matter == id_matter) {
+                                return res
+                            }
+                        }
+                    }
+                }).filter( res => {
+                    if(res != null) {
+                        return res
+                    }
+                })
+                return res.json({
+                    data: attdc,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+
+    async createAttendance(req, res) {
+        const { day, month, year, status, id_student, id_teacher, id_matter } = req.body;
+
+        // validations
+        if (!day) {
+            return res.status(422).json({ msg: "O Dia é obrigatório!" });
+        }
+
+        if (!month) {
+            return res.status(422).json({ msg: "O Mes é obrigatório!" });
+        }
+
+        if (!year) {
+            return res.status(422).json({ msg: "O RE do estudante é obrigatório!" });
+        }
+
+        if (!status) {
+            return res.status(422).json({ msg: "A senha é obrigatória!" });
+        }
+
+        // check if user exists
+        //const userExists = await Student.findOne({ rg: rg });
+
+        /*if (userExists) {
+            return res.status(422).json({ msg: "Esse estudante ja esta cadastrado!" });
+        }*/
+
+        // create user
+        const user = new Attendance({
+            day: day,
+            month: month,
+            year: year,
+            status: status.toUpperCase(),
+            id_student: id_student,
+            id_teacher: id_teacher,
+            id_matter: id_matter
+        });
+
+        try {
+            
+            const attendance = await user.save()
+            
+            await Student.updateOne({
+                _id: id_student
+            }, {
+                $push: {
+                    id_attendance: attendance._id      
+                }
+            })
+            res.status(200).json({
+                msg: 'Conta profissional cadastrado com sucesso.'
+            })
+
+        } catch (err){
+            res.status(500).json({
+                msg: 'Error ao cadastra uma Conta profissional.'
+            })
+        }
+    }
+
   
     async update(req, res) {
         try {

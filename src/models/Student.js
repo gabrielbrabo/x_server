@@ -44,6 +44,12 @@ const studentschema = new mongoose.Schema(
                 ref: 'class'
             }
         ],         
+        id_attendance: [
+            {
+                type: mongoose.Types.ObjectId,
+                ref: 'attendance'
+            }
+        ],         
         id_reporter_card: [
             {
                 type: mongoose.Types.ObjectId,

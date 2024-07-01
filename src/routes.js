@@ -43,6 +43,8 @@ routes.post('/employee/info/:id', EmployeeController.InfoIndex)
 routes.post('/class/info/:id', ClassController.InfoIndex)
 
 routes.post('/myclass', EmployeeController.MyClassIndex)
+routes.post('/attendance', StudentController.createAttendance)
+routes.post('/attendance/index', StudentController.AttendanceIndex)
 
 routes.post('/remove/student', ClassController.removeStudent)
 routes.post('/remove/teacher', ClassController.removeTeacher)
