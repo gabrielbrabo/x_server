@@ -26,6 +26,10 @@ const attendance = new mongoose.Schema(
             type: mongoose.Types.ObjectId, 
             ref: 'employee',
         },
+        id_class: {
+            type: mongoose.Types.ObjectId, 
+            ref: 'class',
+        },
         id_matter: {
             type: mongoose.Types.ObjectId, 
             ref: 'matter',

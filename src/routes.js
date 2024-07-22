@@ -5,6 +5,7 @@ const ClassController = require( "./controllers/ClassController")
 const StudentController = require( "./controllers/StudentController")
 const MatterController = require( "./controllers/MatterContoller")
 const ReportCardController = require( "./controllers/RepoCardController")
+const AttendanceController = require( "./controllers/AttendanceController")
 
 const auth = require ("./middlewares/auth")
 
@@ -45,6 +46,8 @@ routes.post('/class/info/:id', ClassController.InfoIndex)
 routes.post('/myclass', EmployeeController.MyClassIndex)
 routes.post('/attendance', StudentController.createAttendance)
 routes.post('/attendance/index', StudentController.AttendanceIndex)
+routes.post('/search/frequency', AttendanceController.index)
+routes.post('/update/frequency', AttendanceController.update)
 
 routes.post('/remove/student', ClassController.removeStudent)
 routes.post('/remove/teacher', ClassController.removeTeacher)

@@ -127,7 +127,6 @@ class ClassController {
                 _id: id
             }).populate('id_student').populate('id_employee')
               .populate('id_matter').populate('addTeacher')
-            
             if (clss) {
                 return res.json({
                     data: [clss],

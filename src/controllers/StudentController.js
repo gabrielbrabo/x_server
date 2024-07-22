@@ -157,7 +157,7 @@ class StudentController {
     }
 
     async createAttendance(req, res) {
-        const { day, month, year, status, id_student, id_teacher, id_matter } = req.body;
+        const { day, month, year, status, id_student, id_teacher, id_matter, id_class } = req.body;
 
         // validations
         if (!day) {
@@ -191,7 +191,8 @@ class StudentController {
             status: status.toUpperCase(),
             id_student: id_student,
             id_teacher: id_teacher,
-            id_matter: id_matter
+            id_matter: id_matter,
+            id_class: id_class
         });
 
         try {
