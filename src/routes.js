@@ -6,6 +6,7 @@ const StudentController = require( "./controllers/StudentController")
 const MatterController = require( "./controllers/MatterContoller")
 const ReportCardController = require( "./controllers/RepoCardController")
 const AttendanceController = require( "./controllers/AttendanceController")
+const RefreshController = require( "./controllers/RefreshController")
 
 const auth = require ("./middlewares/auth")
 
@@ -15,6 +16,7 @@ const routes = express.Router()
 routes.post('/register/school', SchoolController.create)
 routes.post('/session/school', SessionsController.sessionSchool)
 routes.post('/session/employee', SessionsController.sessionEmployee)
+routes.post('/refresh/employee', RefreshController.checkToken)
 
 routes.use(auth)
 
