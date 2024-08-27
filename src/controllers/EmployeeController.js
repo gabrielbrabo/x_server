@@ -7,7 +7,7 @@ const bcrypt = require('bcryptjs')
 class EmployeeController {
   
     async create(req, res) {
-        const { name, cpf, position_at_school, password, confirmpassword } = req.body;
+        const { name, dateOfBirth, cpf, rg, email, cellPhone, address, position_at_school, password, confirmpassword } = req.body;
 
         const { id } = req.params;
 
@@ -48,7 +48,12 @@ class EmployeeController {
         // create user
         const user = new User({
             name: name.toUpperCase(),
+            dateOfBirth,
             cpf,
+            rg,
+            email,
+            cellPhone,
+            address: address.toUpperCase(),
             type: 'employee',
             position_at_school: position_at_school.toUpperCase(),
             id_school: id,
@@ -166,6 +171,33 @@ class EmployeeController {
         }
     }
   
+    async getEmployeeById(req, res) {
+        try {
+            const employee = await Employee.findById(req.params.id);
+            if (!employee) {
+              return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(employee);
+          }catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async updateEmployee(req, res) {
+        try {
+            const { id } = req.params;
+            const employee = await Employee.findByIdAndUpdate(id, req.body, { new: true });
+            if (!employee) {
+              return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(employee);
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
     async update(req, res) {
         try {
             const { id } = req.params;

@@ -18,6 +18,8 @@ routes.post('/session/school', SessionsController.sessionSchool)
 routes.post('/session/employee', SessionsController.sessionEmployee)
 routes.post('/refresh/employee', RefreshController.checkToken)
 
+routes.post('/school/index', SchoolController.index)
+
 routes.use(auth)
 
 routes.post('/register/employee/:id', EmployeeController.create)
@@ -37,6 +39,8 @@ routes.post('/card/III_rd_quarter', ReportCardController.III_rd_quarter)
 routes.post('/card/IV_th_quarter', ReportCardController.IV_th_quarter)
 
 routes.post('/employee', EmployeeController.index)
+routes.get('/employee-details/:id', EmployeeController. getEmployeeById)
+routes.post('/employee-update/:id', EmployeeController.updateEmployee)
 routes.post('/student', StudentController.index)
 routes.post('/class', ClassController.index)
 routes.post('/matter', MatterController.index)

@@ -68,6 +68,29 @@ class SchoolController {
             res.status(500).json({ msg: error });
         }
     }
+
+    async index(req, res) {
+
+        const {idSchool} = req.body;
+
+        try {
+            const school = await User.findById({
+                _id: idSchool
+            })
+
+            if (school) {
+                return res.json({
+                    data: school.name,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
   
     async update(req, res) {
         try {
