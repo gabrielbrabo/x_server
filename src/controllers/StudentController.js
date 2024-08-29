@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs')
 class StudentController {
   
     async create(req, res) {
-        const { name, rg, password, confirmpassword, registerStudent } = req.body;
+        const { name, dateOfBirth, cpf, rg, cellPhone, cellPhoneOfParentsOrGuardians, address, password, confirmpassword, registerStudent } = req.body;
 
         const { id } = req.params;
 
@@ -17,6 +17,12 @@ class StudentController {
 
         if (!rg) {
             return res.status(422).json({ msg: "O RG é obrigatório!" });
+        }
+        if (!cpf) {
+            return res.status(422).json({ msg: "O cpf é obrigatório!" });
+        }
+        if (!dateOfBirth) {
+            return res.status(422).json({ msg: "A data de nascimento é obrigatório!" });
         }
 
         if (!registerStudent) {
@@ -34,7 +40,7 @@ class StudentController {
         }
 
         // check if user exists
-        const userExists = await Student.findOne({ rg: rg });
+        const userExists = await Student.findOne({ cpf: cpf });
 
         if (userExists) {
             return res.status(422).json({ msg: "Esse estudante ja esta cadastrado!" });
@@ -47,7 +53,12 @@ class StudentController {
         // create user
         const user = new Student({
             name: name.toUpperCase(),
+            dateOfBirth: dateOfBirth,
+            cpf: cpf,
             rg: rg,
+            cellPhone: cellPhone,
+            cellPhoneOfParentsOrGuardians: cellPhoneOfParentsOrGuardians,
+            address: address,
             type: "student",
             registerStudent: registerStudent,
             id_school: id,

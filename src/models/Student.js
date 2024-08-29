@@ -11,9 +11,30 @@ const studentschema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        dateOfBirth: {
+            type: String,
+            required: true,
+        },
+        cpf: {
+            type: String,
+            required: true,
+            unique: true
+        },
         rg: {
             type: String,
-            unique: true
+            required: true,
+        },
+        cellPhone: {
+            type: String,
+            required: true,
+        },
+        cellPhoneOfParentsOrGuardians: {
+            type: String,
+            required: true,
+        },
+        address: {
+            type: String,
+            required: true,
         },
         type: {
             type: String,
