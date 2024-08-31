@@ -253,7 +253,7 @@ class StudentController {
     async destroy(req, res) {
         try {
             const { id } = req.params;
-            const user = await User.findById(id);
+            const user = await Student.findById(id);
     
             if (!user) {
                 return res.status(404).json();

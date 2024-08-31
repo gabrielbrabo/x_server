@@ -56,6 +56,7 @@ routes.post('/search/frequency', AttendanceController.index)
 routes.post('/update/frequency', AttendanceController.update)
 
 routes.post('/destroy-employee/:id', EmployeeController.destroy)
+routes.post('/destroy-student/:id', StudentController.destroy)
 routes.post('/remove/student', ClassController.removeStudent)
 routes.post('/remove/teacher', ClassController.removeTeacher)
 routes.post('/remove/matter', MatterController.removeMatter)
