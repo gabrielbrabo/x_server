@@ -228,6 +228,33 @@ class StudentController {
         }
     }
 
+    async getStudentById(req, res) {
+        try {
+            const student = await Student.findById(req.params.id);
+            if (!student) {
+              return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(student);
+          }catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async updateStudent(req, res) {
+        try {
+            const { id } = req.params;
+            const student = await Student.findByIdAndUpdate(id, req.body, { new: true });
+            if (!student) {
+              return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(student);
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
   
     async update(req, res) {
         try {
