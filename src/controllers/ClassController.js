@@ -443,6 +443,52 @@ class ClassController {
             })
         }
     }
+
+    
+    async getclassById(req, res) {
+        try {
+            const cla$$ = await Class.findById(req.params.id);
+            if (!cla$$) {
+              return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(cla$$);
+          }catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async updateClass(req, res) {
+        try {
+            const { id } = req.params;
+            const cla$$ = await Class.findByIdAndUpdate(id, req.body, { new: true });
+            if (!cla$$) {
+              return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(cla$$);
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async destroy(req, res) {
+        try {
+            const { id } = req.params;
+            const cla$$ = await Class.findById(id);
+    
+            if (!cla$$) {
+                return res.status(404).json();
+            }
+    
+            await cla$$.deleteOne();
+    
+            return res.status(200).json();
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
 }
   
 module.exports = new ClassController();
