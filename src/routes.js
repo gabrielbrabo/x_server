@@ -54,7 +54,7 @@ routes.post('/employee/info/:id', EmployeeController.InfoIndex)
 routes.post('/class/info/:id', ClassController.InfoIndex)
 
 routes.post('/myclass', EmployeeController.MyClassIndex)
-routes.post('/attendance', StudentController.createAttendance)
+routes.post('/attendance', AttendanceController.createAttendance)
 routes.post('/attendance/index', StudentController.AttendanceIndex)
 routes.post('/search/frequency', AttendanceController.index)
 routes.post('/update/frequency', AttendanceController.update)

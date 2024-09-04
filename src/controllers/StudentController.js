@@ -167,67 +167,6 @@ class StudentController {
         }
     }
 
-    async createAttendance(req, res) {
-        const { day, month, year, status, id_student, id_teacher, id_matter, id_class } = req.body;
-
-        // validations
-        if (!day) {
-            return res.status(422).json({ msg: "O Dia é obrigatório!" });
-        }
-
-        if (!month) {
-            return res.status(422).json({ msg: "O Mes é obrigatório!" });
-        }
-
-        if (!year) {
-            return res.status(422).json({ msg: "O RE do estudante é obrigatório!" });
-        }
-
-        if (!status) {
-            return res.status(422).json({ msg: "A senha é obrigatória!" });
-        }
-
-        // check if user exists
-        //const userExists = await Student.findOne({ rg: rg });
-
-        /*if (userExists) {
-            return res.status(422).json({ msg: "Esse estudante ja esta cadastrado!" });
-        }*/
-
-        // create user
-        const user = new Attendance({
-            day: day,
-            month: month,
-            year: year,
-            status: status.toUpperCase(),
-            id_student: id_student,
-            id_teacher: id_teacher,
-            id_matter: id_matter,
-            id_class: id_class
-        });
-
-        try {
-            
-            const attendance = await user.save()
-            
-            await Student.updateOne({
-                _id: id_student
-            }, {
-                $push: {
-                    id_attendance: attendance._id      
-                }
-            })
-            res.status(200).json({
-                msg: 'Conta profissional cadastrado com sucesso.'
-            })
-
-        } catch (err){
-            res.status(500).json({
-                msg: 'Error ao cadastra uma Conta profissional.'
-            })
-        }
-    }
-
     async getStudentById(req, res) {
         try {
             const student = await Student.findById(req.params.id);
