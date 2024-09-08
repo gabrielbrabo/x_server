@@ -3,10 +3,10 @@ const Student = require( "../models/Student")
 const Cards = require( "../models/Report_card")
 const Matter = require( "../models/Matter")
 
-class StudentController {
+class RepoCardController {
   
     async create(req, res) {
-        const { year, id_matter, id_employee, id_student } = req.body;
+        const { year, bimonthly, totalGrade, averageGrade, studentGrade, idBimonthly, id_matter, id_employee, id_student } = req.body;
 
         // validations
         if (!year) {
@@ -34,24 +34,30 @@ class StudentController {
             
             const Res = card.map( result => {
                 if(result.year == year) {
-                    return result.id_matter
-                }
-            }).map( result => {
-                if(result == id_matter) {
-                    return result
+                    if(result.bimonthly == bimonthly) {
+                        if(result.id_matter == id_matter) {
+                            return result
+                        }
+                    }
                 }
             }).filter((fill) => {
                 return fill
             })
             
             if(Res.length > 0) {    
-                return res.status(422).json({Res, msg: "Essa truma ja esta cadastrada!" });
+                return res.status(422).json({Res, msg: "Esse aluno ja tem um boletinho cadastrado!" });
             }
+            console.log("card", Res)
         }
-
+    
         // create user
         const newreportCards = new Cards({
             year: year, 
+            bimonthly: bimonthly.toUpperCase(), 
+            totalGrade: totalGrade, 
+            averageGrade: averageGrade, 
+            studentGrade: studentGrade, 
+            idBimonthly: idBimonthly,
             id_matter: id_matter, 
             id_employee: id_employee, 
             id_student: id_student
@@ -96,7 +102,7 @@ class StudentController {
         }
     }
 
-    async I_st_quarter(req, res) {
+    /*async I_st_quarter(req, res) {
         try {
             const { id_reporter_card, id_student, id_employee, I_st_quarter } = req.body;
             const card = await Cards.find({_id: id_reporter_card});
@@ -222,8 +228,8 @@ class StudentController {
             console.error(err);
             return res.status(500).json({ error: "Internal Server Error" });
         }
-    }
+    }*/
 
 }
   
-module.exports = new StudentController();
+module.exports = new RepoCardController();

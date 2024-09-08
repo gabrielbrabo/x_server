@@ -22,15 +22,6 @@ class AttendanceController {
         if (!status) {
             return res.status(422).json({ msg: "A senha é obrigatória!" });
         }
-
-        // check if user exists
-        //const userExists = await Student.findOne({ rg: rg });
-
-        /*if (userExists) {
-            return res.status(422).json({ msg: "Esse estudante ja esta cadastrado!" });
-        }*/
-
-        // create user
         const user = new Attendance({
             day: day,
             month: month,
