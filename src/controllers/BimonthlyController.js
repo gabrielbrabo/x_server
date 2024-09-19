@@ -1,4 +1,7 @@
 const I_stQuarter = require("../models/I_stQuarter")
+const II_ndQuarter = require("../models/II_ndQuarter")
+const III_rdQuarter = require("../models/III_rdQuarter")
+const IV_thQuarter = require("../models/IV_thQuarter")
 const School = require("../models/School")
 
 class BimonthlyController {
@@ -22,6 +25,14 @@ class BimonthlyController {
         if (!averageGrade) {
             return res.status(422).json({ msg: "A media é obrigatória!" });
         }
+
+        const startDate = new Date(startyear, startmonth - 1, startday); // Note que os meses no objeto Date são baseados em zero (0 para Janeiro, 11 para Dezembro)
+        const endDate = new Date(endyear, endmonth - 1, endday);
+
+        if (endDate <= startDate) {
+            return res.status(422).json({ msg: "A data de fim deve ser posterior à data de início!" });
+        }
+
 
         //const school = await School.findOne({ _id: id_school });
 
@@ -109,6 +120,412 @@ class BimonthlyController {
             })
         }
     }
+
+    async getI_stQuarterById(req, res) {
+        try {
+            const i_stQuarter = await I_stQuarter.findById(req.params.id);
+            console.log("i_stQuarter", i_stQuarter)
+            if (!i_stQuarter) {
+              return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(i_stQuarter);
+          }catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async updateI_stQuarter(req, res) {
+        try {
+            const { id } = req.params;
+            const i_stQuarter = await I_stQuarter.findByIdAndUpdate(id, req.body, { new: true });
+            if (!i_stQuarter) {
+              return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(i_stQuarter);
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async createII_ndQuarter(req, res) {
+        const { year, startday, startmonth, startyear, endday, endmonth, endyear, totalGrade, averageGrade, id_school } = req.body;
+
+        // validations
+        if (!startday) {
+            return res.status(422).json({ msg: "A data de incio é obrigatório!" });
+        }
+
+        if (!endday) {
+            return res.status(422).json({ msg: "A data do fim é obrigatório!" });
+        }
+
+        if (!totalGrade) {
+            return res.status(422).json({ msg: "A nota total é obrigatório!" });
+        }
+
+        if (!averageGrade) {
+            return res.status(422).json({ msg: "A media é obrigatória!" });
+        }
+
+        const startDate = new Date(startyear, startmonth - 1, startday); // Note que os meses no objeto Date são baseados em zero (0 para Janeiro, 11 para Dezembro)
+        const endDate = new Date(endyear, endmonth - 1, endday);
+
+        if (endDate <= startDate) {
+            return res.status(422).json({ msg: "A data de fim deve ser posterior à data de início!" });
+        }
+
+        const previousQuarter = await I_stQuarter.findOne({ id_school: id_school, year: year });
+
+        if (previousQuarter) {
+            const firstQuarterEndDate = new Date(previousQuarter.endyear, previousQuarter.endmonth - 1, previousQuarter.endday);
+            const secondQuarterStartDate = new Date(startyear, startmonth - 1, startday);
+
+            if (secondQuarterStartDate <= firstQuarterEndDate) {
+                return res.status(422).json({ msg: "A data de início do 2º bimestre deve ser maior que a data de término do 1º bimestre!" });
+            }
+        }
+
+        //const school = await School.findOne({ _id: id_school });
+
+        const existingBimonthly = await II_ndQuarter.find({ id_school: id_school })
+
+        console.log("existingBimonthly", existingBimonthly)
+        if (existingBimonthly) {
+            const result = existingBimonthly.map(Res => {
+                if (Res.year == year) {
+                    return Res.year
+                }
+                return null
+            }).filter(Res => {
+                if (Res !== null) {
+                    return Res
+                }
+            })
+            console.log("result", result)
+            if (result.length > 0) {
+                return res.status(422).json({ msg: "O bimestre ja foi definido voçê so podera editalo!" });
+            }
+        }
+
+        const bimonthly = new II_ndQuarter({
+            year: year,
+            startday: startday,
+            startmonth: startmonth,
+            startyear: startyear,
+            endday: endday,
+            endmonth: endmonth,
+            endyear: endyear,
+            totalGrade: totalGrade,
+            averageGrade: averageGrade,
+            id_school: id_school
+        });
+
+        try {
+
+            const ii_ndQuarter = await bimonthly.save()
+
+            await School.updateOne({
+                _id: id_school
+            }, {
+                $push: {
+                    id_iiNdQuarter: ii_ndQuarter._id
+                }
+            })
+            res.status(200).json({
+                msg: 'Conta profissional cadastrado com sucesso.'
+            })
+
+        } catch (err) {
+            res.status(500).json({
+                msg: 'Error ao cadastra uma Conta profissional.'
+            })
+        }
+    }
+
+    async indexII_ndQuarter(req, res) {
+
+        const { year, id_school } = req.body;
+
+        const ii_NdQuarter = await II_ndQuarter.find({ id_school: id_school });
+        const result = ii_NdQuarter.map(res => {
+            if (res.year == year) {
+                return res
+            }
+        }).filter(res => {
+            if (res != null) {
+                return res
+            }
+        })
+
+        try {
+            if (result) {
+                return res.json({
+                    data: result,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+
+    async createIII_rdQuarter(req, res) {
+        const { year, startday, startmonth, startyear, endday, endmonth, endyear, totalGrade, averageGrade, id_school } = req.body;
+
+        // validations
+        if (!startday) {
+            return res.status(422).json({ msg: "A data de incio é obrigatório!" });
+        }
+
+        if (!endday) {
+            return res.status(422).json({ msg: "A data do fim é obrigatório!" });
+        }
+
+        if (!totalGrade) {
+            return res.status(422).json({ msg: "A nota total é obrigatório!" });
+        }
+
+        if (!averageGrade) {
+            return res.status(422).json({ msg: "A media é obrigatória!" });
+        }
+
+        const startDate = new Date(startyear, startmonth - 1, startday); // Note que os meses no objeto Date são baseados em zero (0 para Janeiro, 11 para Dezembro)
+        const endDate = new Date(endyear, endmonth - 1, endday);
+
+        if (endDate <= startDate) {
+            return res.status(422).json({ msg: "A data de fim deve ser posterior à data de início!" });
+        }
+
+        const previousQuarter = await II_ndQuarter.findOne({ id_school: id_school, year: year });
+
+        if (previousQuarter) {
+            const secondQuarterEndDate = new Date(previousQuarter.endyear, previousQuarter.endmonth - 1, previousQuarter.endday);
+            const thirdQuarterStartDate = new Date(startyear, startmonth - 1, startday);
+
+            if (thirdQuarterStartDate <= secondQuarterEndDate) {
+                return res.status(422).json({ msg: "A data de início do 3º bimestre deve ser maior que a data de término do 2º bimestre!" });
+            }
+        }
+
+
+        //const school = await School.findOne({ _id: id_school });
+
+        const existingBimonthly = await III_rdQuarter.find({ id_school: id_school })
+
+        console.log("existingBimonthly", existingBimonthly)
+        if (existingBimonthly) {
+            const result = existingBimonthly.map(Res => {
+                if (Res.year == year) {
+                    return Res.year
+                }
+                return null
+            }).filter(Res => {
+                if (Res !== null) {
+                    return Res
+                }
+            })
+            console.log("result", result)
+            if (result.length > 0) {
+                return res.status(422).json({ msg: "O bimestre ja foi definido voçê so podera editalo!" });
+            }
+        }
+
+        const bimonthly = new III_rdQuarter({
+            year: year,
+            startday: startday,
+            startmonth: startmonth,
+            startyear: startyear,
+            endday: endday,
+            endmonth: endmonth,
+            endyear: endyear,
+            totalGrade: totalGrade,
+            averageGrade: averageGrade,
+            id_school: id_school
+        });
+
+        try {
+
+            const iii_rdQuarter = await bimonthly.save()
+
+            await School.updateOne({
+                _id: id_school
+            }, {
+                $push: {
+                    id_iii_rdQuarter: iii_rdQuarter._id
+                }
+            })
+            res.status(200).json({
+                msg: 'Conta profissional cadastrado com sucesso.'
+            })
+
+        } catch (err) {
+            res.status(500).json({
+                msg: 'Error ao cadastra uma Conta profissional.'
+            })
+        }
+    }
+
+    async indexIII_rdQuarter(req, res) {
+
+        const { year, id_school } = req.body;
+
+        const iii_rdQuarter = await III_rdQuarter.find({ id_school: id_school });
+        const result = iii_rdQuarter.map(res => {
+            if (res.year == year) {
+                return res
+            }
+        }).filter(res => {
+            if (res != null) {
+                return res
+            }
+        })
+
+        try {
+            if (result) {
+                return res.json({
+                    data: result,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+
+    async createIV_thQuarter(req, res) {
+        const { year, startday, startmonth, startyear, endday, endmonth, endyear, totalGrade, averageGrade, id_school } = req.body;
+
+        // validations
+        if (!startday) {
+            return res.status(422).json({ msg: "A data de incio é obrigatório!" });
+        }
+
+        if (!endday) {
+            return res.status(422).json({ msg: "A data do fim é obrigatório!" });
+        }
+
+        if (!totalGrade) {
+            return res.status(422).json({ msg: "A nota total é obrigatório!" });
+        }
+
+        if (!averageGrade) {
+            return res.status(422).json({ msg: "A media é obrigatória!" });
+        }
+
+        const startDate = new Date(startyear, startmonth - 1, startday); // Note que os meses no objeto Date são baseados em zero (0 para Janeiro, 11 para Dezembro)
+        const endDate = new Date(endyear, endmonth - 1, endday);
+
+        if (endDate <= startDate) {
+            return res.status(422).json({ msg: "A data de fim deve ser posterior à data de início!" });
+        }
+
+        const previousQuarter = await III_rdQuarter.findOne({ id_school: id_school, year: year });
+
+        if (previousQuarter) {
+            const thirdQuarterEndDate = new Date(previousQuarter.endyear, previousQuarter.endmonth - 1, previousQuarter.endday);
+            const fourthQuarterStartDate = new Date(startyear, startmonth - 1, startday);
+
+            if (fourthQuarterStartDate <= thirdQuarterEndDate) {
+                return res.status(422).json({ msg: "A data de início do 4º bimestre deve ser maior que a data de término do 3º bimestre!" });
+            }
+        }
+
+
+        //const school = await School.findOne({ _id: id_school });
+
+        const existingBimonthly = await IV_thQuarter.find({ id_school: id_school })
+
+        console.log("existingBimonthly", existingBimonthly)
+        if (existingBimonthly) {
+            const result = existingBimonthly.map(Res => {
+                if (Res.year == year) {
+                    return Res.year
+                }
+                return null
+            }).filter(Res => {
+                if (Res !== null) {
+                    return Res
+                }
+            })
+            console.log("result", result)
+            if (result.length > 0) {
+                return res.status(422).json({ msg: "O bimestre ja foi definido voçê so podera editalo!" });
+            }
+        }
+
+        const bimonthly = new IV_thQuarter({
+            year: year,
+            startday: startday,
+            startmonth: startmonth,
+            startyear: startyear,
+            endday: endday,
+            endmonth: endmonth,
+            endyear: endyear,
+            totalGrade: totalGrade,
+            averageGrade: averageGrade,
+            id_school: id_school
+        });
+
+        try {
+
+            const iv_thQuarter = await bimonthly.save()
+
+            await School.updateOne({
+                _id: id_school
+            }, {
+                $push: {
+                    id_ivThQuarter: iv_thQuarter._id
+                }
+            })
+            res.status(200).json({
+                msg: 'Conta profissional cadastrado com sucesso.'
+            })
+
+        } catch (err) {
+            res.status(500).json({
+                msg: 'Error ao cadastra uma Conta profissional.'
+            })
+        }
+    }
+
+    async indexIV_thQuarter(req, res) {
+
+        const { year, id_school } = req.body;
+
+        const iv_thQuarter = await IV_thQuarter.find({ id_school: id_school });
+        const result = iv_thQuarter.map(res => {
+            if (res.year == year) {
+                return res
+            }
+        }).filter(res => {
+            if (res != null) {
+                return res
+            }
+        })
+
+        try {
+            if (result) {
+                return res.json({
+                    data: result,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
 }
+
 
 module.exports = new BimonthlyController();

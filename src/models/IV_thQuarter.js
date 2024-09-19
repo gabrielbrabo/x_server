@@ -41,7 +41,6 @@ const IV_thQuarter = new mongoose.Schema(
         },
         status: {
             type: String,
-            required: true,
         },
         id_reporter_card: [
             {
