@@ -274,6 +274,34 @@ class BimonthlyController {
         }
     }
 
+    async getII_ndQuarterById(req, res) {
+        try {
+            const ii_ndQuarter = await II_ndQuarter.findById(req.params.id);
+            console.log("ii_ndQuarter", ii_ndQuarter)
+            if (!ii_ndQuarter) {
+              return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(ii_ndQuarter);
+          }catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async updateII_ndQuarter(req, res) {
+        try {
+            const { id } = req.params;
+            const ii_ndQuarter = await II_ndQuarter.findByIdAndUpdate(id, req.body, { new: true });
+            if (!ii_ndQuarter) {
+              return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(ii_ndQuarter);
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
     async createIII_rdQuarter(req, res) {
         const { year, startday, startmonth, startyear, endday, endmonth, endyear, totalGrade, averageGrade, id_school } = req.body;
 
@@ -400,6 +428,34 @@ class BimonthlyController {
         }
     }
 
+    async getIII_rdQuarterById(req, res) {
+        try {
+            const iii_rdQuarter = await III_rdQuarter.findById(req.params.id);
+            console.log("ii_ndQuarter", iii_rdQuarter)
+            if (!iii_rdQuarter) {
+              return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(iii_rdQuarter);
+          }catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async updateIII_rdQuarter(req, res) {
+        try {
+            const { id } = req.params;
+            const iii_rdQuarter = await III_rdQuarter.findByIdAndUpdate(id, req.body, { new: true });
+            if (!iii_rdQuarter) {
+              return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(iii_rdQuarter);
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
     async createIV_thQuarter(req, res) {
         const { year, startday, startmonth, startyear, endday, endmonth, endyear, totalGrade, averageGrade, id_school } = req.body;
 
@@ -523,6 +579,34 @@ class BimonthlyController {
             res.status(500).json({
                 message: 'there was an error on server side!'
             })
+        }
+    }
+
+    async getIV_thQuarterById(req, res) {
+        try {
+            const iv_thQuarter = await IV_thQuarter.findById(req.params.id);
+            console.log("ii_ndQuarter", iv_thQuarter)
+            if (!iv_thQuarter) {
+              return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(iv_thQuarter);
+          }catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async updateIV_thQuarter(req, res) {
+        try {
+            const { id } = req.params;
+            const iv_thQuarter = await IV_thQuarter.findByIdAndUpdate(id, req.body, { new: true });
+            if (!iv_thQuarter) {
+              return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(iv_thQuarter);
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
         }
     }
 }
