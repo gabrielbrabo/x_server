@@ -70,7 +70,13 @@ const studentschema = new mongoose.Schema(
                 type: mongoose.Types.ObjectId,
                 ref: 'attendance'
             }
-        ],         
+        ], 
+        id_grade: [
+            {
+                type: mongoose.Types.ObjectId,
+                ref: 'grade'
+            }
+        ],        
         id_reporter_card: [
             {
                 type: mongoose.Types.ObjectId,

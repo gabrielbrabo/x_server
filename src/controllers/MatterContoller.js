@@ -69,6 +69,23 @@ class MatterController {
         }
     }
 
+    async getMatter(req, res) {
+
+        try {
+            const idMatter = await Matter.findById(req.params.id);
+            console.log("idMatter", idMatter)
+            if (!idMatter) {
+              return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(idMatter);
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+    
     async index(req, res) {
 
         const {idSchool} = req.body;

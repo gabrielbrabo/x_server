@@ -58,6 +58,7 @@ class BimonthlyController {
 
         const bimonthly = new I_stQuarter({
             year: year,
+            bimonthly: '1º BIMESTRE',
             startday: startday,
             startmonth: startmonth,
             startyear: startyear,
@@ -211,6 +212,7 @@ class BimonthlyController {
 
         const bimonthly = new II_ndQuarter({
             year: year,
+            bimonthly: '2º BIMESTRE',
             startday: startday,
             startmonth: startmonth,
             startyear: startyear,
@@ -365,6 +367,7 @@ class BimonthlyController {
 
         const bimonthly = new III_rdQuarter({
             year: year,
+            bimonthly: '3º BIMESTRE',
             startday: startday,
             startmonth: startmonth,
             startyear: startyear,
@@ -519,6 +522,7 @@ class BimonthlyController {
 
         const bimonthly = new IV_thQuarter({
             year: year,
+            bimonthly: '4º BIMESTRE',
             startday: startday,
             startmonth: startmonth,
             startyear: startyear,

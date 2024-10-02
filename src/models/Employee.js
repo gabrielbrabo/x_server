@@ -64,12 +64,6 @@ const employeeschema = new mongoose.Schema(
                 ref: 'class'
             }
         ],
-        id_reporter_card: [
-            {
-                type: mongoose.Types.ObjectId,
-                ref: 'reporter_card'
-            }
-        ],
         status: {
             type: String,
             enum: ["active", "inactive"],

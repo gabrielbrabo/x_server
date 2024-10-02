@@ -7,6 +7,10 @@ const III_rdQuarter = new mongoose.Schema(
             type: String,
             required: true,
         },
+        bimonthly: {
+            type: String,
+            required: true,
+        },
         startday: {
             type: String,
             required: true,
