@@ -114,6 +114,112 @@ class GradeController {
             })
         }
     }
+
+    async indexIIndQuarter(req, res) {
+
+        const { year, id_matter, id_iiNdQuarter} = req.body;
+
+        const grade = await Grade.find({ id_iiNdQuarter: id_iiNdQuarter }).populate('id_student');
+
+        console.log("grade", grade)
+
+        const grd = grade.map(res => {
+            if (res.year == year) {
+                if (res.id_matter == id_matter) {
+                    return res
+                } 
+            }
+        }).filter(res => {
+            if (res != null) {
+                return res
+            }
+        })
+       console.log("grd", grd)
+
+        try {
+            if (grd) {
+                return res.json({
+                    data: grd,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+    async indexIIIrdQuarter(req, res) {
+
+        const { year, id_matter, id_iiiRdQuarter} = req.body;
+
+        const grade = await Grade.find({ id_iiiRdQuarter: id_iiiRdQuarter }).populate('id_student');
+
+        console.log("grade", grade)
+
+        const grd = grade.map(res => {
+            if (res.year == year) {
+                if (res.id_matter == id_matter) {
+                    return res
+                } 
+            }
+        }).filter(res => {
+            if (res != null) {
+                return res
+            }
+        })
+       console.log("grd", grd)
+
+        try {
+            if (grd) {
+                return res.json({
+                    data: grd,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+    async indexIVthQuarter(req, res) {
+
+        const { year, id_matter, id_ivThQuarter} = req.body;
+
+        const grade = await Grade.find({ id_ivThQuarter: id_ivThQuarter }).populate('id_student');
+
+        console.log("grade", grade)
+
+        const grd = grade.map(res => {
+            if (res.year == year) {
+                if (res.id_matter == id_matter) {
+                    return res
+                } 
+            }
+        }).filter(res => {
+            if (res != null) {
+                return res
+            }
+        })
+       console.log("grd", grd)
+
+        try {
+            if (grd) {
+                return res.json({
+                    data: grd,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
 }
 
 module.exports = new GradeController();

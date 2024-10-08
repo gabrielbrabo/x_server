@@ -53,7 +53,10 @@ routes.get('/details/ivthQuarter/:id', BimonthlyController.getIV_thQuarterById)
 routes.post('/update/ivthQuarter/:id', BimonthlyController.updateIV_thQuarter)
 
 routes.post('/register/grade', GradeController.createGrade)
-routes.post('/index/grade', GradeController.indexIstQuarter)
+routes.post('/index/gradei', GradeController.indexIstQuarter)
+routes.post('/index/gradeii', GradeController.indexIIndQuarter)
+routes.post('/index/gradeiii', GradeController.indexIIIrdQuarter)
+routes.post('/index/gradeiv', GradeController.indexIVthQuarter)
 
 /*routes.post('/card/I_st_quarter', ReportCardController.I_st_quarter)
 routes.post('/card/II_nd_quarter', ReportCardController.II_nd_quarter)
