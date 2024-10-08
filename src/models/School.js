@@ -78,6 +78,14 @@ const schoolschema = new mongoose.Schema(
             type: mongoose.Types.ObjectId,
             ref: 'IV_thQuarter'
         },
+        id_vThQuarter: {
+            type: mongoose.Types.ObjectId,
+            ref: 'V_thQuarter'
+        },
+        id_viThQuarter: {
+            type: mongoose.Types.ObjectId,
+            ref: 'VI_thQuarter'
+        },
         status: {
             type: String,
             enum: ["active", "inactive"],

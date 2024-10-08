@@ -40,6 +40,14 @@ const grade_schema = new mongoose.Schema(
             type: mongoose.Types.ObjectId,
             ref: 'IV_thQuarter'
         },
+        id_vThQuarter: {
+            type: mongoose.Types.ObjectId,
+            ref: 'V_thQuarter'
+        },
+        id_viThQuarter: {
+            type: mongoose.Types.ObjectId,
+            ref: 'VI_thQuarter'
+        },
         id_matter: {
             type: mongoose.Types.ObjectId,
             ref: 'matter'

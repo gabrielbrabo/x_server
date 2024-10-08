@@ -4,7 +4,7 @@ const Student = require( "../models/Student")
 class GradeController {
 
     async createGrade(req, res) {
-        const { year, bimonthly, totalGrade, averageGrade, studentGrade, id_iStQuarter, id_iiNdQuarter, id_iiiRdQuarter, id_ivThQuarter, id_student, id_teacher, id_matter } = req.body;
+        const { year, bimonthly, totalGrade, averageGrade, studentGrade, id_iStQuarter, id_iiNdQuarter, id_iiiRdQuarter, id_ivThQuarter, id_vThQuarter,id_viThQuarter, id_student, id_teacher, id_matter } = req.body;
 
         // validations
         if (!totalGrade) {
@@ -33,6 +33,8 @@ class GradeController {
             id_iiNdQuarter,
             id_iiiRdQuarter,
             id_ivThQuarter,
+            id_vThQuarter,
+            id_viThQuarter,
             id_student: id_student,
             id_teacher: id_teacher,
             id_matter: id_matter
@@ -190,6 +192,77 @@ class GradeController {
         const { year, id_matter, id_ivThQuarter} = req.body;
 
         const grade = await Grade.find({ id_ivThQuarter: id_ivThQuarter }).populate('id_student');
+
+        console.log("grade", grade)
+
+        const grd = grade.map(res => {
+            if (res.year == year) {
+                if (res.id_matter == id_matter) {
+                    return res
+                } 
+            }
+        }).filter(res => {
+            if (res != null) {
+                return res
+            }
+        })
+       console.log("grd", grd)
+
+        try {
+            if (grd) {
+                return res.json({
+                    data: grd,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+    async indexVthQuarter(req, res) {
+
+        const { year, id_matter, id_vThQuarter} = req.body;
+
+        const grade = await Grade.find({ id_vThQuarter: id_vThQuarter }).populate('id_student');
+
+        console.log("grade", grade)
+
+        const grd = grade.map(res => {
+            if (res.year == year) {
+                if (res.id_matter == id_matter) {
+                    return res
+                } 
+            }
+        }).filter(res => {
+            if (res != null) {
+                return res
+            }
+        })
+       console.log("grd", grd)
+
+        try {
+            if (grd) {
+                return res.json({
+                    data: grd,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+
+    async indexVIthQuarter(req, res) {
+
+        const { year, id_matter, id_viThQuarter} = req.body;
+
+        const grade = await Grade.find({ id_viThQuarter: id_viThQuarter }).populate('id_student');
 
         console.log("grade", grade)
 
