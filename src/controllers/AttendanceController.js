@@ -4,7 +4,7 @@ const Student = require( "../models/Student")
 class AttendanceController {
 
     async createAttendance(req, res) {
-        const { day, month, year, status, id_student, id_teacher, id_matter, id_class } = req.body;
+        const { day, month, year, status, id_student, id_teacher, id_class } = req.body;
 
         // validations
         if (!day) {
@@ -29,7 +29,6 @@ class AttendanceController {
             status: status.toUpperCase(),
             id_student: id_student,
             id_teacher: id_teacher,
-            id_matter: id_matter,
             id_class: id_class
         });
 
@@ -57,17 +56,15 @@ class AttendanceController {
 
     async index(req, res) {
 
-        const { day, month, year, id_matter, id_class } = req.body;
+        const { day, month, year, id_class } = req.body;
 
         const attendance = await Attendance.find({ id_class: id_class }).populate('id_student');
 
         const att = attendance.map(res => {
-            if (res.id_matter == id_matter) {
-                if (res.year == year) {
-                    if (res.month == month) {
-                        if (res.day == day) {
-                            return res
-                        }
+            if (res.year == year) {
+                if (res.month == month) {
+                    if (res.day == day) {
+                        return res
                     }
                 }
             }

@@ -30,10 +30,6 @@ const attendance = new mongoose.Schema(
             type: mongoose.Types.ObjectId, 
             ref: 'class',
         },
-        id_matter: {
-            type: mongoose.Types.ObjectId, 
-            ref: 'matter',
-        },
         
     },
     {
