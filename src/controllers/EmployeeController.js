@@ -116,22 +116,22 @@ class EmployeeController {
                 _id: id
             }).populate('id_matter').populate('id_class')
 
-            const info = await AddTeacher.find({
+            /*const info = await AddTeacher.find({
                 id_teacher: id
-            }).populate('id_class')
-            console.log("info", info)
-            if (employee && info) {
+            }).populate('id_class')*/
+            //console.log("info", info)
+            if (employee /*&& info*/) {
                 return res.json({
                     data: [employee],
-                    info: [info],
+                    //info: [info],
                     message: 'Sucess'
                 })
-            } else {
+            } /*else {
                 return res.json({
                     data: [employee],
                     message: 'Sucess'
                 })
-            }
+            }*/
         } catch (err) {
             console.log(err)
             res.status(500).json({

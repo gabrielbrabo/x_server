@@ -4,7 +4,7 @@ const Student = require( "../models/Student")
 class GradeController {
 
     async createGrade(req, res) {
-        const { year, bimonthly, totalGrade, averageGrade, studentGrade, id_iStQuarter, id_iiNdQuarter, id_iiiRdQuarter, id_ivThQuarter, id_vThQuarter,id_viThQuarter, id_student, id_teacher, id_matter } = req.body;
+        const { year, bimonthly, totalGrade, averageGrade, studentGrade, id_iStQuarter, id_iiNdQuarter, id_iiiRdQuarter, id_ivThQuarter, id_vThQuarter,id_viThQuarter, id_student, id_teacher, id_matter, id_class } = req.body;
 
         // validations
         if (!totalGrade) {
@@ -37,7 +37,8 @@ class GradeController {
             id_viThQuarter,
             id_student: id_student,
             id_teacher: id_teacher,
-            id_matter: id_matter
+            id_matter: id_matter,
+            id_class: id_class
         });
 
         try {
@@ -64,7 +65,7 @@ class GradeController {
 
     async indexIstQuarter(req, res) {
 
-        const { year, id_matter, id_iStQuarter} = req.body;
+        const { year, id_matter, id_iStQuarter, id_class} = req.body;
 
         const grade = await Grade.find({ id_iStQuarter: id_iStQuarter }).populate('id_student');
 
@@ -73,7 +74,9 @@ class GradeController {
         const grd = grade.map(res => {
             if (res.year == year) {
                 if (res.id_matter == id_matter) {
-                    return res
+                    if (res.id_class == id_class) {
+                        return res
+                    }
                 } 
             }
         }).filter(res => {
@@ -119,7 +122,7 @@ class GradeController {
 
     async indexIIndQuarter(req, res) {
 
-        const { year, id_matter, id_iiNdQuarter} = req.body;
+        const { year, id_matter, id_iiNdQuarter, id_class} = req.body;
 
         const grade = await Grade.find({ id_iiNdQuarter: id_iiNdQuarter }).populate('id_student');
 
@@ -128,7 +131,9 @@ class GradeController {
         const grd = grade.map(res => {
             if (res.year == year) {
                 if (res.id_matter == id_matter) {
-                    return res
+                    if (res.id_class == id_class) {
+                        return res
+                    }
                 } 
             }
         }).filter(res => {
@@ -154,7 +159,7 @@ class GradeController {
     }
     async indexIIIrdQuarter(req, res) {
 
-        const { year, id_matter, id_iiiRdQuarter} = req.body;
+        const { year, id_matter, id_iiiRdQuarter, id_class} = req.body;
 
         const grade = await Grade.find({ id_iiiRdQuarter: id_iiiRdQuarter }).populate('id_student');
 
@@ -163,7 +168,9 @@ class GradeController {
         const grd = grade.map(res => {
             if (res.year == year) {
                 if (res.id_matter == id_matter) {
-                    return res
+                    if (res.id_class == id_class) {
+                        return res
+                    }
                 } 
             }
         }).filter(res => {
@@ -189,7 +196,7 @@ class GradeController {
     }
     async indexIVthQuarter(req, res) {
 
-        const { year, id_matter, id_ivThQuarter} = req.body;
+        const { year, id_matter, id_ivThQuarter, id_class} = req.body;
 
         const grade = await Grade.find({ id_ivThQuarter: id_ivThQuarter }).populate('id_student');
 
@@ -198,7 +205,9 @@ class GradeController {
         const grd = grade.map(res => {
             if (res.year == year) {
                 if (res.id_matter == id_matter) {
-                    return res
+                    if (res.id_class == id_class) {
+                        return res
+                    }
                 } 
             }
         }).filter(res => {
@@ -224,7 +233,7 @@ class GradeController {
     }
     async indexVthQuarter(req, res) {
 
-        const { year, id_matter, id_vThQuarter} = req.body;
+        const { year, id_matter, id_vThQuarter, id_class} = req.body;
 
         const grade = await Grade.find({ id_vThQuarter: id_vThQuarter }).populate('id_student');
 
@@ -233,7 +242,9 @@ class GradeController {
         const grd = grade.map(res => {
             if (res.year == year) {
                 if (res.id_matter == id_matter) {
-                    return res
+                    if (res.id_class == id_class) {
+                        return res
+                    }
                 } 
             }
         }).filter(res => {
@@ -260,7 +271,7 @@ class GradeController {
 
     async indexVIthQuarter(req, res) {
 
-        const { year, id_matter, id_viThQuarter} = req.body;
+        const { year, id_matter, id_viThQuarter, id_class} = req.body;
 
         const grade = await Grade.find({ id_viThQuarter: id_viThQuarter }).populate('id_student');
 
@@ -269,7 +280,9 @@ class GradeController {
         const grd = grade.map(res => {
             if (res.year == year) {
                 if (res.id_matter == id_matter) {
-                    return res
+                    if (res.id_class == id_class) {
+                        return res
+                    }
                 } 
             }
         }).filter(res => {

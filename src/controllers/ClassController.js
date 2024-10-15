@@ -259,7 +259,7 @@ class ClassController {
     }
     
     async removeTeacher(req, res) {
-        const { id_teacher, id_class, id_matter, addTeacher } = req.body;
+        const { id_teacher, id_class, /*id_matter, addTeacher*/ } = req.body;
         // validations
         if (!id_teacher) {
             return res.status(422).json({ msg: "O id do estudante é obrigatório!" });
@@ -267,28 +267,28 @@ class ClassController {
         if (!id_class) {
             return res.status(422).json({ msg: "A id da turma é obrigatório!" });
         }
-        if (!id_matter) {
+        /*if (!id_matter) {
             return res.status(422).json({ msg: "A id da turma é obrigatório!" });
         }
         if (!addTeacher) {
             return res.status(422).json({ msg: "A id da turma é obrigatório!" });
-        }
+        }*/
 
         // Check if the student is already registered in a class
-        const teacher = await Student.find({ _id: addTeacher });
+        /*const teacher = await Student.find({ _id: addTeacher });
         if(! teacher) {
             return res.status(422).json({ msg: "O estudante não existe!" });
-        }
+        }*/
 
         try {
-            await AddTeacher.deleteOne({ _id: addTeacher })
-            await modelClass.updateOne({
+            //await AddTeacher.deleteOne({ _id: addTeacher })
+            /*await modelClass.updateOne({
                 _id: id_class
             }, {
                 $pull: {
                     addTeacher: addTeacher      
                 }
-            })
+            })*/
             await modelClass.updateOne({
                 _id: id_class
             }, {
@@ -296,13 +296,13 @@ class ClassController {
                     id_employee: id_teacher      
                 }
             })
-            await modelClass.updateOne({
+            /*await modelClass.updateOne({
                 _id: id_class
             }, {
                 $pull: {
                     id_matter: id_matter      
                 }
-            })
+            })*/
 
             await Employee.updateOne({
                 _id: id_teacher
@@ -311,13 +311,15 @@ class ClassController {
                     id_class: id_class      
                 }
             })
-            await Matter.updateOne({
+            /*await Matter.updateOne({
                 _id: id_matter
             }, {
                 $pull: {
                     id_class: id_class      
                 }
-            })
+            })*/
+           console.log('emp', id_teacher)
+           console.log('class', id_class)
             res.status(200).json({
                 msg: 'Estudante removido com sucesso.'
             })
@@ -330,7 +332,7 @@ class ClassController {
     }
 
     async addTeacher(req, res) {
-        const { id_employee, id_class, id_matter } = req.body;
+        const { id_employee, id_class, /*id_matter*/} = req.body;
 
         // validations
         if (!id_employee) {
@@ -341,9 +343,9 @@ class ClassController {
             return res.status(422).json({ msg: "A id da turma é obrigatório!" });
         }
 
-        if (!id_matter) {
+        /*if (!id_matter) {
             return res.status(422).json({ msg: "A id da turma é obrigatório!" });
-        }
+        }*/
 
         // Check if the student is already registered in a class
         const clss = await Class.find({ _id: id_class});
@@ -357,11 +359,20 @@ class ClassController {
             }
             console.log("cl", cl)
             console.log("currentYear", currentYear)
-            const matter = clss.find( mat => {
-                return  mat
+            const teacher = clss.find( tchr => {
+                return tchr
+            }).id_employee.filter( res => {
+                return res == id_employee
             })
 
-            const matt = matter.id_matter.map( mat => {
+            if(teacher.length > 0) { 
+                console.log("filter", teacher)   
+                return res.status(422).json({ msg: "Esse Professor ja esta cadastrado nessa turma!" });
+            }
+
+            console.log('teacher', teacher)
+
+            /*const matt = matter.id_matter.map( mat => {
                 return  mat
             })
 
@@ -374,10 +385,10 @@ class ClassController {
             if(fil.length > 0) { 
                 console.log("filter", fil)   
                 return res.status(422).json({ msg: "Essa materia ja esta cadastrada!" });
-            }
+            }*/
         }
 
-        const colectionTeacher = await Employee.findOne({ _id: id_employee});
+        /*const colectionTeacher = await Employee.findOne({ _id: id_employee});
         const colectionMatter = await Matter.findOne({ _id: id_matter});
 
         const newteacher = new AddTeacher({
@@ -387,19 +398,19 @@ class ClassController {
             id_class: id_class,
             id_teacher: id_employee,
             id_matter: id_matter
-        })
+        })*/
 
         try {
 
-            const newTeacher = await newteacher.save()
+            //const newTeacher = await newteacher.save()
 
-            await modelClass.updateOne({
+            /*await modelClass.updateOne({
                 _id: id_class
             }, {
                 $push: {
                     addTeacher: newTeacher._id
                 }
-            })
+            })*/
             
             await Employee.updateOne({
                 _id: id_employee
@@ -417,7 +428,7 @@ class ClassController {
                 }
             })
 
-            await Matter.updateOne({
+           /* await Matter.updateOne({
                 _id: id_matter
             }, {
                 $push: {
@@ -431,7 +442,7 @@ class ClassController {
                 $push: {
                     id_matter: id_matter      
                 }
-            })
+            })*/
 
             res.status(200).json({
                 msg: 'Turma cadastrado com sucesso.'

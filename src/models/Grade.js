@@ -59,7 +59,11 @@ const grade_schema = new mongoose.Schema(
         id_teacher: {
             type: mongoose.Types.ObjectId,
             ref: 'employee'
-        }
+        },
+        id_class: {
+            type: mongoose.Types.ObjectId, 
+            ref: 'class',
+        },
     },
     {
         timestamps: true
