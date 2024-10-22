@@ -103,15 +103,15 @@ class GradeController {
 
     async update(req, res) {
 
-        const { update_attendance, update_status } = req.body;
+        const { update_id_grade, update_studentGrade } = req.body;
 
-        const attendance = await Attendance.findByIdAndUpdate(update_attendance, { status: update_status }, { new: true });
+        const grade = await Grade.findByIdAndUpdate(update_id_grade, { studentGrade: update_studentGrade }, { new: true });
 
         try {
-            if (!attendance) {
-                return res.status(404).json({ message: 'Student not found' });
+            if (!grade) {
+                return res.status(404).json({ message: 'Student Grade not found' });
             }
-            res.json(attendance);
+            res.json(grade);
         } catch (err) {
             console.log(err)
             res.status(500).json({

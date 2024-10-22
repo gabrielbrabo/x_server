@@ -61,6 +61,8 @@ routes.get('/details/vithQuarter/:id', BimonthlyController.getVI_thQuarterById)
 routes.post('/update/vithQuarter/:id', BimonthlyController.updateVI_thQuarter)
 
 routes.post('/register/grade', GradeController.createGrade)
+routes.post('/update/grade', GradeController.update)
+
 routes.post('/index/gradei', GradeController.indexIstQuarter)
 routes.post('/index/gradeii', GradeController.indexIIndQuarter)
 routes.post('/index/gradeiii', GradeController.indexIIIrdQuarter)
