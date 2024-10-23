@@ -63,6 +63,61 @@ class GradeController {
         }
     }
 
+    async GetGrade(req, res) {
+
+        const { year, bimonthly, id_student } = req.body;
+
+        const grade = await Grade.find({
+            id_student: id_student
+        }).populate('id_student').populate('id_matter').populate('id_teacher')
+
+        const grd = grade.map(res => {
+            if (res.year == year) {
+                if (res.bimonthly == bimonthly) {
+                    return res
+                } 
+            }
+        }).filter(res => {
+            if (res != null) {
+                return res
+            }
+        })
+        console.log("grade", grade)
+        console.log("grd", grd)
+        try {
+            if (grd) {
+                return res.json({
+                    data: grd,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+
+    async update(req, res) {
+
+        const { update_id_grade, update_studentGrade } = req.body;
+
+        const grade = await Grade.findByIdAndUpdate(update_id_grade, { studentGrade: update_studentGrade }, { new: true });
+
+        try {
+            if (!grade) {
+                return res.status(404).json({ message: 'Student Grade not found' });
+            }
+            res.json(grade);
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+
     async indexIstQuarter(req, res) {
 
         const { year, id_matter, id_iStQuarter, id_class} = req.body;
@@ -93,25 +148,6 @@ class GradeController {
                     message: 'Sucess'
                 })
             }
-        } catch (err) {
-            console.log(err)
-            res.status(500).json({
-                message: 'there was an error on server side!'
-            })
-        }
-    }
-
-    async update(req, res) {
-
-        const { update_id_grade, update_studentGrade } = req.body;
-
-        const grade = await Grade.findByIdAndUpdate(update_id_grade, { studentGrade: update_studentGrade }, { new: true });
-
-        try {
-            if (!grade) {
-                return res.status(404).json({ message: 'Student Grade not found' });
-            }
-            res.json(grade);
         } catch (err) {
             console.log(err)
             res.status(500).json({
