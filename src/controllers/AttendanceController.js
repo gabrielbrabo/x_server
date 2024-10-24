@@ -1,5 +1,5 @@
 const Attendance = require("../models/Attendance")
-const Student = require( "../models/Student")
+const Student = require("../models/Student")
 
 class AttendanceController {
 
@@ -33,21 +33,21 @@ class AttendanceController {
         });
 
         try {
-            
+
             const attendance = await user.save()
-            
+
             await Student.updateOne({
                 _id: id_student
             }, {
                 $push: {
-                    id_attendance: attendance._id      
+                    id_attendance: attendance._id
                 }
             })
             res.status(200).json({
                 msg: 'Conta profissional cadastrado com sucesso.'
             })
 
-        } catch (err){
+        } catch (err) {
             res.status(500).json({
                 msg: 'Error ao cadastra uma Conta profissional.'
             })
@@ -86,6 +86,52 @@ class AttendanceController {
             res.status(500).json({
                 message: 'there was an error on server side!'
             })
+        }
+    }
+
+    async AttendanceBimonthly(req, res) {
+        const { startd, startm, starty, endd, endm, endy, id_student } = req.body;
+
+        try {
+            // Converta as partes da data para números inteiros
+            const startDay = parseInt(startd, 10);
+            const startMonth = parseInt(startm, 10);
+            const startYear = parseInt(starty, 10);
+            const endDay = parseInt(endd, 10);
+            const endMonth = parseInt(endm, 10);
+            const endYear = parseInt(endy, 10);
+
+            // Converta para objetos de data
+            const startDate = new Date(startYear, startMonth - 1, startDay); // Mês é 0-based em JS
+            const endDate = new Date(endYear, endMonth - 1, endDay);
+
+            // Busque as presenças que estão entre essas datas
+            const attendance = await Attendance.find({
+                id_student: id_student,
+                // Comparar diretamente com as datas de início e fim
+                date: {
+                    $gte: startDate, // Maior ou igual à data de início
+                    $lte: endDate    // Menor ou igual à data de fim
+                }
+            }).populate('id_student');
+
+            console.log("attendance", attendance);
+
+            if (attendance.length > 0) {
+                return res.json({
+                    data: attendance,
+                    message: 'Success'
+                });
+            } else {
+                return res.status(404).json({
+                    message: 'No attendance records found for the specified period.'
+                });
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({
+                message: 'There was an error on the server side!'
+            });
         }
     }
 

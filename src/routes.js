@@ -93,10 +93,12 @@ routes.post('/employee/info/:id', EmployeeController.InfoIndex)
 routes.post('/class/info/:id', ClassController.InfoIndex)
 
 routes.post('/myclass', EmployeeController.MyClassIndex)
+
 routes.post('/attendance', AttendanceController.createAttendance)
 routes.post('/attendance/index', StudentController.AttendanceIndex)
 routes.post('/search/frequency', AttendanceController.index)
 routes.post('/update/frequency', AttendanceController.update)
+routes.post('/attendance-bimonthly', AttendanceController.AttendanceBimonthly)
 
 routes.post('/destroy-employee/:id', EmployeeController.destroy)
 routes.post('/destroy-student/:id', StudentController.destroy)
