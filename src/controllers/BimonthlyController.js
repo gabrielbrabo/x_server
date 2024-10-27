@@ -9,7 +9,7 @@ const School = require("../models/School")
 class BimonthlyController {
 
     async createI_stQuarter(req, res) {
-        const { year, startday, startmonth, startyear, endday, endmonth, endyear, totalGrade, averageGrade, id_school } = req.body;
+        const { year, startday, startmonth, startyear, endday, endmonth, endyear, /*totalGrade, averageGrade,*/ id_school } = req.body;
 
         // validations
         if (!startday) {
@@ -20,13 +20,13 @@ class BimonthlyController {
             return res.status(422).json({ msg: "A data do fim é obrigatório!" });
         }
 
-        if (!totalGrade) {
+        /*if (!totalGrade) {
             return res.status(422).json({ msg: "A nota total é obrigatório!" });
         }
 
         if (!averageGrade) {
             return res.status(422).json({ msg: "A media é obrigatória!" });
-        }
+        }*/
 
         const startDate = new Date(startyear, startmonth - 1, startday); // Note que os meses no objeto Date são baseados em zero (0 para Janeiro, 11 para Dezembro)
         const endDate = new Date(endyear, endmonth - 1, endday);
@@ -153,7 +153,7 @@ class BimonthlyController {
     }
 
     async createII_ndQuarter(req, res) {
-        const { year, startday, startmonth, startyear, endday, endmonth, endyear, totalGrade, averageGrade, id_school } = req.body;
+        const { year, startday, startmonth, startyear, endday, endmonth, endyear, /*totalGrade, averageGrade,*/ id_school } = req.body;
 
         // validations
         if (!startday) {
@@ -307,7 +307,7 @@ class BimonthlyController {
     }
 
     async createIII_rdQuarter(req, res) {
-        const { year, startday, startmonth, startyear, endday, endmonth, endyear, totalGrade, averageGrade, id_school } = req.body;
+        const { year, startday, startmonth, startyear, endday, endmonth, endyear, /*totalGrade, averageGrade,*/ id_school } = req.body;
 
         // validations
         if (!startday) {
@@ -462,7 +462,7 @@ class BimonthlyController {
     }
 
     async createIV_thQuarter(req, res) {
-        const { year, startday, startmonth, startyear, endday, endmonth, endyear, totalGrade, averageGrade, id_school } = req.body;
+        const { year, startday, startmonth, startyear, endday, endmonth, endyear, /*totalGrade, averageGrade,*/ id_school } = req.body;
 
         // validations
         if (!startday) {
@@ -617,7 +617,7 @@ class BimonthlyController {
     }
 
     async createV_thQuarter(req, res) {
-        const { year, startday, startmonth, startyear, endday, endmonth, endyear, totalGrade, averageGrade, id_school } = req.body;
+        const { year, startday, startmonth, startyear, endday, endmonth, endyear, /*totalGrade, averageGrade,*/ id_school } = req.body;
 
         // validations
         if (!startday) {
@@ -772,7 +772,7 @@ class BimonthlyController {
         }
     }
     async createVI_thQuarter(req, res) {
-        const { year, startday, startmonth, startyear, endday, endmonth, endyear, totalGrade, averageGrade, id_school } = req.body;
+        const { year, startday, startmonth, startyear, endday, endmonth, endyear, /*totalGrade, averageGrade,*/ id_school } = req.body;
 
         // validations
         if (!startday) {

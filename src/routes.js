@@ -79,6 +79,9 @@ routes.post('/card/IV_th_quarter', ReportCardController.IV_th_quarter)*/
 routes.post('/employee', EmployeeController.index)
 routes.get('/employee-details/:id', EmployeeController. getEmployeeById)
 routes.post('/employee-update/:id', EmployeeController.updateEmployee)
+routes.post('/record-class-taught', EmployeeController.RecordClassTaught)
+routes.post('/index-record-class', EmployeeController.indexRecordClassTaught)
+
 routes.get('/student-details/:id', StudentController. getStudentById)
 routes.post('/student-update/:id', StudentController.updateStudent)
 routes.get('/class-details/:id', ClassController.getclassById)

@@ -1,11 +1,12 @@
 const Employee = require("../models/Employee");
-const User = require( "../models/Employee")
-const School = require( "../models/School")
-const AddTeacher = require( "../models/AddTeacher")
+const User = require("../models/Employee")
+const School = require("../models/School")
+const AddTeacher = require("../models/AddTeacher")
+const RecordClassTaught = require("../models/RecordClassTaught")
 const bcrypt = require('bcryptjs')
 
 class EmployeeController {
-  
+
     async create(req, res) {
         const { name, dateOfBirth, cpf, rg, email, cellPhone, address, position_at_school, password, confirmpassword } = req.body;
 
@@ -30,8 +31,8 @@ class EmployeeController {
 
         if (password != confirmpassword) {
             return res
-            .status(422)
-            .json({ msg: "A senha e a confirmação precisam ser iguais!" });
+                .status(422)
+                .json({ msg: "A senha e a confirmação precisam ser iguais!" });
         }
 
         // check if user exists
@@ -61,14 +62,14 @@ class EmployeeController {
         });
 
         try {
-            
+
             const employee = await user.save()
-            
+
             await School.updateOne({
                 _id: id
             }, {
                 $push: {
-                    id_employee: employee._id      
+                    id_employee: employee._id
                 }
             })
             res.status(200).json({
@@ -77,7 +78,7 @@ class EmployeeController {
                 msg: 'Conta profissional cadastrado com sucesso.'
             })
 
-        } catch (err){
+        } catch (err) {
             res.status(500).json({
                 msg: 'Error ao cadastra uma Conta profissional.'
             })
@@ -86,7 +87,7 @@ class EmployeeController {
 
     async index(req, res) {
 
-        const {idSchool} = req.body;
+        const { idSchool } = req.body;
 
         try {
             const employee = await School.findById({
@@ -139,22 +140,22 @@ class EmployeeController {
             })
         }
     }
-    
+
     async MyClassIndex(req, res) {
 
-        const {id_class, id_teacher} = req.body;
+        const { id_class, id_teacher } = req.body;
 
         const clss = await AddTeacher.find({ id_class: id_class });
         const result = clss.map(res => {
-            if(res.id_teacher == id_teacher) {
+            if (res.id_teacher == id_teacher) {
                 return res
             }
         })
 
         try {
-            if(result) {
+            if (result) {
                 const filter = result.filter(res => {
-                    if(res !== null) {
+                    if (res !== null) {
                         return res
                     }
                 })
@@ -170,15 +171,15 @@ class EmployeeController {
             })
         }
     }
-  
+
     async getEmployeeById(req, res) {
         try {
             const employee = await Employee.findById(req.params.id);
             if (!employee) {
-              return res.status(404).json({ error: 'Employee not found' });
+                return res.status(404).json({ error: 'Employee not found' });
             }
             res.json(employee);
-          }catch (err) {
+        } catch (err) {
             console.error(err);
             return res.status(500).json({ error: "Internal Server Error" });
         }
@@ -189,7 +190,7 @@ class EmployeeController {
             const { id } = req.params;
             const employee = await Employee.findByIdAndUpdate(id, req.body, { new: true });
             if (!employee) {
-              return res.status(404).json({ error: 'Employee not found' });
+                return res.status(404).json({ error: 'Employee not found' });
             }
             res.json(employee);
         } catch (err) {
@@ -203,39 +204,145 @@ class EmployeeController {
             const { id } = req.params;
             const { email, password } = req.body;
             const user = await User.findById(id);
-  
+
             if (!user) {
                 return res.status(404).json();
             }
 
             const encryptedPassword = await createPasswordHash(password)
-  
-            await user.updateOne({email, password: encryptedPassword });
-    
+
+            await user.updateOne({ email, password: encryptedPassword });
+
             return res.status(200).json();
         } catch (err) {
             console.error(err);
             return res.status(500).json({ error: "Internal Server Error" });
         }
     }
-  
+
     async destroy(req, res) {
         try {
             const { id } = req.params;
             const user = await User.findById(id);
-    
+
             if (!user) {
                 return res.status(404).json();
             }
-    
+
             await user.deleteOne();
-    
+
             return res.status(200).json({ msg: "Usuario removido com sucesso" });
         } catch (err) {
             console.error(err);
             return res.status(500).json({ error: "Internal Server Error" });
         }
     }
+
+    async RecordClassTaught(req, res) {
+        const { day, month, year, description, id_teacher, id_class } = req.body;
+
+        // validations
+        if (!day) {
+            return res.status(422).json({ msg: "A data de incio é obrigatório!" });
+        }
+
+        if (!year) {
+            return res.status(422).json({ msg: "A data do fim é obrigatório!" });
+        }
+
+
+        //const school = await School.findOne({ _id: id_school });
+
+        const existingRecordClassTaught = await RecordClassTaught.find({ id_class: id_class })
+
+        console.log("existingBimonthly", existingRecordClassTaught)
+        if (existingRecordClassTaught) {
+            const result = existingRecordClassTaught.map(Res => {
+                if (Res.year == year) {
+                    if (Res.month == month) {
+                        if (Res.day == day) {
+                            return Res
+                        }
+                    }
+                }
+                return null
+            }).filter(Res => {
+                if (Res !== null) {
+                    return Res
+                }
+            })
+            console.log("result", result)
+            if (result.length > 0) {
+                return res.status(422).json({ msg: "A aula ja foi definido voçê so podera editalo!" });
+            }
+        }
+
+        const recordClassTaught = new RecordClassTaught({
+            day,
+            month,
+            year,
+            description,
+            id_teacher,
+            id_class
+        });
+
+        try {
+
+            const recordClass = await recordClassTaught.save()
+
+            await Employee.updateOne({
+                _id: id_teacher
+            }, {
+                $push: {
+                    id_recordClassTaught: recordClass._id
+                }
+            })
+            res.status(200).json({
+                msg: 'Conta profissional cadastrado com sucesso.'
+            })
+
+        } catch (err) {
+            res.status(500).json({
+                msg: 'Error ao cadastra uma Conta profissional.'
+            })
+        }
+    }
+
+    async indexRecordClassTaught(req, res) {
+
+        const {
+            year,
+            id_class
+        } = req.body;
+
+        try {
+            const recordClass = await RecordClassTaught.find({
+                id_class: id_class
+            }).populate('id_teacher').populate('id_class')
+
+            if (recordClass) {
+                const result = recordClass.map(Res => {
+                    if (Res.year == year) {
+
+                        return Res
+                    }
+                }).filter(Res => {
+                    if (Res !== null) {
+                        return Res
+                    }
+                })
+                return res.json({
+                    data: result,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
 }
-  
+
 module.exports = new EmployeeController();

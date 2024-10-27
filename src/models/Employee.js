@@ -64,6 +64,12 @@ const employeeschema = new mongoose.Schema(
                 ref: 'class'
             }
         ],
+        id_recordClassTaught: [
+            {
+                type: mongoose.Types.ObjectId,
+                ref: 'RecordClassTaught'
+            }
+        ],
         status: {
             type: String,
             enum: ["active", "inactive"],
