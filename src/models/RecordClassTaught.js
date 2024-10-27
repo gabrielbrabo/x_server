@@ -26,12 +26,10 @@ const RecordClassTaught = new mongoose.Schema(
             type: mongoose.Types.ObjectId,
             ref: 'employee',
         },
-        id_class: [
-            {
-                type: mongoose.Types.ObjectId,
-                ref: 'class'
-            }
-        ], 
+        id_class: {
+            type: mongoose.Types.ObjectId,
+            ref: 'class'
+        },
     },
     {
         timestamps: true
