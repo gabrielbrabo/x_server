@@ -343,6 +343,33 @@ class EmployeeController {
             })
         }
     }
+
+    async updateRecordClassTaught(req, res) {
+        const { editedDescription, day, month, editingId } = req.body;
+    
+        try {
+            const editingRecordClassTaught = await RecordClassTaught.findByIdAndUpdate(
+                editingId,
+                { 
+                    description: editedDescription,
+                    day: day,
+                    month: month 
+                },
+                { new: true } // Retorna o documento atualizado
+            );
+    
+            if (!editingRecordClassTaught) {
+                return res.status(404).json({ message: 'Record not found' });
+            }
+    
+            res.json(editingRecordClassTaught);
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({
+                message: 'There was an error on the server side!'
+            });
+        }
+    }
 }
 
 module.exports = new EmployeeController();

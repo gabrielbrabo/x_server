@@ -81,6 +81,7 @@ routes.get('/employee-details/:id', EmployeeController. getEmployeeById)
 routes.post('/employee-update/:id', EmployeeController.updateEmployee)
 routes.post('/record-class-taught', EmployeeController.RecordClassTaught)
 routes.post('/index-record-class', EmployeeController.indexRecordClassTaught)
+routes.post('/update-record-class', EmployeeController.updateRecordClassTaught)
 
 routes.get('/student-details/:id', StudentController. getStudentById)
 routes.post('/student-update/:id', StudentController.updateStudent)
