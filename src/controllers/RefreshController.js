@@ -8,9 +8,14 @@ class RefreshController {
         const { id } = req.body;
 
         const user = await User.findOne({ _id: id });
+        console.log("user", user)
+
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado" });
+        }
         
         //const avatar = user.avataruser
-        const { ID } = user
+        const ID  = user
         const name = user.name
         const email = user.email
         const CPF  = user.cpf
