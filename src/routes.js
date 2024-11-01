@@ -18,9 +18,11 @@ const routes = express.Router()
 routes.post('/register/school', SchoolController.create)
 routes.post('/session/school', SessionsController.sessionSchool)
 routes.post('/session/employee', SessionsController.sessionEmployee)
+routes.post('/login-with-school', SessionsController.loginWithSchool)
 routes.post('/refresh/employee', RefreshController.checkToken)
 
 routes.post('/school/index', SchoolController.index)
+routes.post('/index-school', SchoolController.indexSchools)
 
 routes.use(auth)
 
@@ -82,6 +84,7 @@ routes.post('/employee-update/:id', EmployeeController.updateEmployee)
 routes.post('/record-class-taught', EmployeeController.RecordClassTaught)
 routes.post('/index-record-class', EmployeeController.indexRecordClassTaught)
 routes.post('/update-record-class', EmployeeController.updateRecordClassTaught)
+routes.get('/check-employee/:cpf', EmployeeController.EmpExist)
 
 routes.get('/student-details/:id', StudentController. getStudentById)
 routes.post('/student-update/:id', StudentController.updateStudent)

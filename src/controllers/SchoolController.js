@@ -91,6 +91,36 @@ class SchoolController {
             })
         }
     }
+
+    async indexSchools(req, res) {
+        const { idSchools } = req.body; // Recebe um array de IDs de escolas
+    
+        if (!Array.isArray(idSchools)) {
+            return res.status(400).json({ message: 'idSchools deve ser um array de IDs' });
+        }
+    
+        try {
+            // Busca todas as escolas cujos IDs estão no array 'idSchools'
+            const schools = await User.find({
+                _id: { $in: idSchools }
+            });
+    
+            // Verifica se encontrou as escolas
+            if (schools && schools.length > 0) {
+                return res.json({
+                    data: schools.map(school => ({ id: school._id, name: school.name })),
+                    message: 'Success'
+                });
+            } else {
+                return res.status(404).json({ message: 'Nenhuma escola encontrada com os IDs fornecidos' });
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({
+                message: 'Houve um erro no servidor!'
+            });
+        }
+    }
   
     async update(req, res) {
         try {

@@ -9,44 +9,36 @@ class EmployeeController {
 
     async create(req, res) {
         const { name, dateOfBirth, cpf, rg, email, cellPhone, address, position_at_school, password, confirmpassword } = req.body;
-
         const { id } = req.params;
-
-        // validations
+        console.log("Dados recebidos:", req.body); // Adicione este log
+        // Validations
         if (!name) {
             return res.status(422).json({ msg: "O nome é obrigatório!" });
         }
-
         if (!cpf) {
             return res.status(422).json({ msg: "O cpf é obrigatório!" });
         }
-
         if (!position_at_school) {
-            return res.status(422).json({ msg: "O cargo do funcionario é obrigatório!" });
+            return res.status(422).json({ msg: "O cargo do funcionário é obrigatório!" });
         }
-
         if (!password) {
             return res.status(422).json({ msg: "A senha é obrigatória!" });
         }
-
         if (password != confirmpassword) {
-            return res
-                .status(422)
-                .json({ msg: "A senha e a confirmação precisam ser iguais!" });
+            return res.status(422).json({ msg: "A senha e a confirmação precisam ser iguais!" });
         }
 
-        // check if user exists
-        const userExists = await User.findOne({ cpf: cpf });
-
+        // Check if user exists with the same CPF and id_school
+        const userExists = await User.findOne({ cpf: cpf, id_school: id });
         if (userExists) {
-            return res.status(422).json({ msg: "Esse cpf ja esta cadastrado!" });
+            return res.status(422).json({ msg: "Esse CPF já está cadastrado para esta escola!" });
         }
 
-        // create password
-        const salt = await bcrypt.genSalt(12);
-        const passwordHash = await bcrypt.hash(password, salt);
+        // Create password hash
+        //const salt = await bcrypt.genSalt(12);
+        //const passwordHash = await bcrypt.hash(password, salt);
 
-        // create user
+        // Create new user
         const user = new User({
             name: name.toUpperCase(),
             dateOfBirth,
@@ -58,30 +50,48 @@ class EmployeeController {
             type: 'employee',
             position_at_school: position_at_school.toUpperCase(),
             id_school: id,
-            password: passwordHash
+            password: password
         });
-
+    
         try {
+            console.log("Criando usuário...");
+            const employee = await user.save();
 
-            const employee = await user.save()
+            console.log("Atualizando escola...");
+            await School.updateOne(
+                { _id: id },
+                { $push: { id_employee: employee._id } }
+            );
 
-            await School.updateOne({
-                _id: id
-            }, {
-                $push: {
-                    id_employee: employee._id
-                }
-            })
             res.status(200).json({
                 name_employee: employee.name,
                 id_employee: employee._id,
-                msg: 'Conta profissional cadastrado com sucesso.'
-            })
+                msg: 'Conta profissional cadastrada com sucesso.'
+            });
 
         } catch (err) {
+            console.error("Erro ao cadastrar:", err);
             res.status(500).json({
-                msg: 'Error ao cadastra uma Conta profissional.'
-            })
+                msg: 'Erro ao cadastrar uma conta profissional.'
+            });
+        }
+    }
+
+
+    async EmpExist(req, res) {
+        const { cpf } = req.params;
+
+        try {
+            const employee = await Employee.findOne({ cpf });
+
+            if (employee) {
+                return res.status(200).json({ exists: true, data: employee });
+            }
+
+            //return res.status(404).json({ exists: false });
+        } catch (error) {
+            console.error("Error checking employee existence:", error);
+            return res.status(500).json({ message: "Internal Server Error" });
         }
     }
 
@@ -346,22 +356,22 @@ class EmployeeController {
 
     async updateRecordClassTaught(req, res) {
         const { editedDescription, day, month, editingId } = req.body;
-    
+
         try {
             const editingRecordClassTaught = await RecordClassTaught.findByIdAndUpdate(
                 editingId,
-                { 
+                {
                     description: editedDescription,
                     day: day,
-                    month: month 
+                    month: month
                 },
                 { new: true } // Retorna o documento atualizado
             );
-    
+
             if (!editingRecordClassTaught) {
                 return res.status(404).json({ message: 'Record not found' });
             }
-    
+
             res.json(editingRecordClassTaught);
         } catch (err) {
             console.log(err);

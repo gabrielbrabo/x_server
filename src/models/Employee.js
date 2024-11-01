@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
 const employeeschema = new mongoose.Schema(
     {
@@ -13,7 +13,6 @@ const employeeschema = new mongoose.Schema(
         cpf: {
             type: String,
             required: true,
-            unique: true
         },
         rg: {
             type: String,
@@ -35,20 +34,20 @@ const employeeschema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        avatar:{
+        avatar: {
             type: String,
             ref: 'PostFile',
         },
         type: {
             type: String,
-            required: true
+            required: true,
         },
         position_at_school: {
             type: String,
-            required: true
+            required: true,
         },
         id_school: {
-            type: mongoose.Types.ObjectId, 
+            type: mongoose.Types.ObjectId,
             ref: 'school',
             required: true,
         },
@@ -79,5 +78,8 @@ const employeeschema = new mongoose.Schema(
         timestamps: true
     }
 );
+
+// Índice composto para garantir unicidade do par cpf + id_school
+employeeschema.index({ cpf: 1, id_school: 1 }, { unique: true });
 
 module.exports = mongoose.model("employee", employeeschema);
