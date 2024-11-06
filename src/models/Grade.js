@@ -11,11 +11,11 @@ const grade_schema = new mongoose.Schema(
         },
         totalGrade: {
             type: String,
-            required: true,
+            //required: true,
         },
         averageGrade: {
             type: String,
-            required: true,
+            //required: true,
         },
         studentGrade: {
             type: String,

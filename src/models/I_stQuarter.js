@@ -37,11 +37,11 @@ const I_stQuarter = new mongoose.Schema(
         },
         totalGrade: {
             type: String,
-            required: true,
+            //required: true,
         },
         averageGrade: {
             type: String,
-            required: true,
+            //required: true,
         },
         status: {
             type: String,

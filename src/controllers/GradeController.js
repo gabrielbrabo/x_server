@@ -4,17 +4,9 @@ const Student = require( "../models/Student")
 class GradeController {
 
     async createGrade(req, res) {
-        const { year, bimonthly, totalGrade, averageGrade, studentGrade, id_iStQuarter, id_iiNdQuarter, id_iiiRdQuarter, id_ivThQuarter, id_vThQuarter,id_viThQuarter, id_student, id_teacher, id_matter, id_class } = req.body;
+        const { year, bimonthly, /*totalGrade, averageGrade,*/ studentGrade, id_iStQuarter, id_iiNdQuarter, id_iiiRdQuarter, id_ivThQuarter, id_vThQuarter,id_viThQuarter, id_student, id_teacher, id_matter, id_class } = req.body;
 
         // validations
-        if (!totalGrade) {
-            return res.status(422).json({ msg: "O Dia é obrigatório!" });
-        }
-
-        if (!averageGrade) {
-            return res.status(422).json({ msg: "O Mes é obrigatório!" });
-        }
-
         if (!year) {
             return res.status(422).json({ msg: "O RE do estudante é obrigatório!" });
         }
@@ -25,8 +17,8 @@ class GradeController {
         const user = new Grade({
             year: year,
             bimonthly: bimonthly.toUpperCase(),
-            totalGrade: totalGrade,
-            averageGrade: averageGrade,
+            //totalGrade: totalGrade,
+            //averageGrade: averageGrade,
             studentGrade: studentGrade,
             status: 'ABERTO',
             id_iStQuarter,

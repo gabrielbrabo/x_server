@@ -67,8 +67,8 @@ class BimonthlyController {
             endday: endday,
             endmonth: endmonth,
             endyear: endyear,
-            totalGrade: totalGrade,
-            averageGrade: averageGrade,
+            //totalGrade: totalGrade,
+            //averageGrade: averageGrade,
             id_school: id_school
         });
 
@@ -164,13 +164,7 @@ class BimonthlyController {
             return res.status(422).json({ msg: "A data do fim é obrigatório!" });
         }
 
-        if (!totalGrade) {
-            return res.status(422).json({ msg: "A nota total é obrigatório!" });
-        }
-
-        if (!averageGrade) {
-            return res.status(422).json({ msg: "A media é obrigatória!" });
-        }
+        
 
         const startDate = new Date(startyear, startmonth - 1, startday); // Note que os meses no objeto Date são baseados em zero (0 para Janeiro, 11 para Dezembro)
         const endDate = new Date(endyear, endmonth - 1, endday);
@@ -221,8 +215,8 @@ class BimonthlyController {
             endday: endday,
             endmonth: endmonth,
             endyear: endyear,
-            totalGrade: totalGrade,
-            averageGrade: averageGrade,
+            //totalGrade: totalGrade,
+            //averageGrade: averageGrade,
             id_school: id_school
         });
 
@@ -318,13 +312,7 @@ class BimonthlyController {
             return res.status(422).json({ msg: "A data do fim é obrigatório!" });
         }
 
-        if (!totalGrade) {
-            return res.status(422).json({ msg: "A nota total é obrigatório!" });
-        }
-
-        if (!averageGrade) {
-            return res.status(422).json({ msg: "A media é obrigatória!" });
-        }
+        
 
         const startDate = new Date(startyear, startmonth - 1, startday); // Note que os meses no objeto Date são baseados em zero (0 para Janeiro, 11 para Dezembro)
         const endDate = new Date(endyear, endmonth - 1, endday);
@@ -376,8 +364,8 @@ class BimonthlyController {
             endday: endday,
             endmonth: endmonth,
             endyear: endyear,
-            totalGrade: totalGrade,
-            averageGrade: averageGrade,
+            //totalGrade: totalGrade,
+            //averageGrade: averageGrade,
             id_school: id_school
         });
 
@@ -473,14 +461,6 @@ class BimonthlyController {
             return res.status(422).json({ msg: "A data do fim é obrigatório!" });
         }
 
-        if (!totalGrade) {
-            return res.status(422).json({ msg: "A nota total é obrigatório!" });
-        }
-
-        if (!averageGrade) {
-            return res.status(422).json({ msg: "A media é obrigatória!" });
-        }
-
         const startDate = new Date(startyear, startmonth - 1, startday); // Note que os meses no objeto Date são baseados em zero (0 para Janeiro, 11 para Dezembro)
         const endDate = new Date(endyear, endmonth - 1, endday);
 
@@ -531,8 +511,8 @@ class BimonthlyController {
             endday: endday,
             endmonth: endmonth,
             endyear: endyear,
-            totalGrade: totalGrade,
-            averageGrade: averageGrade,
+            //totalGrade: totalGrade,
+            //averageGrade: averageGrade,
             id_school: id_school
         });
 
@@ -628,14 +608,6 @@ class BimonthlyController {
             return res.status(422).json({ msg: "A data do fim é obrigatório!" });
         }
 
-        if (!totalGrade) {
-            return res.status(422).json({ msg: "A nota total é obrigatório!" });
-        }
-
-        if (!averageGrade) {
-            return res.status(422).json({ msg: "A media é obrigatória!" });
-        }
-
         const startDate = new Date(startyear, startmonth - 1, startday); // Note que os meses no objeto Date são baseados em zero (0 para Janeiro, 11 para Dezembro)
         const endDate = new Date(endyear, endmonth - 1, endday);
 
@@ -686,8 +658,8 @@ class BimonthlyController {
             endday: endday,
             endmonth: endmonth,
             endyear: endyear,
-            totalGrade: totalGrade,
-            averageGrade: averageGrade,
+            //totalGrade: totalGrade,
+            //averageGrade: averageGrade,
             id_school: id_school
         });
 
@@ -783,14 +755,6 @@ class BimonthlyController {
             return res.status(422).json({ msg: "A data do fim é obrigatório!" });
         }
 
-        if (!totalGrade) {
-            return res.status(422).json({ msg: "A nota total é obrigatório!" });
-        }
-
-        if (!averageGrade) {
-            return res.status(422).json({ msg: "A media é obrigatória!" });
-        }
-
         const startDate = new Date(startyear, startmonth - 1, startday); // Note que os meses no objeto Date são baseados em zero (0 para Janeiro, 11 para Dezembro)
         const endDate = new Date(endyear, endmonth - 1, endday);
 
@@ -841,8 +805,8 @@ class BimonthlyController {
             endday: endday,
             endmonth: endmonth,
             endyear: endyear,
-            totalGrade: totalGrade,
-            averageGrade: averageGrade,
+            //totalGrade: totalGrade,
+            //averageGrade: averageGrade,
             id_school: id_school
         });
 
