@@ -8,6 +8,7 @@ const ReportCardController = require( "./controllers/RepoCardController")
 const AttendanceController = require( "./controllers/AttendanceController")
 const BimonthlyController = require( "./controllers/BimonthlyController")
 const GradeController = require( "./controllers/GradeController")
+const IndividualFormController = require( "./controllers/IndividualFormController")
 const RefreshController = require( "./controllers/RefreshController")
 
 const auth = require ("./middlewares/auth")
@@ -112,6 +113,10 @@ routes.post('/destroy-student/:id', StudentController.destroy)
 routes.post('/remove/student', ClassController.removeStudent)
 routes.post('/remove/teacher', ClassController.removeTeacher)
 routes.post('/remove/matter', MatterController.removeMatter)
+
+routes.post('/create-individual-form', IndividualFormController.createIndividualForm)
+routes.post('/index-individual-form', IndividualFormController.IndexIndividualForm)
+routes.get('/get-individual-form/:id', IndividualFormController.GetIndividualForm)
 
 routes.post('/delete/matter', MatterController.deleteMatter)
 

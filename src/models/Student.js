@@ -83,6 +83,12 @@ const studentschema = new mongoose.Schema(
                 ref: 'reporter_card'
             }
         ],
+        id_individualForm: [
+            {
+                type: mongoose.Types.ObjectId,
+                ref: 'IndividualForm'
+            }
+        ],
         status: {
             type: String,
             enum: ["active", "inactive"],
