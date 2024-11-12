@@ -140,21 +140,29 @@ class GradeController {
     }    
 
     async update(req, res) {
-
-        const { update_id_grade, update_studentGrade } = req.body;
-
-        const grade = await Grade.findByIdAndUpdate(update_id_grade, { studentGrade: update_studentGrade }, { new: true });
-
         try {
-            if (!grade) {
-                return res.status(404).json({ message: 'Student Grade not found' });
+            const { update_idForm, editedDescription } = req.body;
+    
+            // Verifique se o ID está presente
+            if (!update_idForm) {
+                return res.status(400).json({ message: 'ID da ficha individual não fornecido' });
             }
-            res.json(grade);
+    
+            // Encontre e atualize o documento
+            const form = await IndividualForm.findByIdAndUpdate(
+                update_idForm,
+                { description: editedDescription },
+                { new: true }
+            );
+    
+            if (!form) {
+                return res.status(404).json({ message: 'Ficha individual não encontrada' });
+            }
+    
+            res.json(form);
         } catch (err) {
-            console.log(err)
-            res.status(500).json({
-                message: 'there was an error on server side!'
-            })
+            console.error(err);
+            res.status(500).json({ message: 'Ocorreu um erro no servidor' });
         }
     }
 }
