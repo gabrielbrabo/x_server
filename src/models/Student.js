@@ -83,6 +83,12 @@ const studentschema = new mongoose.Schema(
                 ref: 'reporter_card'
             }
         ],
+        id_FinalConcepts: [
+            {
+                type: mongoose.Types.ObjectId,
+                ref: 'FinalConcepts'
+            }
+        ],
         id_individualForm: [
             {
                 type: mongoose.Types.ObjectId,
