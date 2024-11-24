@@ -133,6 +133,40 @@ class finalConcepts {
         }
     }
 
+    async GetFinalConcepts(req, res) {
+
+        const { year, id_student } = req.body;
+
+        const gradefinal = await FinalConcepts.find({
+            id_student: id_student
+        }).populate('id_student').populate('id_matter').populate('id_employee')
+
+        const grade = gradefinal.map(res => {
+            if (res.year == year) {
+                return res
+            }
+        }).filter(res => {
+            if (res != null) {
+                return res
+            }
+        })
+        console.log("grade", grade)
+        console.log("grd", gradefinal)
+        try {
+            if (grade) {
+                return res.json({
+                    data: grade,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+
 }
 
 module.exports = new finalConcepts();

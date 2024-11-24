@@ -153,6 +153,40 @@ class AttendanceController {
             })
         }
     }
+
+    async AttendanceFinalConcepts(req, res) {
+
+        const { year, id_student } = req.body;
+        console.log('dados recebidos', year, id_student)
+        const attendance = await Attendance.find({
+            id_student: id_student
+        }).populate('id_student')
+
+        const att = attendance.map(res => {
+            if (res.year == year) {
+                return res
+            }
+        }).filter(res => {
+            if (res != null) {
+                return res
+            }
+        })
+        console.log("grade", attendance)
+        console.log("grd", att)
+        try {
+            if (att) {
+                return res.json({
+                    data: att,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
 }
 
 module.exports = new AttendanceController();

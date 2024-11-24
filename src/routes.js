@@ -41,6 +41,7 @@ routes.post('/register/card', ReportCardController.create)
 
 routes.post('/register/final-concepts', FinalConcepts.create)
 routes.post('/get/final-concepts', FinalConcepts.GetGradeFinalConcepts)
+routes.post('/get/card-final-concepts', FinalConcepts.GetFinalConcepts)
 routes.post('/update/final-concepts', FinalConcepts.update)
 
 routes.post('/register/istQuarter', BimonthlyController.createI_stQuarter)
@@ -112,6 +113,7 @@ routes.post('/attendance/index', StudentController.AttendanceIndex)
 routes.post('/search/frequency', AttendanceController.index)
 routes.post('/update/frequency', AttendanceController.update)
 routes.post('/attendance-bimonthly', AttendanceController.AttendanceBimonthly)
+routes.post('/attendance-final-concepts', AttendanceController.AttendanceFinalConcepts)
 
 routes.post('/destroy-employee/:id', EmployeeController.destroy)
 routes.post('/destroy-student/:id', StudentController.destroy)
