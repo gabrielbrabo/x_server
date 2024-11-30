@@ -114,6 +114,7 @@ routes.post('/search/frequency', AttendanceController.index)
 routes.post('/update/frequency', AttendanceController.update)
 routes.post('/attendance-bimonthly', AttendanceController.AttendanceBimonthly)
 routes.post('/attendance-final-concepts', AttendanceController.AttendanceFinalConcepts)
+routes.post('/Attendance-by-teacher-class', AttendanceController.AttendanceByTeacherAndClass)
 
 routes.post('/destroy-employee/:id', EmployeeController.destroy)
 routes.post('/destroy-student/:id', StudentController.destroy)

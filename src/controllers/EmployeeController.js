@@ -125,8 +125,7 @@ class EmployeeController {
         try {
             const employee = await Employee.findById({
                 _id: id
-            }).populate('id_matter').populate('id_class')
-
+            }).populate('id_matter').populate('id_class').populate('id_recordClassTaught')
             /*const info = await AddTeacher.find({
                 id_teacher: id
             }).populate('id_class')*/

@@ -187,6 +187,53 @@ class AttendanceController {
             })
         }
     }
+
+    async AttendanceByTeacherAndClass(req, res) {
+        const { year, id_teacher, id_class, startd, startm, starty, endd, endm, endy } = req.body;
+        console.log('dados recebidos', year, id_teacher, id_class, startd, startm, starty, endd, endm, endy)
+        try {
+            // Converta as partes da data para números inteiros
+            const startDay = parseInt(startd, 10);
+            const startMonth = parseInt(startm, 10);
+            const startYear = parseInt(starty, 10);
+            const endDay = parseInt(endd, 10);
+            const endMonth = parseInt(endm, 10);
+            const endYear = parseInt(endy, 10);
+    
+            // Converta para objetos de data
+            const startDate = new Date(startYear, startMonth - 1, startDay); // Mês é 0-based
+            const endDate = new Date(endYear, endMonth - 1, endDay);
+            console.log('startDate', startDate, 'endDate', endDate)
+            // Busque as presenças que correspondem aos critérios
+            const attendance = await Attendance.find({
+                year: year,
+                id_teacher: id_teacher,
+                id_class: id_class,
+                date: {
+                    $gte: startDate, // Maior ou igual à data de início
+                    $lte: endDate    // Menor ou igual à data de fim
+                }
+            }).populate('id_teacher id_class id_student');
+    
+            console.log("attendance", attendance);
+    
+            if (attendance.length > 0) {
+                return res.json({
+                    data: attendance,
+                    message: 'Success'
+                });
+            } else {
+                return res.status(404).json({
+                    message: 'No attendance records found for the specified criteria.'
+                });
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({
+                message: 'There was an error on the server side!'
+            });
+        }
+    }
 }
 
 module.exports = new AttendanceController();
