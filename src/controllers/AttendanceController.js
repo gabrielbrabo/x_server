@@ -202,7 +202,7 @@ class AttendanceController {
     
             // Converta para objetos de data
             const startDate = new Date(startYear, startMonth - 1, startDay); // Mês é 0-based
-            const endDate = new Date(endYear, endMonth - 1, endDay);
+            const endDate = new Date(endYear, endMonth - 1, endDay + 1);
             console.log('startDate', startDate, 'endDate', endDate)
             // Busque as presenças que correspondem aos critérios
             const attendance = await Attendance.find({
