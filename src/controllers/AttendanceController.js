@@ -199,10 +199,11 @@ class AttendanceController {
             const endDay = parseInt(endd, 10);
             const endMonth = parseInt(endm, 10);
             const endYear = parseInt(endy, 10);
-    
+
             // Converta para objetos de data
-            const startDate = new Date(startYear, startMonth - 1, startDay); // Mês é 0-based
-            const endDate = new Date(endYear, endMonth - 1, endDay + 1);
+            const startDate = new Date(Date.UTC(startYear, startMonth - 1, startDay)); // Normaliza para UTC
+            const endDate = new Date(Date.UTC(endYear, endMonth - 1, endDay, 23, 59, 59)); // Inclui o fim do dia em UTC
+
             console.log('startDate', startDate, 'endDate', endDate)
             // Busque as presenças que correspondem aos critérios
             const attendance = await Attendance.find({
@@ -214,9 +215,9 @@ class AttendanceController {
                     $lte: endDate    // Menor ou igual à data de fim
                 }
             }).populate('id_teacher id_class id_student');
-    
+
             console.log("attendance", attendance);
-    
+
             if (attendance.length > 0) {
                 return res.json({
                     data: attendance,
