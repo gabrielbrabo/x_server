@@ -102,8 +102,8 @@ class AttendanceController {
             const endYear = parseInt(endy, 10);
 
             // Converta para objetos de data
-            const startDate = new Date(startYear, startMonth - 1, startDay); // Mês é 0-based em JS
-            const endDate = new Date(endYear, endMonth - 1, endDay);
+            const startDate = new Date(Date.UTC(startYear, startMonth - 1, startDay)); // Normaliza para UTC
+            const endDate = new Date(Date.UTC(endYear, endMonth - 1, endDay, 23, 59, 59)); // Inclui o fim do dia em UTC
 
             // Busque as presenças que estão entre essas datas
             const attendance = await Attendance.find({
