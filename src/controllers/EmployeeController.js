@@ -379,6 +379,57 @@ class EmployeeController {
             });
         }
     }
+
+    async RecordClassTaughtDaily(req, res) {
+
+        const {
+            year, id_teacher, id_class, startd, startm, starty, endd, endm, endy
+        } = req.body;
+
+        try {
+            // Converta as partes da data para números inteiros
+            const startDay = parseInt(startd, 10);
+            const startMonth = parseInt(startm, 10);
+            const startYear = parseInt(starty, 10);
+            const endDay = parseInt(endd, 10);
+            const endMonth = parseInt(endm, 10);
+            const endYear = parseInt(endy, 10);
+
+            // Converta para objetos de data
+            const startDate = new Date(Date.UTC(startYear, startMonth - 1, startDay)); // Normaliza para UTC
+            const endDate = new Date(Date.UTC(endYear, endMonth - 1, endDay, 23, 59, 59)); // Inclui o fim do dia em UTC
+
+            console.log('startDate', startDate, 'endDate', endDate)
+            // Busque as presenças que correspondem aos critérios
+            const classes = await RecordClassTaught.find({
+                year: year,
+                id_teacher: id_teacher,
+                id_class: id_class,
+                date: {
+                    $gte: startDate, // Maior ou igual à data de início
+                    $lte: endDate    // Menor ou igual à data de fim
+                }
+            }).populate('id_teacher id_class');
+
+            console.log("classes", classes);
+
+            if (classes.length > 0) {
+                return res.json({
+                    data: classes,
+                    message: 'Success'
+                });
+            } else {
+                return res.status(404).json({
+                    message: 'No attendance records found for the specified criteria.'
+                });
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({
+                message: 'There was an error on the server side!'
+            });
+        }
+    }
 }
 
 module.exports = new EmployeeController();
