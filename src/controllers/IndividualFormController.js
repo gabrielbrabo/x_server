@@ -55,7 +55,7 @@ class GradeController {
 
     async IndexIndividualForm(req, res) {
         const { year, id_class, id_iStQuarter, id_iiNdQuarter, id_iiiRdQuarter, id_ivThQuarter, id_vThQuarter, id_viThQuarter } = req.body;
-    
+        console.log('dados do front', req.body)
         // Cria um objeto de filtro inicial vazio
         const filter = {};
     
@@ -82,8 +82,8 @@ class GradeController {
                     }
                 }
             });
-            console.log("form", form)
-            console.log("Form", Form)
+            //console.log("form", form)
+            //console.log("Form", Form)
             if (Form.length > 0) {
                 return res.json({
                     data: Form,
