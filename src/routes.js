@@ -79,6 +79,7 @@ routes.post('/index/gradeiv', GradeController.indexIVthQuarter)
 routes.post('/index/gradev', GradeController.indexVthQuarter)
 routes.post('/index/gradevi', GradeController.indexVIthQuarter)
 routes.post('/get-grade', GradeController.GetGrade)
+routes.post('/grade-daily', GradeController.IndexGradeDaily)
 
 /*routes.post('/card/I_st_quarter', ReportCardController.I_st_quarter)
 routes.post('/card/II_nd_quarter', ReportCardController.II_nd_quarter)
