@@ -43,6 +43,7 @@ routes.post('/register/final-concepts', FinalConcepts.create)
 routes.post('/get/final-concepts', FinalConcepts.GetGradeFinalConcepts)
 routes.post('/get/card-final-concepts', FinalConcepts.GetFinalConcepts)
 routes.post('/update/final-concepts', FinalConcepts.update)
+routes.post('/final-concepts/daily', FinalConcepts.FinalConceptsDaily)
 
 routes.post('/register/istQuarter', BimonthlyController.createI_stQuarter)
 routes.post('/index/istQuarter', BimonthlyController.indexI_stQuarter)

@@ -4,7 +4,7 @@ const FinalConcepts = require("../models/FinalConcepts")
 class finalConcepts {
 
     async create(req, res) {
-        const { year, studentGrade, id_matter, id_employee, id_student } = req.body;
+        const { year, studentGrade, id_matter, id_employee, id_student, id_class } = req.body;
 
         console.log("Requisição recebida com dados:", { year, studentGrade, id_matter, id_employee, id_student });
 
@@ -52,6 +52,7 @@ class finalConcepts {
             year: year,
             studentGrade: studentGrade.toUpperCase(),
             id_matter: id_matter,
+            id_class: id_class,
             id_employee: id_employee,
             id_student: id_student
         })
@@ -139,6 +140,40 @@ class finalConcepts {
 
         const gradefinal = await FinalConcepts.find({
             id_student: id_student
+        }).populate('id_student').populate('id_matter').populate('id_employee')
+
+        const grade = gradefinal.map(res => {
+            if (res.year == year) {
+                return res
+            }
+        }).filter(res => {
+            if (res != null) {
+                return res
+            }
+        })
+        console.log("grade", grade)
+        console.log("grd", gradefinal)
+        try {
+            if (grade) {
+                return res.json({
+                    data: grade,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+    async FinalConceptsDaily(req, res) {
+
+        const { year, id_class } = req.body;
+        console.log("dados do front", req.body)
+
+        const gradefinal = await FinalConcepts.find({
+            id_class: id_class
         }).populate('id_student').populate('id_matter').populate('id_employee')
 
         const grade = gradefinal.map(res => {

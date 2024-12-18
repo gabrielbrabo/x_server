@@ -21,6 +21,10 @@ const FinalConcepts = new mongoose.Schema(
             type: mongoose.Types.ObjectId,
             ref: 'student'
         },
+        id_class: {
+            type: mongoose.Types.ObjectId, 
+            ref: 'class',
+        },
         id_employee: {
             type: mongoose.Types.ObjectId,
             ref: 'employee'
