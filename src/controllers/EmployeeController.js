@@ -52,7 +52,7 @@ class EmployeeController {
             id_school: id,
             password: password
         });
-    
+
         try {
             console.log("Criando usuário...");
             const employee = await user.save();
@@ -429,6 +429,73 @@ class EmployeeController {
                 message: 'There was an error on the server side!'
             });
         }
+    }
+
+    async ForgotPassword (req, res) {
+
+        const { cpf } = req.body;
+        console.log("dados do front", cpf)
+
+        const crypto = require('crypto');
+
+        function generateResetToken() {
+            return crypto.randomBytes(32).toString('hex'); // Gera um token aleatório em formato hexadecimal
+        }
+
+        const user = await User.find({ cpf });
+        if (!user) {
+            return res.status(404).send('Usuário não encontrado.');
+        } 
+        
+        const userEmail = user.find(res => {
+            return res
+        })
+
+        const Schemas = userEmail._id; // Substitua isso por sua lógica dinâmica, se necessário
+        const email = userEmail.email; // Substitua isso por sua lógica dinâmica, se necessário
+        console.log("usuario", user)
+        console.log("userEmail", userEmail)
+        console.log("email", email)
+        console.log("Schemas", Schemas)
+
+        const resetToken = generateResetToken(); // Função para criar um token
+        console.log("resetToken", resetToken)
+        /*user.resetToken = resetToken;
+        user.resetTokenExpiry = Date.now() + 3600000; // 1 hora
+        await user.save();
+        */
+
+        const nodemailer = require('nodemailer');
+        
+        const baseUrl = process.env.BASE_URL;
+        const resetLink = `${baseUrl}/reset-password/${resetToken}/${cpf}`;
+        sendEmail(email, resetLink );
+
+        async function sendEmail(email, resetLink) {
+            const transporter = nodemailer.createTransport({
+                service: 'gmail', // ou outro serviço de e-mail
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASS,
+                },
+            });
+
+            const mailOptions = {
+                from: 'gsgxdevelopement@gmail.com',
+                to: email,
+                subject: 'Redefinição de Senha',
+                text: `Clique aqui para redefinir sua senha: ${resetLink}`,
+            };
+
+            try {
+                await transporter.sendMail(mailOptions);
+                console.log(`E-mail enviado para ${email}`);
+            } catch (error) {
+                console.error('Erro ao enviar e-mail:', error);
+            }
+        }
+
+        return res.json({ msg: `Foi enviado um link de recupreação de senha para o email: ${userEmail.email}, Identifique o email e click no link para recupera a senha.` });
     }
 }
 

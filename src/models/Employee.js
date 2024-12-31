@@ -73,6 +73,8 @@ const employeeschema = new mongoose.Schema(
             type: String,
             enum: ["active", "inactive"],
         },
+        resetToken: String,
+        resetTokenExpiry: Date,
     },
     {
         timestamps: true
