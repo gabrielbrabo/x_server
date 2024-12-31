@@ -3,6 +3,7 @@ const User = require("../models/Employee")
 const School = require("../models/School")
 const AddTeacher = require("../models/AddTeacher")
 const RecordClassTaught = require("../models/RecordClassTaught")
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs')
 
 class EmployeeController {
@@ -431,12 +432,10 @@ class EmployeeController {
         }
     }
 
-    async ForgotPassword (req, res) {
+    async ForgotPassword(req, res) {
 
         const { cpf } = req.body;
         console.log("dados do front", cpf)
-
-        const crypto = require('crypto');
 
         function generateResetToken() {
             return crypto.randomBytes(32).toString('hex'); // Gera um token aleatório em formato hexadecimal
@@ -445,8 +444,8 @@ class EmployeeController {
         const user = await User.find({ cpf });
         if (!user) {
             return res.status(404).send('Usuário não encontrado.');
-        } 
-        
+        }
+
         const userEmail = user.find(res => {
             return res
         })
@@ -460,16 +459,16 @@ class EmployeeController {
 
         const resetToken = generateResetToken(); // Função para criar um token
         console.log("resetToken", resetToken)
-        /*user.resetToken = resetToken;
-        user.resetTokenExpiry = Date.now() + 3600000; // 1 hora
-        await user.save();
-        */
+        userEmail.resetToken = resetToken;
+        userEmail.resetTokenExpiry = Date.now() + 3600000; // 1 hora
+        await userEmail.save();
+
 
         const nodemailer = require('nodemailer');
-        
+
         const baseUrl = process.env.BASE_URL;
-        const resetLink = `${baseUrl}/reset-password/${resetToken}/${cpf}`;
-        sendEmail(email, resetLink );
+        const resetLink = `${baseUrl}/reset-password/${cpf}/${Schemas}/${resetToken}`;
+        sendEmail(email, resetLink);
 
         async function sendEmail(email, resetLink) {
             const transporter = nodemailer.createTransport({
@@ -496,6 +495,50 @@ class EmployeeController {
         }
 
         return res.json({ msg: `Foi enviado um link de recupreação de senha para o email: ${userEmail.email}, Identifique o email e click no link para recupera a senha.` });
+    }
+
+    async ResetPassword (req, res) {
+        const { cpf, id, token, newPassword } = req.body;
+
+        try {
+            // 1. Verifica se o usuário existe pelo CPF
+            const user = await User.findById(id);
+            if (!user) {
+                return res.status(404).json({ error: 'Usuário não encontrado.' });
+            }
+
+            // 2. Verifica se o token é válido
+            if (user.resetToken !== token) {
+                return res.status(400).json({ error: 'Token inválido.' });
+            }
+
+            // 3. Verifica se o token expirou
+            if (Date.now() > user.resetTokenExpiry) {
+                return res.status(400).json({ error: 'Token expirado.' });
+            }
+
+            // 4. Gera um hash da nova senha
+            //const salt = await bcrypt.genSalt(10);
+            //const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+            // 5. Atualiza a senha e remove o token
+            user.password = newPassword;
+            user.resetToken = null;
+            user.resetTokenExpiry = null;
+            await user.save();
+
+            // 6. Atualiza outros modelos que possuem o mesmo CPF
+            const updateData = { password: newPassword };
+            await Promise.all([
+                User.updateMany({ cpf }, updateData),
+                // Adicione outros modelos conforme necessário
+            ]);
+
+            res.json({ message: 'Senha atualizada com sucesso. Agora podera fazer login com a nova senha.' });
+        } catch (error) {
+            console.error('Erro ao redefinir senha:', error);
+            res.status(500).json({ error: 'Erro interno do servidor.' });
+        }
     }
 }
 

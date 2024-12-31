@@ -21,6 +21,7 @@ routes.post('/register/school', SchoolController.create)
 routes.post('/session/school', SessionsController.sessionSchool)
 routes.post('/session/employee', SessionsController.sessionEmployee)
 routes.post('/forgot-password', EmployeeController.ForgotPassword)
+routes.post('/reset-password', EmployeeController.ResetPassword )
 routes.post('/login-with-school', SessionsController.loginWithSchool)
 routes.post('/refresh/employee', RefreshController.checkToken)
 
