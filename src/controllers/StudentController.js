@@ -6,21 +6,23 @@ const bcrypt = require('bcryptjs')
 class StudentController {
   
     async create(req, res) {
-        const { name, dateOfBirth, cpf, rg, cellPhone, cellPhoneOfParentsOrGuardians, address, password, confirmpassword, registerStudent } = req.body;
+        const { name, dateOfBirth, /*cpf, rg,*/cellPhone, cellPhoneOfParentsOrGuardians, address, password, confirmpassword, registerStudent } = req.body;
 
         const { id } = req.params;
+        console.log("dados do front", req.body)
 
         // validations
         if (!name) {
             return res.status(422).json({ msg: "O nome é obrigatório!" });
         }
 
-        if (!rg) {
+        /*if (!rg) {
             return res.status(422).json({ msg: "O RG é obrigatório!" });
         }
         if (!cpf) {
             return res.status(422).json({ msg: "O cpf é obrigatório!" });
-        }
+        }*/
+       
         if (!dateOfBirth) {
             return res.status(422).json({ msg: "A data de nascimento é obrigatório!" });
         }
@@ -40,11 +42,11 @@ class StudentController {
         }
 
         // check if user exists
-        const userExists = await Student.findOne({ cpf: cpf });
+        //const userExists = await Student.findOne({ cpf: cpf });
 
-        if (userExists) {
+        /*if (userExists) {
             return res.status(422).json({ msg: "Esse estudante ja esta cadastrado!" });
-        }
+        }*/
 
         // create password
         const salt = await bcrypt.genSalt(12);
@@ -54,8 +56,8 @@ class StudentController {
         const user = new Student({
             name: name.toUpperCase(),
             dateOfBirth: dateOfBirth,
-            cpf: cpf,
-            rg: rg,
+            //cpf: cpf,
+            //rg: rg,
             cellPhone: cellPhone,
             cellPhoneOfParentsOrGuardians: cellPhoneOfParentsOrGuardians,
             address: address,
@@ -81,6 +83,7 @@ class StudentController {
             })
 
         } catch (err){
+            console.error("Erro ao salvar aluno:", err);
             res.status(500).json({
                 msg: 'Error ao cadastra uma Conta profissional.'
             })

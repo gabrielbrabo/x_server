@@ -95,6 +95,7 @@ routes.post('/employee-update/:id', EmployeeController.updateEmployee)
 routes.post('/record-class-taught', EmployeeController.RecordClassTaught)
 routes.post('/index-record-class', EmployeeController.indexRecordClassTaught)
 routes.post('/update-record-class', EmployeeController.updateRecordClassTaught)
+routes.post('/update-record-class/adm', EmployeeController.updateRecordClassTaughtADM)
 routes.post('/record-class-daily', EmployeeController.RecordClassTaughtDaily)
 routes.get('/check-employee/:cpf', EmployeeController.EmpExist)
 
