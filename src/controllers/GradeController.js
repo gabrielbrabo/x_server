@@ -110,6 +110,42 @@ class GradeController {
         }
     }
 
+    async indexGrades(req, res) {
+
+        const { year, id_class, id_matter} = req.body;
+
+        const grade = await Grade.find({ id_class: id_class }).populate('id_student');
+
+        console.log("grade", grade)
+
+        const grd = grade.map(res => {
+            if (res.year == year) {
+                if (res.id_matter == id_matter) {
+                    return res
+                }
+            }
+        }).filter(res => {
+            if (res != null) {
+                return res
+            }
+        })
+       console.log("grd", grd)
+
+        try {
+            if (grd) {
+                return res.json({
+                    data: grd,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+
     async indexIstQuarter(req, res) {
 
         const { year, id_matter, id_iStQuarter, id_class} = req.body;

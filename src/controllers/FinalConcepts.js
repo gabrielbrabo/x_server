@@ -23,6 +23,10 @@ class finalConcepts {
         if (!id_student) {
             return res.status(422).json({ msg: "o turno é obrigatória!" });
         }
+        
+        if (!studentGrade) {
+            return res.status(422).json({ msg: "o conceito do aluno é obrigatória!" });
+        }
 
         // check if class exists
         const student = await Student.findOne({ _id: id_student });
@@ -50,7 +54,7 @@ class finalConcepts {
         // create user
         const newFinalConcepts = new FinalConcepts({
             year: year,
-            studentGrade: studentGrade.toUpperCase(),
+            studentGrade: studentGrade,//.toUpperCase(),
             id_matter: id_matter,
             id_class: id_class,
             id_employee: id_employee,
