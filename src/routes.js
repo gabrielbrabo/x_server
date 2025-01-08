@@ -72,6 +72,15 @@ routes.post('/index/vi_thQuarter', BimonthlyController.indexVI_thQuarter)
 routes.get('/details/vithQuarter/:id', BimonthlyController.getVI_thQuarterById)
 routes.post('/update/vithQuarter/:id', BimonthlyController.updateVI_thQuarter)
 
+routes.post('/reopen_i_stQuarter/:id', BimonthlyController.reopenI_stQuarter)
+routes.post('/toclose_i_stQuarter/:id', BimonthlyController.tocloseI_stQuarter)
+routes.post('/reopen_ii_ndQuarter/:id', BimonthlyController.reopenII_ndQuarter)
+routes.post('/toclose_ii_ndQuarter/:id', BimonthlyController.tocloseII_ndQuarter)
+routes.post('/reopen_iii_rdQuarter/:id', BimonthlyController.reopenIII_rdQuarter)
+routes.post('/toclose_iii_rdQuarter/:id', BimonthlyController.tocloseIII_rdQuarter)
+routes.post('/reopen_iv_thQuarter/:id', BimonthlyController.reopenIV_thQuarter)
+routes.post('/toclose_iv_thQuarter/:id', BimonthlyController.tocloseIV_thQuarter)
+
 routes.post('/register/grade', GradeController.createGrade)
 routes.post('/update/grade', GradeController.update)
 
@@ -83,6 +92,7 @@ routes.post('/index/gradev', GradeController.indexVthQuarter)
 routes.post('/index/gradevi', GradeController.indexVIthQuarter)
 routes.post('/get-grade', GradeController.GetGrade)
 routes.post('/grade-daily', GradeController.IndexGradeDaily)
+routes.post('/grades-card', GradeController.indexGradesCard)
 routes.post('/grades', GradeController.indexGrades)
 
 /*routes.post('/card/I_st_quarter', ReportCardController.I_st_quarter)

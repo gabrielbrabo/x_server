@@ -67,8 +67,8 @@ class BimonthlyController {
             endday: endday,
             endmonth: endmonth,
             endyear: endyear,
-            //totalGrade: totalGrade,
-            //averageGrade: averageGrade,
+            status: 'aberto',
+            statusSupervisor: 'aberto',
             id_school: id_school
         });
 
@@ -129,10 +129,10 @@ class BimonthlyController {
             const i_stQuarter = await I_stQuarter.findById(req.params.id);
             console.log("i_stQuarter", i_stQuarter)
             if (!i_stQuarter) {
-              return res.status(404).json({ error: 'Employee not found' });
+                return res.status(404).json({ error: 'Employee not found' });
             }
             res.json(i_stQuarter);
-          }catch (err) {
+        } catch (err) {
             console.error(err);
             return res.status(500).json({ error: "Internal Server Error" });
         }
@@ -143,7 +143,7 @@ class BimonthlyController {
             const { id } = req.params;
             const i_stQuarter = await I_stQuarter.findByIdAndUpdate(id, req.body, { new: true });
             if (!i_stQuarter) {
-              return res.status(404).json({ error: 'Employee not found' });
+                return res.status(404).json({ error: 'Employee not found' });
             }
             res.json(i_stQuarter);
         } catch (err) {
@@ -164,7 +164,7 @@ class BimonthlyController {
             return res.status(422).json({ msg: "A data do fim é obrigatório!" });
         }
 
-        
+
 
         const startDate = new Date(startyear, startmonth - 1, startday); // Note que os meses no objeto Date são baseados em zero (0 para Janeiro, 11 para Dezembro)
         const endDate = new Date(endyear, endmonth - 1, endday);
@@ -215,8 +215,8 @@ class BimonthlyController {
             endday: endday,
             endmonth: endmonth,
             endyear: endyear,
-            //totalGrade: totalGrade,
-            //averageGrade: averageGrade,
+            status: 'aberto',
+            statusSupervisor: 'aberto',
             id_school: id_school
         });
 
@@ -277,10 +277,10 @@ class BimonthlyController {
             const ii_ndQuarter = await II_ndQuarter.findById(req.params.id);
             console.log("ii_ndQuarter", ii_ndQuarter)
             if (!ii_ndQuarter) {
-              return res.status(404).json({ error: 'Employee not found' });
+                return res.status(404).json({ error: 'Employee not found' });
             }
             res.json(ii_ndQuarter);
-          }catch (err) {
+        } catch (err) {
             console.error(err);
             return res.status(500).json({ error: "Internal Server Error" });
         }
@@ -291,7 +291,7 @@ class BimonthlyController {
             const { id } = req.params;
             const ii_ndQuarter = await II_ndQuarter.findByIdAndUpdate(id, req.body, { new: true });
             if (!ii_ndQuarter) {
-              return res.status(404).json({ error: 'Employee not found' });
+                return res.status(404).json({ error: 'Employee not found' });
             }
             res.json(ii_ndQuarter);
         } catch (err) {
@@ -312,7 +312,7 @@ class BimonthlyController {
             return res.status(422).json({ msg: "A data do fim é obrigatório!" });
         }
 
-        
+
 
         const startDate = new Date(startyear, startmonth - 1, startday); // Note que os meses no objeto Date são baseados em zero (0 para Janeiro, 11 para Dezembro)
         const endDate = new Date(endyear, endmonth - 1, endday);
@@ -364,8 +364,8 @@ class BimonthlyController {
             endday: endday,
             endmonth: endmonth,
             endyear: endyear,
-            //totalGrade: totalGrade,
-            //averageGrade: averageGrade,
+            status: 'aberto',
+            statusSupervisor: 'aberto',
             id_school: id_school
         });
 
@@ -426,10 +426,10 @@ class BimonthlyController {
             const iii_rdQuarter = await III_rdQuarter.findById(req.params.id);
             console.log("ii_ndQuarter", iii_rdQuarter)
             if (!iii_rdQuarter) {
-              return res.status(404).json({ error: 'Employee not found' });
+                return res.status(404).json({ error: 'Employee not found' });
             }
             res.json(iii_rdQuarter);
-          }catch (err) {
+        } catch (err) {
             console.error(err);
             return res.status(500).json({ error: "Internal Server Error" });
         }
@@ -440,7 +440,7 @@ class BimonthlyController {
             const { id } = req.params;
             const iii_rdQuarter = await III_rdQuarter.findByIdAndUpdate(id, req.body, { new: true });
             if (!iii_rdQuarter) {
-              return res.status(404).json({ error: 'Employee not found' });
+                return res.status(404).json({ error: 'Employee not found' });
             }
             res.json(iii_rdQuarter);
         } catch (err) {
@@ -511,8 +511,8 @@ class BimonthlyController {
             endday: endday,
             endmonth: endmonth,
             endyear: endyear,
-            //totalGrade: totalGrade,
-            //averageGrade: averageGrade,
+            status: 'aberto',
+            statusSupervisor: 'aberto',
             id_school: id_school
         });
 
@@ -573,10 +573,10 @@ class BimonthlyController {
             const iv_thQuarter = await IV_thQuarter.findById(req.params.id);
             console.log("ii_ndQuarter", iv_thQuarter)
             if (!iv_thQuarter) {
-              return res.status(404).json({ error: 'Employee not found' });
+                return res.status(404).json({ error: 'Employee not found' });
             }
             res.json(iv_thQuarter);
-          }catch (err) {
+        } catch (err) {
             console.error(err);
             return res.status(500).json({ error: "Internal Server Error" });
         }
@@ -587,7 +587,7 @@ class BimonthlyController {
             const { id } = req.params;
             const iv_thQuarter = await IV_thQuarter.findByIdAndUpdate(id, req.body, { new: true });
             if (!iv_thQuarter) {
-              return res.status(404).json({ error: 'Employee not found' });
+                return res.status(404).json({ error: 'Employee not found' });
             }
             res.json(iv_thQuarter);
         } catch (err) {
@@ -658,8 +658,8 @@ class BimonthlyController {
             endday: endday,
             endmonth: endmonth,
             endyear: endyear,
-            //totalGrade: totalGrade,
-            //averageGrade: averageGrade,
+            status: 'aberto',
+            statusSupervisor: 'aberto',
             id_school: id_school
         });
 
@@ -721,10 +721,10 @@ class BimonthlyController {
             const v_thQuarter = await V_thQuarter.findById(req.params.id);
             console.log("ii_ndQuarter", v_thQuarter)
             if (!v_thQuarter) {
-              return res.status(404).json({ error: 'Employee not found' });
+                return res.status(404).json({ error: 'Employee not found' });
             }
             res.json(v_thQuarter);
-          }catch (err) {
+        } catch (err) {
             console.error(err);
             return res.status(500).json({ error: "Internal Server Error" });
         }
@@ -735,7 +735,7 @@ class BimonthlyController {
             const { id } = req.params;
             const v_thQuarter = await V_thQuarter.findByIdAndUpdate(id, req.body, { new: true });
             if (!v_thQuarter) {
-              return res.status(404).json({ error: 'Employee not found' });
+                return res.status(404).json({ error: 'Employee not found' });
             }
             res.json(v_thQuarter);
         } catch (err) {
@@ -868,10 +868,10 @@ class BimonthlyController {
             const vi_thQuarter = await VI_thQuarter.findById(req.params.id);
             console.log("ii_ndQuarter", vi_thQuarter)
             if (!vi_thQuarter) {
-              return res.status(404).json({ error: 'Employee not found' });
+                return res.status(404).json({ error: 'Employee not found' });
             }
             res.json(vi_thQuarter);
-          }catch (err) {
+        } catch (err) {
             console.error(err);
             return res.status(500).json({ error: "Internal Server Error" });
         }
@@ -882,9 +882,217 @@ class BimonthlyController {
             const { id } = req.params;
             const vi_thQuarter = await VI_thQuarter.findByIdAndUpdate(id, req.body, { new: true });
             if (!vi_thQuarter) {
-              return res.status(404).json({ error: 'Employee not found' });
+                return res.status(404).json({ error: 'Employee not found' });
             }
             res.json(vi_thQuarter);
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async reopenI_stQuarter(req, res) {
+        try {
+            const { id } = req.params;
+            // Verifica se o ID foi fornecido
+            if (!id || id === "undefined") {
+                return res.status(400).json({ error: "ID is required and cannot be 'undefined'" });
+            }
+            const i_stQuarter = await I_stQuarter.findByIdAndUpdate(
+                id, // Passa todos os IDs encontrados no array
+                {
+                    $set: {
+                        statusSupervisor: 'aberto' // Atualização do campo
+                    }
+                },
+                { new: true } // Retorna o documento atualizado
+            );
+            if (!i_stQuarter) {
+                return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(i_stQuarter); // Retorna o documento atualizado
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async tocloseI_stQuarter(req, res) {
+        try {
+            const { id } = req.params;
+            // Verifica se o ID foi fornecido
+            if (!id || id === "undefined") {
+                return res.status(400).json({ error: "ID is required and cannot be 'undefined'" });
+            }
+            const i_stQuarter = await I_stQuarter.findByIdAndUpdate(
+                id, // Passa todos os IDs encontrados no array
+                {
+                    $set: {
+                        statusSupervisor: 'fechado' // Atualização do campo
+                    }
+                },
+                { new: true } // Retorna o documento atualizado
+            );
+            if (!i_stQuarter) {
+                return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(i_stQuarter); // Retorna o documento atualizado
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async reopenII_ndQuarter(req, res) {
+        try {
+            const { id } = req.params;
+            // Verifica se o ID foi fornecido
+            if (!id || id === "undefined") {
+                return res.status(400).json({ error: "ID is required and cannot be 'undefined'" });
+            }
+            const ii_ndQuarter = await II_ndQuarter.findByIdAndUpdate(
+                id, // Passa todos os IDs encontrados no array
+                {
+                    $set: {
+                        statusSupervisor: 'aberto' // Atualização do campo
+                    }
+                },
+                { new: true } // Retorna o documento atualizado
+            );
+            if (!ii_ndQuarter) {
+                return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(ii_ndQuarter); // Retorna o documento atualizado
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async tocloseII_ndQuarter(req, res) {
+        try {
+            const { id } = req.params;
+            // Verifica se o ID foi fornecido
+            if (!id || id === "undefined") {
+                return res.status(400).json({ error: "ID is required and cannot be 'undefined'" });
+            }
+            const ii_ndQuarter = await II_ndQuarter.findByIdAndUpdate(
+                id, // Passa todos os IDs encontrados no array
+                {
+                    $set: {
+                        statusSupervisor: 'fechado' // Atualização do campo
+                    }
+                },
+                { new: true } // Retorna o documento atualizado
+            );
+            if (!ii_ndQuarter) {
+                return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(ii_ndQuarter); // Retorna o documento atualizado
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async reopenIII_rdQuarter(req, res) {
+        try {
+            const { id } = req.params;
+            // Verifica se o ID foi fornecido
+            if (!id || id === "undefined") {
+                return res.status(400).json({ error: "ID is required and cannot be 'undefined'" });
+            }
+            const iii_rdQuarter = await III_rdQuarter.findByIdAndUpdate(
+                id, // Passa todos os IDs encontrados no array
+                {
+                    $set: {
+                        statusSupervisor: 'aberto' // Atualização do campo
+                    }
+                },
+                { new: true } // Retorna o documento atualizado
+            );
+            if (!iii_rdQuarter) {
+                return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(iii_rdQuarter); // Retorna o documento atualizado
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async tocloseIII_rdQuarter(req, res) {
+        try {
+            const { id } = req.params;
+            // Verifica se o ID foi fornecido
+            if (!id || id === "undefined") {
+                return res.status(400).json({ error: "ID is required and cannot be 'undefined'" });
+            }
+            const iii_rdQuarter = await III_rdQuarter.findByIdAndUpdate(
+                id, // Passa todos os IDs encontrados no array
+                {
+                    $set: {
+                        statusSupervisor: 'fechado' // Atualização do campo
+                    }
+                },
+                { new: true } // Retorna o documento atualizado
+            );
+            if (!iii_rdQuarter) {
+                return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(iii_rdQuarter); // Retorna o documento atualizado
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async reopenIV_thQuarter(req, res) {
+        try {
+            const { id } = req.params;
+            // Verifica se o ID foi fornecido
+            if (!id || id === "undefined") {
+                return res.status(400).json({ error: "ID is required and cannot be 'undefined'" });
+            }
+            const iv_thQuarter = await IV_thQuarter.findByIdAndUpdate(
+                id, // Passa todos os IDs encontrados no array
+                {
+                    $set: {
+                        statusSupervisor: 'aberto' // Atualização do campo
+                    }
+                },
+                { new: true } // Retorna o documento atualizado
+            );
+            if (!iv_thQuarter) {
+                return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(iv_thQuarter); // Retorna o documento atualizado
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async tocloseIV_thQuarter(req, res) {
+        try {
+            const { id } = req.params;
+            // Verifica se o ID foi fornecido
+            if (!id || id === "undefined") {
+                return res.status(400).json({ error: "ID is required and cannot be 'undefined'" });
+            }
+            const iv_thQuarter = await IV_thQuarter.findByIdAndUpdate(
+                id, // Passa todos os IDs encontrados no array
+                {
+                    $set: {
+                        statusSupervisor: 'fechado' // Atualização do campo
+                    }
+                },
+                { new: true } // Retorna o documento atualizado
+            );
+            if (!iv_thQuarter) {
+                return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(iv_thQuarter); // Retorna o documento atualizado
         } catch (err) {
             console.error(err);
             return res.status(500).json({ error: "Internal Server Error" });

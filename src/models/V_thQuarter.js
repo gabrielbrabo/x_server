@@ -46,6 +46,9 @@ const V_thQuarter = new mongoose.Schema(
         status: {
             type: String,
         },
+        statusSupervisor: {
+            type: String,
+        },
         id_reporter_card: [
             {
                 type: mongoose.Types.ObjectId,

@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const morgan = require("morgan");
 const cors = require('cors')
 const path = require("path");
+const scheduleBimesterUpdates = require('./middlewares/schedule'); // Importa o agendamento
+
 require("dotenv").config();
 
 app.use(express.json());
@@ -16,6 +18,10 @@ app.use(
   express.static(path.resolve(__dirname, "..", "tmp", "uploads"))
 );
 
+// Iniciar o agendamento
+scheduleBimesterUpdates();
+
+//user e password de acesso ao banco de dados
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASS;
 

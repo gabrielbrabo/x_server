@@ -73,6 +73,10 @@ class GradeController {
                 .populate('id_student')
                 .populate('id_teacher')
                 .populate('id_class')
+                .populate('id_iStQuarter')
+                .populate('id_iiNdQuarter')
+                .populate('id_iiiRdQuarter')
+                .populate('id_ivThQuarter')
     
             // Filtra os resultados pela `year` e `id_class`
             const Form = form.map(res => {
