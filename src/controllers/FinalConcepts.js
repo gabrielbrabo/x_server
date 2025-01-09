@@ -173,7 +173,7 @@ class finalConcepts {
     }
     async FinalConceptsDaily(req, res) {
 
-        const { year, id_class } = req.body;
+        const { year, id_class ,id_teacher} = req.body;
         console.log("dados do front", req.body)
 
         const gradefinal = await FinalConcepts.find({
@@ -182,7 +182,9 @@ class finalConcepts {
 
         const grade = gradefinal.map(res => {
             if (res.year == year) {
-                return res
+                if(res.id_teacher == id_teacher) {
+                    return res
+                }
             }
         }).filter(res => {
             if (res != null) {

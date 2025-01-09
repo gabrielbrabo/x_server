@@ -410,6 +410,7 @@ class GradeController {
         const { 
             year, 
             id_class, 
+            id_teacher,
             id_iStQuarter, 
             id_iiNdQuarter,
             id_iiiRdQuarter,
@@ -450,7 +451,7 @@ class GradeController {
                     idClassFromDB: res.id_class._id.toString(),
                     idClassFromFront: id_class
                 });
-                return res.year === year.toString() && res.id_class._id.toString() === id_class;
+                return res.year === year.toString() && res.id_class._id.toString() === id_class && res.id_teacher._id.toString() === id_teacher;
             });
     
             console.log('Resultados após filtro:', Grd);

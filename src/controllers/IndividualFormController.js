@@ -54,7 +54,7 @@ class GradeController {
     }
 
     async IndexIndividualForm(req, res) {
-        const { year, id_class, id_iStQuarter, id_iiNdQuarter, id_iiiRdQuarter, id_ivThQuarter, id_vThQuarter, id_viThQuarter } = req.body;
+        const { year, id_class, id_teacher, id_iStQuarter, id_iiNdQuarter, id_iiiRdQuarter, id_ivThQuarter, id_vThQuarter, id_viThQuarter } = req.body;
         console.log('dados do front', req.body)
         // Cria um objeto de filtro inicial vazio
         const filter = {};
@@ -82,7 +82,9 @@ class GradeController {
             const Form = form.map(res => {
                 if(res.year == year) {
                     if(res.id_class._id == id_class) {
-                        return res
+                        if(res.id_teacher._id == id_teacher) {
+                            return res
+                        }
                     }
                 }
             });

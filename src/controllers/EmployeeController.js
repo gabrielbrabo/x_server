@@ -263,7 +263,7 @@ class EmployeeController {
 
         //const school = await School.findOne({ _id: id_school });
 
-        const existingRecordClassTaught = await RecordClassTaught.find({ id_class: id_class })
+        const existingRecordClassTaught = await RecordClassTaught.find({ id_teacher: id_teacher })
 
         console.log("existingBimonthly", existingRecordClassTaught)
         if (existingRecordClassTaught) {
@@ -271,7 +271,9 @@ class EmployeeController {
                 if (Res.year == year) {
                     if (Res.month == month) {
                         if (Res.day == day) {
-                            return Res
+                            if (Res.id_class == id_class) {
+                                return Res
+                            }
                         }
                     }
                 }
@@ -322,7 +324,8 @@ class EmployeeController {
 
         const {
             year,
-            id_class
+            id_class,
+            id_employee
         } = req.body;
 
         try {
@@ -334,7 +337,10 @@ class EmployeeController {
                 const result = recordClass.map(Res => {
                     if (Res.year == year) {
 
-                        return Res
+                        if (Res.id_teacher._id == id_employee) {
+
+                            return Res
+                        }
                     }
                 }).filter(Res => {
                     if (Res !== null) {
