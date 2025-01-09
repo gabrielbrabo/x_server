@@ -55,16 +55,19 @@ class AttendanceController {
     }
 
     async index(req, res) {
-
-        const { day, month, year, id_class } = req.body;
-
-        const attendance = await Attendance.find({ id_class: id_class }).populate('id_student');
-
+        
+        const { day, month, year, id_class, id_teacher } = req.body.month;
+        console.log("Body recebido pelo backend:", req.body);
+        console.log("Tipo de id_teacher:", typeof req.body.id_teacher);
+        const attendance = await Attendance.find({ id_teacher: id_teacher }).populate('id_student');
+        console.log("attendance", attendance)
         const att = attendance.map(res => {
             if (res.year == year) {
                 if (res.month == month) {
                     if (res.day == day) {
-                        return res
+                        if (res.id_class == id_class) {
+                            return res
+                        }
                     }
                 }
             }
