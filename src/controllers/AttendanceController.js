@@ -93,7 +93,7 @@ class AttendanceController {
     }
 
     async AttendanceBimonthly(req, res) {
-        const { startd, startm, starty, endd, endm, endy, id_student } = req.body;
+        const { startd, startm, starty, endd, endm, endy, id_student, id_teacher } = req.body;
 
         try {
             // Converta as partes da data para números inteiros
@@ -111,6 +111,7 @@ class AttendanceController {
             // Busque as presenças que estão entre essas datas
             const attendance = await Attendance.find({
                 id_student: id_student,
+                id_teacher: id_teacher,
                 // Comparar diretamente com as datas de início e fim
                 date: {
                     $gte: startDate, // Maior ou igual à data de início
@@ -159,10 +160,11 @@ class AttendanceController {
 
     async AttendanceFinalConcepts(req, res) {
 
-        const { year, id_student } = req.body;
-        console.log('dados recebidos', year, id_student)
+        const { year, id_student, id_teacher } = req.body;
+        console.log('dados recebidos', year, id_student, id_teacher)
         const attendance = await Attendance.find({
-            id_student: id_student
+            id_student: id_student,
+            id_teacher: id_teacher
         }).populate('id_student')
 
         const att = attendance.map(res => {
@@ -174,8 +176,8 @@ class AttendanceController {
                 return res
             }
         })
-        console.log("grade", attendance)
-        console.log("grd", att)
+        //console.log("grade", attendance)
+        //console.log("grd", att)
         try {
             if (att) {
                 return res.json({

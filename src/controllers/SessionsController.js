@@ -68,25 +68,11 @@ class SessionController {
         }
 
         // check if user exists
-        const users = await Employee.findOne({ cpf: cpf });
+        const users = await Employee.findOne({ cpf: cpf, password: password });
         console.log("uses", users)
         if (!users) {
-            return res.status(404).json({ msg: "Usuário não encontrado!" });
+            return res.status(404).json({ msg: "Cpf ou senha esta errado!" });
         }
-
-        // check passwords for all users with the same CPF
-        /*const validUser = await Promise.all(users.map(async (user) => {
-            const checkPassword = await bcrypt.compare(password, user.password);
-            return checkPassword ? user : null;
-        }));
-    
-        const authenticatedUser = validUser.find(user => user !== null);
-    
-        if (!authenticatedUser) {
-            return res.status(422).json({ msg: "Senha inválida" });
-        }*/
-
-        // Verifica se o usuário tem mais de um registro
         const usersWithSameCpf = await Employee.find({ cpf: cpf });
 
         if (usersWithSameCpf.length > 1) {

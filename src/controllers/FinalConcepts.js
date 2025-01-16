@@ -144,7 +144,7 @@ class finalConcepts {
 
         const gradefinal = await FinalConcepts.find({
             id_student: id_student
-        }).populate('id_student').populate('id_matter').populate('id_employee')
+        }).populate('id_student').populate('id_matter').populate('id_employee').populate('id_class')
 
         const grade = gradefinal.map(res => {
             if (res.year == year) {

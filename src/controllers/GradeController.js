@@ -61,7 +61,7 @@ class GradeController {
 
         const grade = await Grade.find({
             id_student: id_student
-        }).populate('id_student').populate('id_matter').populate('id_teacher').populate('id_iStQuarter').populate('id_iiNdQuarter').populate('id_iiiRdQuarter').populate('id_ivThQuarter').populate('id_vThQuarter').populate('id_viThQuarter')
+        }).populate('id_student').populate('id_matter').populate('id_teacher').populate('id_class').populate('id_iStQuarter').populate('id_iiNdQuarter').populate('id_iiiRdQuarter').populate('id_ivThQuarter').populate('id_vThQuarter').populate('id_viThQuarter')
 
         const grd = grade.map(res => {
             if (res.year == year) {

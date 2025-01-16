@@ -571,6 +571,35 @@ class EmployeeController {
             res.status(500).json({ error: 'Erro interno do servidor.' });
         }
     }
+    
+    async updatePassword (req, res) {
+        const { cpf, id, password, newPassword } = req.body;
+
+        try {
+            // 1. Verifica se o usuário existe pelo CPF
+            const user = await User.findOne({ _id: id, password: password });
+            if (!user) {
+                return res.status(404).json({ error: 'Senha atual errada ou usuário não encontrado.' });
+            }
+
+            console.log("user", user)
+            console.log("password", password)
+            user.password = newPassword;
+            await user.save();
+
+            // 6. Atualiza outros modelos que possuem o mesmo CPF
+            const updateData = { password: newPassword };
+            await Promise.all([
+                User.updateMany({ cpf }, updateData),
+                // Adicione outros modelos conforme necessário
+            ]);
+
+            res.json({ message: 'Senha atualizada com sucesso.' });
+        } catch (error) {
+            console.error('Erro ao redefinir senha:', error);
+            res.status(500).json({ error: 'Erro interno do servidor.' });
+        }
+    }
 }
 
 module.exports = new EmployeeController();
