@@ -15,6 +15,9 @@ const studentschema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        admissionDate: {
+            type: String,
+        },
         /*cpf: {
             type: String,
             //unique: true
@@ -22,10 +25,16 @@ const studentschema = new mongoose.Schema(
         rg: {
             type: String,
         },*/
-        cellPhone: {
+        motherName: {
             type: String,
         },
-        cellPhoneOfParentsOrGuardians: {
+        fatherName: {
+            type: String,
+        },
+        fatherCellPhone: {
+            type: String,
+        },
+        motherCellPhone: {
             type: String,
         },
         address: {

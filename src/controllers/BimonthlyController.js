@@ -98,6 +98,8 @@ class BimonthlyController {
 
         const { year, id_school } = req.body;
 
+        console.log()
+
         const i_stQuarter = await I_stQuarter.find({ id_school: id_school });
         const result = i_stQuarter.map(res => {
             if (res.year == year) {
