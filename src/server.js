@@ -18,6 +18,10 @@ app.use(
   express.static(path.resolve(__dirname, "..", "tmp", "uploads"))
 );
 
+app.use(cors({
+  origin: 'http://localhost:3000',  // Onde o frontend está rodando
+}));
+
 // Iniciar o agendamento
 scheduleBimesterUpdates();
 

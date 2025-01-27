@@ -107,6 +107,7 @@ routes.post('/employee', EmployeeController.index)
 routes.get('/employee-details/:id', EmployeeController. getEmployeeById)
 routes.post('/employee-update/:id', EmployeeController.updateEmployee)
 routes.post('/record-class-taught', EmployeeController.RecordClassTaught)
+routes.post('/destroy/class', EmployeeController.DestroyClass)
 routes.post('/index-record-class', EmployeeController.indexRecordClassTaught)
 routes.post('/update-record-class', EmployeeController.updateRecordClassTaught)
 routes.post('/update-record-class/adm', EmployeeController.updateRecordClassTaughtADM)
@@ -147,6 +148,7 @@ routes.post('/create-individual-form', IndividualFormController.createIndividual
 routes.post('/index-individual-form', IndividualFormController.IndexIndividualForm)
 routes.get('/get-individual-form/:id', IndividualFormController.GetIndividualForm)
 routes.post('/form-edit', IndividualFormController.update)
+routes.post('/destroy/form', IndividualFormController.DestroyForm)
 
 routes.post('/delete/matter', MatterController.deleteMatter)
 

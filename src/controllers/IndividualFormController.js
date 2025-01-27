@@ -171,6 +171,45 @@ class GradeController {
             res.status(500).json({ message: 'Ocorreu um erro no servidor' });
         }
     }
+
+    async DestroyForm(req, res) {
+        const { idForm } = req.body;
+        console.log("req.body", req.body)
+        // validations
+        if (!idForm) {
+            return res.status(422).json({ msg: "O id da aula é obrigatório!" });
+        }
+
+        // Check if the student is already registered in a class
+        const form = await IndividualForm.findOne({
+            _id: idForm
+        }).populate('id_student')
+
+        const idStudent = form.id_student._id
+        
+        console.log("$$",form)
+        console.log("idStudent",idStudent)
+
+        try {
+
+            await form.deleteOne()
+
+            await Student.updateMany({
+                _id: idStudent
+            }, {
+                $pull: {
+                    id_individualForm: idForm   
+                }
+            })
+            res.status(200).json({
+                msg: 'Aula removida com sucesso.'
+            })
+        } catch (err){
+            res.status(500).json({
+                msg: 'Error ao cadastra uma turma.'
+            })
+        }
+    }
 }
 
 module.exports = new GradeController();

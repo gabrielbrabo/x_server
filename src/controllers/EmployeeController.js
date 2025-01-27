@@ -387,6 +387,45 @@ class EmployeeController {
         }
     }
 
+    async DestroyClass(req, res) {
+        const { idClass } = req.body;
+        console.log("req.body", req.body)
+        // validations
+        if (!idClass) {
+            return res.status(422).json({ msg: "O id da aula é obrigatório!" });
+        }
+
+        // Check if the student is already registered in a class
+        const cla$$ = await RecordClassTaught.findOne({
+            _id: idClass
+        }).populate('id_teacher')
+
+        const idTeacher = cla$$.id_teacher._id
+        
+        console.log("$$",cla$$)
+        console.log("idClass",idClass)
+
+        try {
+
+            await cla$$.deleteOne()
+
+            await Employee.updateMany({
+                _id: idTeacher
+            }, {
+                $pull: {
+                    id_recordClassTaught: idClass   
+                }
+            })
+            res.status(200).json({
+                msg: 'Aula removida com sucesso.'
+            })
+        } catch (err){
+            res.status(500).json({
+                msg: 'Error ao cadastra uma turma.'
+            })
+        }
+    }
+
     async RecordClassTaughtDaily(req, res) {
 
         const {
