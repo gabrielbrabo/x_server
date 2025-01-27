@@ -9,7 +9,7 @@ const IV_thQuarter = require('../models/IV_thQuarter'); // Modelo relacionado ao
 // Agendamento de tarefa
 const scheduleBimesterUpdates = () => {
     // Configurar a tarefa para rodar diariamente às 00:00
-    schedule.scheduleJob('0 0 * * *', async () => {
+    schedule.scheduleJob('0 8 * * *', async () => {
         const today = new Date();
         const year = new Date().getFullYear();
 
@@ -24,11 +24,15 @@ const scheduleBimesterUpdates = () => {
 
             const i_endDate = await Promise.all(
                 i_st_quarter.map(async (res) => {
-                    const i_endDate = new Date(res.endyear, res.endmonth - 1, res.endday);
+                    let i_endDate = new Date(res.endyear, res.endmonth - 1, res.endday);
+
+                    // Adiciona 7 dias à data
+                    i_endDate.setDate(i_endDate.getDate() + 8);
+
                     if (i_endDate < today) {
                         const id = res._id;
                         console.log("id", id);
-                        if (res.status != 'fechado') {
+                        if (res.status !== 'fechado') {
                             // Adiciona o ID ao array para futuras atualizações
                             i_idsToUpdate.push(id);
                         }
@@ -54,22 +58,26 @@ const scheduleBimesterUpdates = () => {
             } else {
                 console.log("Nenhum documento foi encontrado para atualização.");
             }
-            
+
             console.log("endDate", i_endDate)
             console.log("today", today)
 
-            
+
             const ii_nd_quarter = await II_ndQuarter.find({ year: year });
 
             const ii_idsToUpdate = []; // Array para armazenar os IDs dos documentos que precisam ser atualizados
 
             const ii_endDate = await Promise.all(
                 ii_nd_quarter.map(async (res) => {
-                    const ii_endDate = new Date(res.endyear, res.endmonth - 1, res.endday);
+                    let ii_endDate = new Date(res.endyear, res.endmonth - 1, res.endday);
+
+                    // Adiciona 7 dias à data
+                    ii_endDate.setDate(ii_endDate.getDate() + 8);
+
                     if (ii_endDate < today) {
                         const id = res._id;
                         console.log("id", id);
-                        if (res.status != 'fechado') {
+                        if (res.status !== 'fechado') {
                             // Adiciona o ID ao array para futuras atualizações
                             ii_idsToUpdate.push(id);
                         }
@@ -95,22 +103,26 @@ const scheduleBimesterUpdates = () => {
             } else {
                 console.log("Nenhum documento foi encontrado para atualização.");
             }
-            
+
             console.log("ii_endDate", ii_endDate)
             console.log("today", today)
 
-            
+
             const iii_rd_quarter = await III_rdQuarter.find({ year: year });
 
             const iii_idsToUpdate = []; // Array para armazenar os IDs dos documentos que precisam ser atualizados
 
             const iii_endDate = await Promise.all(
                 iii_rd_quarter.map(async (res) => {
-                    const iii_endDate = new Date(res.endyear, res.endmonth - 1, res.endday);
+                    let iii_endDate = new Date(res.endyear, res.endmonth - 1, res.endday);
+
+                    // Adiciona 7 dias à data
+                    iii_endDate.setDate(iii_endDate.getDate() + 8);
+
                     if (iii_endDate < today) {
                         const id = res._id;
                         console.log("id", id);
-                        if (res.status != 'fechado') {
+                        if (res.status !== 'fechado') {
                             // Adiciona o ID ao array para futuras atualizações
                             iii_idsToUpdate.push(id);
                         }
@@ -136,22 +148,26 @@ const scheduleBimesterUpdates = () => {
             } else {
                 console.log("Nenhum documento foi encontrado para atualização.");
             }
-            
+
             console.log("iii_endDate", iii_endDate)
             console.log("today", today)
 
-            
+
             const iv_th_quarter = await IV_thQuarter.find({ year: year });
 
             const iv_idsToUpdate = []; // Array para armazenar os IDs dos documentos que precisam ser atualizados
 
             const iv_endDate = await Promise.all(
                 iv_th_quarter.map(async (res) => {
-                    const iv_endDate = new Date(res.endyear, res.endmonth - 1, res.endday);
+                    let iv_endDate = new Date(res.endyear, res.endmonth - 1, res.endday);
+
+                    // Adiciona 7 dias à data
+                    iv_endDate.setDate(iv_endDate.getDate() + 8);
+
                     if (iv_endDate < today) {
                         const id = res._id;
                         console.log("id", id);
-                        if (res.status != 'fechado') {
+                        if (res.status !== 'fechado') {
                             // Adiciona o ID ao array para futuras atualizações
                             iv_idsToUpdate.push(id);
                         }
@@ -177,7 +193,7 @@ const scheduleBimesterUpdates = () => {
             } else {
                 console.log("Nenhum documento foi encontrado para atualização.");
             }
-            
+
             console.log("iv_endDate", iv_endDate)
             console.log("today", today)
 

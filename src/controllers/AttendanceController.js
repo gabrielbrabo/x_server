@@ -240,6 +240,49 @@ class AttendanceController {
             });
         }
     }
+
+    async DestroyAttendance(req, res) {
+        const { idAttendance } = req.body;
+        console.log("req.body", req.body)
+        // validations
+        if (!idAttendance) {
+            return res.status(422).json({ msg: "O id do estudante é obrigatório!" });
+        }
+
+        /*if (!id_employee) {
+            return res.status(422).json({ msg: "A id da turma é obrigatório!" });
+        }*/
+
+        // Check if the student is already registered in a class
+        const attendance = await Attendance.findOne({
+            _id: idAttendance
+        }).populate('id_student')
+
+        const idStudent = attendance.id_student._id
+        
+        console.log("attendance",attendance)
+        console.log("idStudent",idStudent)
+
+        try {
+
+            await attendance.deleteOne()
+
+            await Student.updateMany({
+                _id: idStudent
+            }, {
+                $pull: {
+                    id_attendance: idAttendance   
+                }
+            })
+            res.status(200).json({
+                msg: 'Materia removido com sucesso.'
+            })
+        } catch (err){
+            res.status(500).json({
+                msg: 'Error ao cadastra uma turma.'
+            })
+        }
+    }
 }
 
 module.exports = new AttendanceController();
