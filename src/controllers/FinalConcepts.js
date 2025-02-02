@@ -182,7 +182,7 @@ class finalConcepts {
 
         const grade = gradefinal.map(res => {
             if (res.year == year) {
-                if(res.id_teacher == id_teacher) {
+                if(res.id_employee._id == id_teacher) {
                     return res
                 }
             }
