@@ -1,4 +1,4 @@
-/*const mongoose = require("mongoose")
+const mongoose = require("mongoose")
 
 const addTeacherschema = new mongoose.Schema(
     {
@@ -33,4 +33,4 @@ const addTeacherschema = new mongoose.Schema(
     }
 );
 
-module.exports = mongoose.model("addTeacher", addTeacherschema);*/
+module.exports = mongoose.model("addTeacher", addTeacherschema);
