@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+/*const mongoose = require("mongoose")
 
 const Responsible_for_the_studentschema = new mongoose.Schema(
     {
@@ -35,4 +35,4 @@ const Responsible_for_the_studentschema = new mongoose.Schema(
     }
 );
 
-module.exports = mongoose.model("Responsible_for_the_student", Responsible_for_the_studentschema);
+module.exports = mongoose.model("Responsible_for_the_student", Responsible_for_the_studentschema);*/

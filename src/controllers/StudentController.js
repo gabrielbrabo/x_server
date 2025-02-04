@@ -68,13 +68,13 @@ class StudentController {
         // check if user exists
         //const userExists = await Student.findOne({ cpf: cpf });
 
-        /*if (userExists) {
+       /* if (userExists) {
             return res.status(422).json({ msg: "Esse estudante ja esta cadastrado!" });
-        }*/
+        }
 
         // create password
         const salt = await bcrypt.genSalt(12);
-        const passwordHash = await bcrypt.hash(password, salt);
+        const passwordHash = await bcrypt.hash(password, salt);*/
 
         // create user
         const user = new Student({
@@ -86,10 +86,10 @@ class StudentController {
             fatherName: fatherName,
             motherCellPhone: motherCellPhone,
             address: address,
-            type: "student",
+            //type: "student",
             registerStudent: registerStudent,
             id_school: id,
-            password: passwordHash
+            //password: passwordHash
         });
 
         try {

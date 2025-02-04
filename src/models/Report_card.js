@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+/*const mongoose = require("mongoose")
 
 const report_cardschema = new mongoose.Schema(
     {
@@ -68,4 +68,4 @@ const report_cardschema = new mongoose.Schema(
     }
 );
 
-module.exports = mongoose.model("report_card", report_cardschema);
+module.exports = mongoose.model("report_card", report_cardschema);*/

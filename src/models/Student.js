@@ -43,11 +43,9 @@ const studentschema = new mongoose.Schema(
         },
         type: {
             type: String,
-            required: true
         },
         password: {
             type: String,
-            required: true,
         },
         avatar:{
             type: String,
@@ -58,12 +56,12 @@ const studentschema = new mongoose.Schema(
             ref: 'school',
             required: true,
         },
-        id_responsible: [
+        /*id_responsible: [
             {
                 type: mongoose.Types.ObjectId,
                 ref: 'Responsible_for_the_student'
             }
-        ],
+        ],*/
         id_class: [
             {
                 type: mongoose.Types.ObjectId,
@@ -82,12 +80,12 @@ const studentschema = new mongoose.Schema(
                 ref: 'grade'
             }
         ],        
-        id_reporter_card: [
+        /*id_reporter_card: [
             {
                 type: mongoose.Types.ObjectId,
                 ref: 'reporter_card'
             }
-        ],
+        ],*/
         id_FinalConcepts: [
             {
                 type: mongoose.Types.ObjectId,
@@ -99,11 +97,11 @@ const studentschema = new mongoose.Schema(
                 type: mongoose.Types.ObjectId,
                 ref: 'IndividualForm'
             }
-        ],
+        ],/*
         status: {
             type: String,
             enum: ["active", "inactive"],
-        },
+        },*/
     },
     {
         timestamps: true

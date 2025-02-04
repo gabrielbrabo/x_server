@@ -11,24 +11,24 @@ const matterschema = new mongoose.Schema(
             ref: 'school',
             required: true,
         },
-        id_employee: [
+        /*id_employee: [
             {
                 type: mongoose.Types.ObjectId,
                 ref: 'employee'
             }
-        ],
-        id_class: [
+        ],*/
+        /*id_class: [
             {
                 type: mongoose.Types.ObjectId,
                 ref: 'class'
             }
-        ],
-        id_reporter_card: [
+        ],*/
+        /*id_reporter_card: [
             {
                 type: mongoose.Types.ObjectId,
                 ref: 'reporter_card'
             }
-        ],
+        ],*/
     },
     {
         timestamps: true
