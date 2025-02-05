@@ -156,11 +156,14 @@ class EmployeeController {
         const { id_class, id_teacher } = req.body;
 
         const clss = await AddTeacher.find({ id_class: id_class });
+        console.log("rsult clss", clss)
         const result = clss.map(res => {
             if (res.id_teacher == id_teacher) {
                 return res
             }
         })
+
+        console.log("result", result)
 
         try {
             if (result) {
