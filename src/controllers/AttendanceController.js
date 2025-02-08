@@ -22,6 +22,27 @@ class AttendanceController {
         if (!status) {
             return res.status(422).json({ msg: "A senha é obrigatória!" });
         }
+
+        const att = await Attendance.find({id_student: id_student})
+        
+       // console.log("att", att)
+        const resAtt = att.map( res => {
+            if(res.day === day) {
+                if (res.month === month) {
+                    if(res.year === year) {
+                        return res
+                    }
+                }
+            }
+        }).filter(res => {
+            if (res != null) {
+                return res
+            }
+        })
+        console.log("resAtt", resAtt)
+        if(resAtt.length > 0) {
+            return res.status(422).json({ msg: "frequencia ja adicionada" });
+        }
         const user = new Attendance({
             day: day,
             month: month,
@@ -57,10 +78,10 @@ class AttendanceController {
     async index(req, res) {
         
         const { day, month, year, id_class, id_teacher } = req.body.month;
-        console.log("Body recebido pelo backend:", req.body);
-        console.log("Tipo de id_teacher:", typeof req.body.id_teacher);
+        //console.log("Body recebido pelo backend:", req.body);
+        //console.log("Tipo de id_teacher:", typeof req.body.id_teacher);
         const attendance = await Attendance.find({ id_teacher: id_teacher }).populate('id_student');
-        console.log("attendance", attendance)
+        //console.log("attendance", attendance)
         const att = attendance.map(res => {
             if (res.year == year) {
                 if (res.month == month) {
