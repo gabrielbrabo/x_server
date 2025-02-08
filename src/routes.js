@@ -129,6 +129,10 @@ routes.post('/class/info/:id', ClassController.InfoIndex)
 
 routes.post('/myclass', EmployeeController.MyClassIndex)
 
+routes.post('/test-attendance', AttendanceController.testcreateArrayAttendance)
+routes.post('/test-index', AttendanceController.testindex)
+routes.post('/test-destroy', AttendanceController.destroyArrayAttendance)
+
 routes.post('/attendance', AttendanceController.createAttendance)
 routes.post('/attendance/index', StudentController.AttendanceIndex)
 routes.post('/search/frequency', AttendanceController.index)

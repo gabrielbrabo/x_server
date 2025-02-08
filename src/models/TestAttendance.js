@@ -1,13 +1,13 @@
 const mongoose = require("mongoose")
 
-const attendance = new mongoose.Schema(
+const testattendance = new mongoose.Schema(
     {
         day: {
             type: String,
             required: true,
         },
         month: {
-            type: Object,
+            type: Number,
             required: true,
         },
         year: {
@@ -42,7 +42,7 @@ const attendance = new mongoose.Schema(
 );
 
 // Middleware para preencher `date` ao salvar um único documento
-attendance.pre('save', function (next) {
+testattendance.pre('save', function (next) {
     if (this.day && this.month && this.year) {
         this.date = new Date(`${this.year}-${String(this.month).padStart(2, '0')}-${String(this.day).padStart(2, '0')}`);
     }
@@ -50,7 +50,7 @@ attendance.pre('save', function (next) {
 });
 
 // Middleware para preencher `date` ao usar `insertMany`
-attendance.pre('insertMany', function (next, docs) {
+testattendance.pre('insertMany', function (next, docs) {
     docs.forEach(doc => {
         if (doc.day && doc.month && doc.year) {
             doc.date = new Date(`${doc.year}-${String(doc.month).padStart(2, '0')}-${String(doc.day).padStart(2, '0')}`);
@@ -59,4 +59,4 @@ attendance.pre('insertMany', function (next, docs) {
     next();
 });
 
-module.exports = mongoose.model("attendance", attendance);
+module.exports = mongoose.model("testattendance", testattendance);

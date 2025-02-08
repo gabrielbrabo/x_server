@@ -1,83 +1,63 @@
 const Attendance = require("../models/Attendance")
+const testAttendance = require("../models/TestAttendance")
 const Student = require("../models/Student")
 
 class AttendanceController {
 
     async createAttendance(req, res) {
-        const { day, month, year, status, id_student, id_teacher, id_class } = req.body;
+        const attendances = req.body; // Recebe um array de frequências
 
         // validations
-        if (!day) {
-            return res.status(422).json({ msg: "O Dia é obrigatório!" });
+        if (!Array.isArray(attendances)) {
+            return res.status(400).json({ error: 'O corpo da requisição deve ser um array.' });
         }
 
-        if (!month) {
-            return res.status(422).json({ msg: "O Mes é obrigatório!" });
-        }
+        try {
+            console.log("attendances", attendances);
 
-        if (!year) {
-            return res.status(422).json({ msg: "O RE do estudante é obrigatório!" });
-        }
+            // Insere todas as frequências no banco de dados
+            const insertedAttendances = await Attendance.insertMany(attendances);
 
-        if (!status) {
-            return res.status(422).json({ msg: "A senha é obrigatória!" });
-        }
+            // Atualiza cada estudante com a respectiva frequência
+            await Promise.all(insertedAttendances.map(async (attendance) => {
+                await Student.updateOne(
+                    { _id: attendance.id_student },
+                    { $push: { id_attendance: attendance._id } }
+                );
+            }));
 
-        const att = await Attendance.find({id_student: id_student})
-        
-       // console.log("att", att)
-        const resAtt = att.map( res => {
-            if(res.day == day) {
-                if (res.month == month) {
-                    if(res.year == year) {
-                        return res
-                    }
-                }
-            }
-        }).filter(res => {
-            if (res != null) {
-                return res
-            }
-        })
-        console.log("resAtt", resAtt)
-        if(resAtt.length > 0) {
-            return res.status(422).json({ msg: "frequencia ja adicionada" });
+            res.status(200).json({ msg: 'Frequências salvas e vinculadas aos estudantes com sucesso!' });
+
+        } catch (err) {
+            res.status(500).json({ error: 'Erro ao salvar as frequências' });
         }
-        const user = new Attendance({
-            day: day,
-            month: month,
-            year: year,
-            status: status.toUpperCase(),
-            id_student: id_student,
-            id_teacher: id_teacher,
-            id_class: id_class
-        });
+    }
+
+    // Rota para salvar a frequência dos alunos
+    async testcreateArrayAttendance(req, res) {
+
+        const attendances = req.body; // Recebe um array de frequências
+
+        // validations
+        if (!Array.isArray(attendances)) {
+            return res.status(400).json({ error: 'O corpo da requisição deve ser um array.' });
+        }
 
         try {
 
-            const attendance = await user.save()
+            console.log("attendances", attendances)
 
-            await Student.updateOne({
-                _id: id_student
-            }, {
-                $push: {
-                    id_attendance: attendance._id
-                }
-            })
-            res.status(200).json({
-                msg: 'Conta profissional cadastrado com sucesso.'
-            })
+            await testAttendance.insertMany(attendances);
+            res.status(200).json({ msg: 'Frequências salvas com sucesso!' });
 
         } catch (err) {
-            res.status(500).json({
-                msg: 'Error ao cadastra uma Conta profissional.'
-            })
+            res.status(500).json({ error: 'Erro ao salvar as frequências' });
         }
     }
 
     async index(req, res) {
-        
-        const { day, month, year, id_class, id_teacher } = req.body.month;
+
+        const { day, month, year, id_class, id_teacher } = req.body;
         //console.log("Body recebido pelo backend:", req.body);
         //console.log("Tipo de id_teacher:", typeof req.body.id_teacher);
         const attendance = await Attendance.find({ id_teacher: id_teacher }).populate('id_student');
@@ -110,6 +90,67 @@ class AttendanceController {
             res.status(500).json({
                 message: 'there was an error on server side!'
             })
+        }
+    }
+
+    async testindex(req, res) {
+
+        const { day, month, year, id_class, id_teacher } = req.body;
+        console.log("Body recebido pelo backend:", req.body);
+        //console.log("Tipo de id_teacher:", typeof req.body.id_teacher);
+        const attendance = await testAttendance.find({ id_teacher: id_teacher }).populate('id_student');
+        //console.log("attendance", attendance)
+        const att = attendance.map(res => {
+            if (res.year == year) {
+                if (res.month == month) {
+                    if (res.day == day) {
+                        if (res.id_class == id_class) {
+                            return res
+                        }
+                    }
+                }
+            }
+        }).filter(res => {
+            if (res != null) {
+                return res
+            }
+        })
+
+        try {
+            if (att) {
+                return res.json({
+                    data: att,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+
+    async destroyArrayAttendance(req, res) {
+
+        const idAttendances = req.body; // Recebe um array de frequências
+
+        // validations
+        if (!Array.isArray(idAttendances)) {
+            return res.status(400).json({ error: 'O corpo da requisição deve ser um array.' });
+        }
+
+        try {
+
+            console.log("attendances", idAttendances)
+
+            // Remove todos os documentos cujos _id estão na lista
+            await testAttendance.deleteMany({ _id: { $in: idAttendances } });
+
+            res.status(200).json({ msg: 'Frequências removidas com sucesso!' });
+
+        } catch (err) {
+            res.status(500).json({ error: 'Erro ao salvar as frequências' });
         }
     }
 
@@ -263,46 +304,31 @@ class AttendanceController {
     }
 
     async DestroyAttendance(req, res) {
-        const { idAttendance } = req.body;
-        console.log("req.body", req.body)
-        // validations
-        if (!idAttendance) {
-            return res.status(422).json({ msg: "O id do estudante é obrigatório!" });
+        const idAttendances = req.body; // Recebe um array de IDs de frequências a serem removidas
+
+        // Validations
+        if (!Array.isArray(idAttendances)) {
+            return res.status(400).json({ error: 'O corpo da requisição deve ser um array.' });
         }
-
-        /*if (!id_employee) {
-            return res.status(422).json({ msg: "A id da turma é obrigatório!" });
-        }*/
-
-        // Check if the student is already registered in a class
-        const attendance = await Attendance.findOne({
-            _id: idAttendance
-        }).populate('id_student')
-
-        const idStudent = attendance.id_student._id
-        
-        console.log("attendance",attendance)
-        console.log("idStudent",idStudent)
 
         try {
+            console.log("attendances to remove", idAttendances);
 
-            await attendance.deleteOne()
+            // Remove todas as chamadas cujos _id estão na lista recebida
+            await Attendance.deleteMany({ _id: { $in: idAttendances } });
 
-            await Student.updateMany({
-                _id: idStudent
-            }, {
-                $pull: {
-                    id_attendance: idAttendance   
-                }
-            })
-            res.status(200).json({
-                msg: 'Materia removido com sucesso.'
-            })
-        } catch (err){
-            res.status(500).json({
-                msg: 'Error ao cadastra uma turma.'
-            })
+            // Atualiza os estudantes, removendo os _id deletados do array id_attendance
+            await Student.updateMany(
+                { id_attendance: { $in: idAttendances } },
+                { $pull: { id_attendance: { $in: idAttendances } } }
+            );
+
+            res.status(200).json({ msg: 'Frequências removidas e estudantes atualizados com sucesso!' });
+
+        } catch (err) {
+            res.status(500).json({ error: 'Erro ao remover as frequências' });
         }
+
     }
 }
 
