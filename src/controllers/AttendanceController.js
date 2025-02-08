@@ -27,9 +27,9 @@ class AttendanceController {
         
        // console.log("att", att)
         const resAtt = att.map( res => {
-            if(res.day === day) {
-                if (res.month === month) {
-                    if(res.year === year) {
+            if(res.day == day) {
+                if (res.month == month) {
+                    if(res.year == year) {
                         return res
                     }
                 }
