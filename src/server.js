@@ -28,10 +28,11 @@ scheduleBimesterUpdates();
 //user e password de acesso ao banco de dados
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASS;
+const dataBase = process.env.dataBase;
 
 mongoose
   .connect(
-    `mongodb+srv://${dbUser}:${dbPassword}@escolarx.7ebaqd0.mongodb.net/?retryWrites=true&w=majority`,
+    `mongodb+srv://${dbUser}:${dbPassword}@escolarx.7ebaqd0.mongodb.net/${dataBase}?retryWrites=true&w=majority`,
     //{ useNewUrlParser: true },
   )
   .then(() => {
