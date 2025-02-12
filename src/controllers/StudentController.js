@@ -51,9 +51,9 @@ class StudentController {
         if (!address) {
             return res.status(422).json({ msg: "O endereço e obrigatório!" });
         }
-        if (!admissionDate) {
+        /*if (!admissionDate) {
             return res.status(422).json({ msg: "A data de admissão e obrigatório!" });
-        }
+        }*/
 
         if (!password) {
             return res.status(422).json({ msg: "A senha é obrigatória!" });
