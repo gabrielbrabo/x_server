@@ -15,6 +15,12 @@ const studentschema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        race: {
+            type: String,
+        },
+        sex: {
+            type: String,
+        },
         admissionDate: {
             type: String,
         },

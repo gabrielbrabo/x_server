@@ -9,6 +9,8 @@ class StudentController {
         const {
             name,
             dateOfBirth,
+            sex,
+            race,
             fatherCellPhone,
             admissionDate,
             motherName,
@@ -51,6 +53,12 @@ class StudentController {
         if (!address) {
             return res.status(422).json({ msg: "O endereço e obrigatório!" });
         }
+        if (!sex) {
+            return res.status(422).json({ msg: "O sexo do aluno e obrigatório!" });
+        }
+        if (!race) {
+            return res.status(422).json({ msg: "A raça e obrigatório!" });
+        }
         /*if (!admissionDate) {
             return res.status(422).json({ msg: "A data de admissão e obrigatório!" });
         }*/
@@ -80,6 +88,8 @@ class StudentController {
         const user = new Student({
             name: name.toUpperCase(),
             dateOfBirth: dateOfBirth,
+            sex: sex,
+            race: race,
             fatherCellPhone: fatherCellPhone,
             admissionDate: admissionDate,
             motherName: motherName,
