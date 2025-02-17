@@ -12,6 +12,7 @@ class StudentController {
             sex,
             race,
             fatherCellPhone,
+            entryDate,
             admissionDate,
             motherName,
             fatherName,
@@ -59,9 +60,9 @@ class StudentController {
         if (!race) {
             return res.status(422).json({ msg: "A raça e obrigatório!" });
         }
-        /*if (!admissionDate) {
-            return res.status(422).json({ msg: "A data de admissão e obrigatório!" });
-        }*/
+        if (!entryDate) {
+            return res.status(422).json({ msg: "A data de ingresso e obrigatório!" });
+        }
 
         if (!password) {
             return res.status(422).json({ msg: "A senha é obrigatória!" });
@@ -91,6 +92,7 @@ class StudentController {
             sex: sex,
             race: race,
             fatherCellPhone: fatherCellPhone,
+            entryDate: entryDate,
             admissionDate: admissionDate,
             motherName: motherName,
             fatherName: fatherName,

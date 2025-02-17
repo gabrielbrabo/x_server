@@ -24,6 +24,12 @@ const studentschema = new mongoose.Schema(
         admissionDate: {
             type: String,
         },
+        entryDate: {
+            type: String,
+        },
+        departureDate: {
+            type: String,
+        },
         /*cpf: {
             type: String,
             //unique: true

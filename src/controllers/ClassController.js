@@ -240,13 +240,13 @@ class ClassController {
                 }
             })
 
-            await modelClass.updateOne({
+            /*await modelClass.updateOne({
                 _id: id_class
             }, {
                 $pull: {
                     id_student: id_student      
                 }
-            })
+            })*/
             res.status(200).json({
                 msg: 'Estudante removido com sucesso.'
             })
