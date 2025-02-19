@@ -69,7 +69,6 @@ class EmployeeController {
                 id_employee: employee._id,
                 msg: 'Conta profissional cadastrada com sucesso.'
             });
-
         } catch (err) {
             console.error("Erro ao cadastrar:", err);
             res.status(500).json({

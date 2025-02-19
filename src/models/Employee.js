@@ -16,7 +16,6 @@ const employeeschema = new mongoose.Schema(
         },
         rg: {
             type: String,
-            required: true,
         },
         email: {
             type: String,
