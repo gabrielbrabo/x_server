@@ -75,9 +75,10 @@ class StudentController {
         }
 
         // check if user exists
-        //const userExists = await Student.findOne({ cpf: cpf });
+        const userExists = await Student.findOne({ name: name, id_school: id });
+        console.log("userExists", userExists)
 
-       /* if (userExists) {
+        if (userExists) {
             return res.status(422).json({ msg: "Esse estudante ja esta cadastrado!" });
         }
 
