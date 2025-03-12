@@ -83,8 +83,8 @@ class StudentController {
         }
 
         // create password
-        const salt = await bcrypt.genSalt(12);
-        const passwordHash = await bcrypt.hash(password, salt);*/
+        //const salt = await bcrypt.genSalt(12);
+        //const passwordHash = await bcrypt.hash(password, salt);*/
 
         // create user
         const user = new Student({
