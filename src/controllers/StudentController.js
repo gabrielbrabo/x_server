@@ -82,9 +82,15 @@ class StudentController {
             return res.status(422).json({ msg: "Esse estudante ja esta cadastrado!" });
         }
 
+<<<<<<< HEAD
         // create password
         //const salt = await bcrypt.genSalt(12);
         //const passwordHash = await bcrypt.hash(password, salt);*/
+=======
+       /* // create password
+        const salt = await bcrypt.genSalt(12);
+        const passwordHash = await bcrypt.hash(password, salt);*/
+>>>>>>> 467dc98 (add forma de avaliação em notas)
 
         // create user
         const user = new Student({

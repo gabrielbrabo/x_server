@@ -38,6 +38,13 @@ const schoolschema = new mongoose.Schema(
         number: {
             type: String,
         },
+        assessmentFormat: {
+            type: String,
+        },
+        logo: {
+            type: mongoose.Types.ObjectId,
+            ref: 'FileLogo'
+        },
         id_employee: [
             {
                 type: mongoose.Types.ObjectId,

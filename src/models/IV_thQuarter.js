@@ -36,11 +36,11 @@ const IV_thQuarter = new mongoose.Schema(
             required: true,
         },
         totalGrade: {
-            type: String,
+            type: Number,
             //required: true,
         },
         averageGrade: {
-            type: String,
+            type: Number,
             //required: true,
         },
         status: {

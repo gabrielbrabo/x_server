@@ -126,7 +126,7 @@ class ClassController {
             const clss = await Class.findById({
                 _id: id
             }).populate('id_student').populate('id_employee')
-              .populate('id_matter').populate('classRegentTeacher').populate('physicalEducationTeacher')
+              .populate('id_matter').populate('classRegentTeacher').populate('classRegentTeacher02').populate('physicalEducationTeacher')
             if (clss) {
                 return res.json({
                     data: [clss],
@@ -389,6 +389,81 @@ class ClassController {
                     id_matter: id_matter      
                 }
             })*/
+
+            res.status(200).json({
+                msg: 'Turma cadastrado com sucesso.'
+            })
+
+        } catch (err){
+            res.status(500).json({
+                msg: 'Error ao cadastra uma turma.'
+            })
+        }
+    }
+    
+    async addTeacher02(req, res) {
+        const { id_employee, id_class, /*id_matter*/} = req.body;
+
+        // validations
+        if (!id_employee) {
+            return res.status(422).json({ msg: "O id do prefessor é obrigatório!" });
+        }
+
+        if (!id_class) {
+            return res.status(422).json({ msg: "A id da turma é obrigatório!" });
+        }
+
+        // Check if the student is already registered in a class
+        const clss = await Class.find({ _id: id_class});
+        const currentYear = new Date().getFullYear()
+        if (clss) {
+            const cl = clss.map(result => {
+                return result.year
+            })
+            if(cl != currentYear) {
+                return res.status(422).json({ msg: "Essa turma não e atual!" });
+            }
+            console.log("cl", cl)
+            console.log("currentYear", currentYear)
+            const teacher = clss.find( tchr => {
+                return tchr
+            }).id_employee.filter( res => {
+                return res == id_employee
+            })
+
+            if(teacher.length > 0) { 
+                console.log("filter", teacher)   
+                return res.status(422).json({ msg: "Esse Professor ja esta cadastrado nessa turma!" });
+            }
+
+            console.log('teacher', teacher)
+        }
+
+        try {
+            
+            await Employee.updateOne({
+                _id: id_employee
+            }, {
+                $push: {
+                    id_class: id_class      
+                }
+            })
+
+            await modelClass.updateOne({
+                _id: id_class
+            }, {
+                $push: {
+                    id_employee: id_employee,    
+                }
+            })
+
+            await modelClass.updateOne({
+                _id: id_class
+            }, {
+                $push: {
+                    classRegentTeacher02: id_employee,    
+                }
+            })
 
             res.status(200).json({
                 msg: 'Turma cadastrado com sucesso.'

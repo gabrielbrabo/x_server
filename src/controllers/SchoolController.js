@@ -42,6 +42,7 @@ class SchoolController {
         const user = new User({
             name,
             email,
+            assessmentFormat: 'grade',
             type: "school",
             password: passwordHash
         });
@@ -51,6 +52,7 @@ class SchoolController {
 
             const name = user.name
             const email = user.email
+            const assessmentFormat = user.assessmentFormat
             const { id } = user
 
             return res.json({
@@ -58,7 +60,7 @@ class SchoolController {
                 id,
                 email,
                 name,
-                
+                assessmentFormat,
                 token: jwt.sign({ id }, authConfig.secret, {
                     expiresIn: authConfig.expiresIn,
                 })
@@ -66,6 +68,31 @@ class SchoolController {
 
         } else {
             res.status(500).json({ msg: error });
+        }
+    }
+
+    async getSchool (req, res) {
+
+        const {idSchool} = req.body;
+        console.log("idSchool", idSchool)
+        try {
+            const school = await User.findById({
+                _id: idSchool
+            })
+
+           // console.log()
+
+            if (school) {
+                return res.json({
+                    data: school,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
         }
     }
 
@@ -158,6 +185,31 @@ class SchoolController {
         } catch (err) {
             console.error(err);
             return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async getLogoSchool (req, res) {
+
+        const {idSchool} = req.body;
+
+        try {
+            const school = await User.findById({
+                _id: idSchool
+            })
+
+           // console.log()
+
+            if (school) {
+                return res.json({
+                    data: school,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
         }
     }
 }

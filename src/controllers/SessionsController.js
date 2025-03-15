@@ -68,8 +68,9 @@ class SessionController {
         }
 
         // check if user exists
-        const users = await Employee.findOne({ cpf: cpf, password: password });
-        console.log("uses", users)
+        const users = await Employee.findOne({ cpf: cpf, password: password })//.populate('id_school');
+        const populateLogo = await Employee.findOne({ cpf: cpf }).populate('id_school');
+        console.log("uses", populateLogo)
         if (!users) {
             return res.status(404).json({ msg: "Cpf ou senha esta errado!" });
         }
@@ -100,6 +101,8 @@ class SessionController {
         const id_matter = users.id_matter
         const id_class = users.id_class
         const id_reporter_card = users.id_reporter_card
+        //const logoSchool = populateLogo.id_school.logo
+        //const assessmentFormat = populateLogo.id_school.assessmentFormat
 
         return res.json({
 
@@ -112,7 +115,8 @@ class SessionController {
             id_matter,
             id_class,
             id_reporter_card,
-
+            //logoSchool,
+            //assessmentFormat,
 
             token: jwt.sign({ id }, authConfig.secret, {
                 expiresIn: authConfig.expiresIn,

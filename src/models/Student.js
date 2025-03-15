@@ -92,6 +92,12 @@ const studentschema = new mongoose.Schema(
                 ref: 'grade'
             }
         ],        
+        numericalGrades: [
+            {
+                type: mongoose.Types.ObjectId,
+                ref: 'numericalGrade'
+            }
+        ],        
         /*id_reporter_card: [
             {
                 type: mongoose.Types.ObjectId,

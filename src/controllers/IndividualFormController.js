@@ -4,7 +4,7 @@ const Student = require( "../models/Student")
 class GradeController {
 
     async createIndividualForm(req, res) {
-        const { year, id_iStQuarter, id_iiNdQuarter, id_iiiRdQuarter, id_ivThQuarter, id_vThQuarter, id_viThQuarter, id_student, id_teacher, description, id_class } = req.body;
+        const { year, id_iStQuarter, id_iiNdQuarter, id_iiiRdQuarter, id_ivThQuarter, id_vThQuarter, id_viThQuarter, id_student, id_teacher, id_teacher02, description, id_class } = req.body;
 
         // validations
         if (!year) {
@@ -28,6 +28,7 @@ class GradeController {
             description: description,
             id_student: id_student,
             id_teacher: id_teacher,
+            id_teacher02,
             id_class: id_class
         });
 
@@ -72,6 +73,7 @@ class GradeController {
             const form = await IndividualForm.find(filter)
                 .populate('id_student')
                 .populate('id_teacher')
+                .populate('id_teacher02')
                 .populate('id_class')
                 .populate('id_iStQuarter')
                 .populate('id_iiNdQuarter')
@@ -89,7 +91,7 @@ class GradeController {
                 }
             });
             //console.log("form", form)
-            //console.log("Form", Form)
+            console.log("Form", Form)
             if (Form.length > 0) {
                 return res.json({
                     data: Form,

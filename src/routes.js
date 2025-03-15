@@ -31,12 +31,15 @@ routes.post('/index-school', SchoolController.indexSchools)
 
 routes.use(auth)
 
+routes.post('/get/school', SchoolController.getSchool)
+
 routes.post('/register/employee/:id', EmployeeController.create)
 routes.post('/register/class/:id', ClassController.create)
 routes.post('/register/student/:id', StudentController.create)
 
 routes.post('/add/student', ClassController.addStudent)
 routes.post('/add/teacher', ClassController.addTeacher)
+routes.post('/add/teacher02', ClassController.addTeacher02)
 routes.post('/add/physicalEducationTeacher', ClassController.addPhysicalTeacher)
 routes.post('/remove/physicalEducationTeacher', ClassController.removePhysicalTeacher)
 
@@ -48,24 +51,34 @@ routes.post('/register/final-concepts', FinalConcepts.create)
 routes.post('/get/final-concepts', FinalConcepts.GetGradeFinalConcepts)
 routes.post('/get/card-final-concepts', FinalConcepts.GetFinalConcepts)
 routes.post('/update/final-concepts', FinalConcepts.update)
+
 routes.post('/final-concepts/daily', FinalConcepts.FinalConceptsDaily)
+routes.post('/final-concepts/daily-teacher02', FinalConcepts.FinalConceptsDailyTeacher02)
 
 routes.post('/register/istQuarter', BimonthlyController.createI_stQuarter)
+routes.post('/register/istQuarter_grade', BimonthlyController.createI_stQuarter$$grade)
 routes.post('/index/istQuarter', BimonthlyController.indexI_stQuarter)
 routes.get('/details/istQuarter/:id', BimonthlyController.getI_stQuarterById)
 routes.post('/update/istQuarter/:id', BimonthlyController.updateI_stQuarter)
+
 routes.post('/register/iindQuarter', BimonthlyController.createII_ndQuarter)
+routes.post('/register/iindQuarter_grade', BimonthlyController.createII_ndQuarter$$grade)
 routes.post('/index/iindQuarter', BimonthlyController.indexII_ndQuarter)
 routes.get('/details/iindQuarter/:id', BimonthlyController.getII_ndQuarterById)
 routes.post('/update/iindQuarter/:id', BimonthlyController.updateII_ndQuarter)
+
 routes.post('/register/iii_rdQuarter', BimonthlyController.createIII_rdQuarter)
+routes.post('/register/iii_rdQuarter_grade', BimonthlyController.createIII_rdQuarter$$grade)
 routes.post('/index/iii_rdQuarter', BimonthlyController.indexIII_rdQuarter)
 routes.get('/details/iiirdQuarter/:id', BimonthlyController.getIII_rdQuarterById)
 routes.post('/update/iiirdQuarter/:id', BimonthlyController.updateIII_rdQuarter)
+
 routes.post('/register/iv_thQuarter', BimonthlyController.createIV_thQuarter)
+routes.post('/register/iv_thQuarter_grade', BimonthlyController.createIV_thQuarter$$grade)
 routes.post('/index/iv_thQuarter', BimonthlyController.indexIV_thQuarter)
 routes.get('/details/ivthQuarter/:id', BimonthlyController.getIV_thQuarterById)
 routes.post('/update/ivthQuarter/:id', BimonthlyController.updateIV_thQuarter)
+
 routes.post('/register/v_thQuarter', BimonthlyController.createV_thQuarter)
 routes.post('/index/v_thQuarter', BimonthlyController.indexV_thQuarter)
 routes.get('/details/vthQuarter/:id', BimonthlyController.getV_thQuarterById)
@@ -85,17 +98,33 @@ routes.post('/reopen_iv_thQuarter/:id', BimonthlyController.reopenIV_thQuarter)
 routes.post('/toclose_iv_thQuarter/:id', BimonthlyController.tocloseIV_thQuarter)
 
 routes.post('/register/grade', GradeController.createGrade)
+routes.post('/register/numerical-grade', GradeController.createNumericalGrade)
+
 routes.post('/update/grade', GradeController.update)
+routes.post('/update/numerical-grade', GradeController.updateNumericalGrade)
 
 routes.post('/index/gradei', GradeController.indexIstQuarter)
+routes.post('/index/numerical-gradei', GradeController.indexNumericalIstQuarter)
+routes.post('/index/numerical-gradeii', GradeController.indexNumericalIIndQuarter)
+routes.post('/index/numerical-gradeiii', GradeController.indexNumericalIIIrdQuarter)
+routes.post('/index/numerical-gradeiv', GradeController.indexNumericalIVthQuarter)
+
 routes.post('/index/gradeii', GradeController.indexIIndQuarter)
 routes.post('/index/gradeiii', GradeController.indexIIIrdQuarter)
 routes.post('/index/gradeiv', GradeController.indexIVthQuarter)
 routes.post('/index/gradev', GradeController.indexVthQuarter)
 routes.post('/index/gradevi', GradeController.indexVIthQuarter)
+
+routes.post('/get-numerical-grade', GradeController.GetNumericalGrade)
 routes.post('/get-grade', GradeController.GetGrade)
+
 routes.post('/grade-daily', GradeController.IndexGradeDaily)
+routes.post('/grade-daily-teacher02', GradeController.IndexGradeDailyTeacher02)
+routes.post('/numerical-grade-daily', GradeController.IndexNumericalGradeDaily)
+
+routes.post('/numerical-grades-card', GradeController.indexNumericalGradesCard)
 routes.post('/grades-card', GradeController.indexGradesCard)
+
 routes.post('/grades', GradeController.indexGrades)
 
 /*routes.post('/card/I_st_quarter', ReportCardController.I_st_quarter)
@@ -155,5 +184,105 @@ routes.post('/form-edit', IndividualFormController.update)
 routes.post('/destroy/form', IndividualFormController.DestroyForm)
 
 routes.post('/delete/matter', MatterController.deleteMatter)
+
+//Rotas de controle de imagens
+
+const postFileLogo = require("./models/postFileLogo");
+const School = require("./models/School")
+
+const multer = require('multer')
+const multerConfig = require('./config/multer')
+
+routes.post("/post-file-logo/:id", multer(multerConfig).single("file"), async (req, res) => {
+
+    const { originalname: name, size, key, location: url = "" } = req.file;
+    
+    const { id } = req.params;
+
+    const post = new postFileLogo({
+        name,
+        size,
+        key,
+        url,
+        id_school: id
+    });
+
+    try {
+        const postLogo = await post.save()
+        await School.updateOne({
+            _id: id
+        }, {
+            $push: {
+                logo: postLogo._id   
+            }
+        })
+        res.status(200).json({
+            msg: ' sucesso.'
+        })
+    } catch (err){
+        res.status(500).json({
+            msg: 'Error.'
+        })
+    }
+});
+
+routes.post("/get-logo", async (req, res) => {
+
+    const { idlogo } = req.body;
+
+    const logo = await postFileLogo.findOne({ _id: idlogo });
+
+    console.log(logo)
+    //const posts = await PostFile.find();
+    const Logo = logo
+    return res.json({
+        Logo
+    });
+});
+
+routes.delete("/delete-logo/:id", async (req, res) => {
+    
+    const fs = require("fs");
+    const path = require("path");
+    const { promisify } = require("util");
+    const aws = require("aws-sdk");
+
+    const s3 = new aws.S3();
+    const { id_school } = req.body
+    const { id } = req.params;
+
+    const posts = await postFileLogo.findById(id);
+  
+    await School.updateOne({
+        _id: id_school
+    }, {
+        $pull: {
+            logo: posts._id      
+        }
+    })
+    
+    await posts.deleteOne();
+
+    if (process.env.STORAGE_TYPE === "s3") {
+        s3.deleteObject({
+            Bucket: process.env.BUCKET_NAME,
+            Key: posts.key
+        })
+        .promise()
+        .then(response => {
+            console.log(response.status);
+        })
+        .catch(response => {
+            console.log(response.status);
+        });
+        return res.send();
+    } else {
+        promisify(fs.unlink)(
+          path.resolve(__dirname,  "..", "tmp", "uploads", posts.key)
+        )
+        return res.send();
+    }
+});
+
 
 module.exports = routes
