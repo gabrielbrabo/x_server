@@ -1,8 +1,201 @@
 const Grade = require("../models/Grade")
+const Activities = require("../models/Activities")
 const NumericalGrade = require("../models/NumericalGrade")
 const Student = require("../models/Student")
 
 class GradeController {
+
+    async createActivity(req, res) {
+        const { year, bimonthly, descricao, tipo, valor, id_iStQuarter, id_iiNdQuarter, id_iiiRdQuarter, id_ivThQuarter, id_vThQuarter, id_viThQuarter, id_teacher, id_teacher02, id_matter, id_class } = req.body;
+        console.log("queisição", req.body)
+        // validations
+        if (!year) {
+            return res.status(422).json({ msg: "O RE do estudante é obrigatório!" });
+        }
+        if (!valor) {
+            return res.status(422).json({ msg: "O valor é obrigatório!" });
+        }
+
+        const user = new Activities({
+            year: year,
+            bimonthly: bimonthly,
+            descricao: descricao,
+            tipo: tipo,
+            valor: valor,
+            id_teacher02,
+            id_teacher: id_teacher,
+            id_matter: id_matter,
+            id_class: id_class,
+            id_iStQuarter: id_iStQuarter,
+            id_iiNdQuarter: id_iiNdQuarter,
+            id_iiiRdQuarter: id_iiiRdQuarter,
+            id_ivThQuarter: id_ivThQuarter,
+            id_vThQuarter: id_vThQuarter,
+            id_viThQuarter: id_viThQuarter,
+        });
+
+        try {
+
+            const activity = await user.save()
+
+            /*await Student.updateOne({
+                _id: id_student
+            }, {
+                $push: {
+                    id_grade: grade._id
+                }
+            })*/
+            res.status(200).json({
+                msg: 'Conta profissional cadastrado com sucesso.',
+                activity: activity._id
+            })
+
+        } catch (err) {
+            console.error("Erro ao cadastrar atividade:", err); // Mostra erro detalhado no terminal
+            res.status(500).json({
+                msg: 'Error ao cadastra uma Conta profissional.'
+            })
+        }
+    }
+
+    async GetActivity(req, res) {
+
+        const { year, bimonthly, id_matter, id_class } = req.body;
+
+        const grade = await Activities.find({
+            id_class: id_class,
+            id_matter: id_matter
+        }).populate('id_matter').populate('id_teacher').populate('id_teacher02').populate('id_class').populate('id_iStQuarter').populate('id_iiNdQuarter').populate('id_iiiRdQuarter').populate('id_ivThQuarter').populate('id_vThQuarter').populate('id_viThQuarter')
+
+        const grd = grade.map(res => {
+            if (res.year == year) {
+                if (res.bimonthly == bimonthly) {
+                    return res
+                }
+            }
+        }).filter(res => {
+            if (res != null) {
+                return res
+            }
+        })
+        console.log("grade", grade)
+        console.log("grd", grd)
+        try {
+            if (grd) {
+                return res.json({
+                    data: grd,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+
+    async updateAvaliação(req, res) {
+
+        const {
+            UpdateIdActivity,
+            EditedDescription,
+            EditedTipo,
+            EditedValor
+        } = req.body;
+
+        const activities = await Activities.findByIdAndUpdate(
+            UpdateIdActivity,
+            {
+                descricao: EditedDescription,
+                tipo: EditedTipo,
+                valor: EditedValor
+            },
+            { new: true }
+        );
+
+        try {
+            if (!activities) {
+                return res.status(404).json({ message: 'Student Grade not found' });
+            }
+            res.json(activities);
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+
+    async DestroyActivity(req, res) {
+        const { idActivity } = req.body;
+        console.log("req.body", req.body)
+        // validations
+        if (!idActivity) {
+            return res.status(422).json({ msg: "O id da aula é obrigatório!" });
+        }
+
+        // Check if the student is already registered in a class
+        const activities = await Activities.findOne({
+            _id: idActivity
+        })//.populate('id_teacher')
+        /*const Grades = await NumericalGrade.findOne({
+            idActivity: idActivity
+        })*///.populate('id_teacher')
+
+
+        try {
+
+            await activities.deleteOne()
+            await NumericalGrade.deleteMany({ idActivity: idActivity });
+            res.status(200).json({
+                msg: 'Avaliação removida com sucesso.'
+            })
+        } catch (err) {
+            res.status(500).json({
+                msg: 'Error ao cadastra uma turma.'
+            })
+        }
+    }
+
+    async GetGradeActivity(req, res) {
+        const { id_activity } = req.body;  // Corrigido aqui
+        console.log("req.body", req.body.id_activity);
+
+        try {
+            const activity = await Activities.find({
+                _id: id_activity
+            })
+                .populate('studentGrades')
+                .populate('id_matter')
+                .populate('id_teacher')
+                .populate('id_class')
+                .populate('id_iStQuarter')
+                .populate('id_iiNdQuarter')
+                .populate('id_iiiRdQuarter')
+                .populate('id_ivThQuarter')
+                .populate('id_vThQuarter')
+                .populate('id_viThQuarter');
+
+            console.log("activity", activity);
+
+            if (activity) {
+                return res.json({
+                    data: activity,
+                    message: 'Success'
+                });
+            } else {
+                return res.status(404).json({
+                    message: 'Activity not found'
+                });
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({
+                message: 'There was an error on the server side!'
+            });
+        }
+    }
 
     async createGrade(req, res) {
         const { year, bimonthly, /*totalGrade, averageGrade,*/ studentGrade, id_iStQuarter, id_iiNdQuarter, id_iiiRdQuarter, id_ivThQuarter, id_vThQuarter, id_viThQuarter, id_student, id_teacher, id_teacher02, id_matter, id_class } = req.body;
@@ -73,6 +266,7 @@ class GradeController {
                     bimonthly,
                     value,  // Aqui está a nota do aluno
                     studentId,  // Nome correto do campo vindo do frontend
+                    idActivity,
                     id_teacher,
                     id_teacher02,
                     id_matter,
@@ -92,7 +286,7 @@ class GradeController {
                 // Cria um novo documento no banco
                 const grade = new NumericalGrade({
                     year,
-                    bimonthly: bimonthly.toUpperCase(),
+                    bimonthly: bimonthly,
                     studentGrade: value,
                     status: 'ABERTO',
                     id_iStQuarter,
@@ -102,6 +296,7 @@ class GradeController {
                     id_vThQuarter,
                     id_viThQuarter,
                     id_student: studentId,  // Corrigido para 'studentId'
+                    idActivity,
                     id_teacher,
                     id_teacher02,
                     id_matter,
@@ -116,6 +311,10 @@ class GradeController {
                 await Student.updateOne(
                     { _id: studentId },  // Corrigido para 'studentId'
                     { $push: { numericalGrades: savedGrade._id } }
+                );
+                await Activities.updateOne(
+                    { _id: idActivity },  // Corrigido para 'studentId'
+                    { $push: { studentGrades: savedGrade._id } }
                 );
             }
 
@@ -168,8 +367,50 @@ class GradeController {
                 message: 'there was an error on server side!'
             })
         }
-    }
+    } 
+
     async GetNumericalGrade(req, res) {
+        const { id_activity } = req.body;  // Corrigido aqui
+        console.log("req.body", req.body.id_activity);
+
+        try {
+            const activity = await NumericalGrade.find({
+                idActivity: id_activity
+            })
+                .populate('id_student')
+                .populate('id_matter')
+                .populate('id_teacher')
+                .populate('id_teacher02')
+                .populate('idActivity')
+                .populate('id_class')
+                .populate('id_iStQuarter')
+                .populate('id_iiNdQuarter')
+                .populate('id_iiiRdQuarter')
+                .populate('id_ivThQuarter')
+                .populate('id_vThQuarter')
+                .populate('id_viThQuarter');
+
+            console.log("activity", activity);
+
+            if (activity) {
+                return res.json({
+                    data: activity,
+                    message: 'Success'
+                });
+            } else {
+                return res.status(404).json({
+                    message: 'Activity not found'
+                });
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({
+                message: 'There was an error on the server side!'
+            });
+        }
+    }
+
+    async GetNumGrade (req, res) {
 
         const { year, bimonthly, id_student } = req.body;
 

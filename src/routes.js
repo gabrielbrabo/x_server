@@ -97,6 +97,12 @@ routes.post('/toclose_iii_rdQuarter/:id', BimonthlyController.tocloseIII_rdQuart
 routes.post('/reopen_iv_thQuarter/:id', BimonthlyController.reopenIV_thQuarter)
 routes.post('/toclose_iv_thQuarter/:id', BimonthlyController.tocloseIV_thQuarter)
 
+routes.post('/create-activity', GradeController.createActivity)
+routes.post('/get-activity', GradeController.GetActivity)
+routes.post('/update-avaliacao', GradeController.updateAvaliação)
+routes.post('/destroy-activity', GradeController.DestroyActivity)
+routes.post('/get-grade-activity', GradeController.GetGradeActivity)
+
 routes.post('/register/grade', GradeController.createGrade)
 routes.post('/register/numerical-grade', GradeController.createNumericalGrade)
 
@@ -116,6 +122,7 @@ routes.post('/index/gradev', GradeController.indexVthQuarter)
 routes.post('/index/gradevi', GradeController.indexVIthQuarter)
 
 routes.post('/get-numerical-grade', GradeController.GetNumericalGrade)
+routes.post('/get-num-grade', GradeController.GetNumGrade)
 routes.post('/get-grade', GradeController.GetGrade)
 
 routes.post('/grade-daily', GradeController.IndexGradeDaily)

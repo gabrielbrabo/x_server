@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 
-const numericalGrade_schema = new mongoose.Schema(
+const ActivitySchema = new mongoose.Schema(
     {
         year: {
             type: String,
@@ -9,17 +9,16 @@ const numericalGrade_schema = new mongoose.Schema(
         bimonthly: {
             type: String,
         },
-        totalGrade: {
-            type: String,
-            //required: true,
-        },
-        averageGrade: {
-            type: String,
-            //required: true,
-        },
-        studentGrade: {
+        descricao: {
             type: String,
             required: true,
+        },
+        tipo: {
+            type: String,
+        },
+        valor: {
+            type: Number,
+            min: 0,
         },
         status: {
             type: String,
@@ -52,14 +51,12 @@ const numericalGrade_schema = new mongoose.Schema(
             type: mongoose.Types.ObjectId,
             ref: 'matter'
         },
-        id_student: {
-            type: mongoose.Types.ObjectId,
-            ref: 'student'
-        },
-        idActivity: {
-            type: mongoose.Types.ObjectId,
-            ref: 'Activity'
-        },
+        studentGrades: [
+            {
+                type: mongoose.Types.ObjectId,
+                ref: 'numericalGrade'
+            }
+        ],
         id_teacher: {
             type: mongoose.Types.ObjectId,
             ref: 'employee'
@@ -69,7 +66,7 @@ const numericalGrade_schema = new mongoose.Schema(
             ref: 'employee'
         },
         id_class: {
-            type: mongoose.Types.ObjectId, 
+            type: mongoose.Types.ObjectId,
             ref: 'class',
         },
     },
@@ -78,4 +75,4 @@ const numericalGrade_schema = new mongoose.Schema(
     }
 );
 
-module.exports = mongoose.model("numericalGrade", numericalGrade_schema);
+module.exports = mongoose.model("Activity", ActivitySchema);
