@@ -279,7 +279,7 @@ class GradeController {
                     id_viThQuarter
                 } = gradeData;
 
-                if (!year || !value) {  // Corrigido para usar 'value' que é a nota
+                if (!year ) {  // Corrigido para usar 'value' que é a nota
                     return res.status(422).json({ msg: "Ano e nota do estudante são obrigatórios!" });
                 }
 
@@ -524,7 +524,7 @@ class GradeController {
 
         const { year, id_student } = req.body;
 
-        const grade = await NumericalGrade.find({ id_student: id_student }).populate('id_student');
+        const grade = await NumericalGrade.find({ id_student: id_student }).populate('id_student').populate('id_matter').populate('id_teacher').populate('id_class').populate('id_iStQuarter').populate('id_iiNdQuarter').populate('id_iiiRdQuarter').populate('id_ivThQuarter').populate('id_vThQuarter').populate('id_viThQuarter');
 
         console.log("grade", grade)
 

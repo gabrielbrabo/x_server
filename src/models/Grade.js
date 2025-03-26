@@ -19,7 +19,7 @@ const grade_schema = new mongoose.Schema(
         },
         studentGrade: {
             type: String,
-            required: true,
+            //required: true,
         },
         status: {
             type: String,
