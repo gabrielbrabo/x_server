@@ -1,6 +1,7 @@
 const School = require("../models/School")
 const Student = require("../models/Student")
 const Attendance = require("../models/Attendance")
+const Class = require("../models/Class")
 const bcrypt = require('bcryptjs')
 
 class StudentController {
@@ -81,7 +82,7 @@ class StudentController {
         if (userExists) {
             return res.status(422).json({ msg: "Esse estudante ja esta cadastrado!" });
         }
-        
+
         // create user
         const user = new Student({
             name: name.toUpperCase(),
@@ -131,11 +132,11 @@ class StudentController {
         try {
             const student = await School.findById({
                 _id: idSchool
-            }).populate('id_student')
+            }).populate('id_student').populate('id_class')
 
             if (student) {
                 return res.json({
-                    data: student.id_student,
+                    data: student,
                     message: 'Sucess'
                 })
             }
@@ -253,6 +254,77 @@ class StudentController {
         } catch (err) {
             console.error(err);
             return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async updateStatus(req, res) {
+        const { id_student, status, exitDate } = req.body;
+        const validStatuses = ["ativo", "transferido", "inativo"];
+
+        console.log("id_student", id_student, "status", status, "exitDate",  exitDate)
+
+        // Verifica se o status enviado é válido
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ message: "Status inválido" });
+        }
+
+        const student = await Student.findById(id_student);
+        if (!student) {
+            return res.status(404).json({ message: "Aluno não encontrado" });
+        }
+
+        // Obtém o ID da turma do aluno
+        const studentClassId = student.id_class;
+        console.log("ID da Turma:", studentClassId);
+
+        try {
+
+            // Define a data de saída se o aluno for transferido ou inativado
+           // const exitDate = (status === "transferido" || status === "inativo") ? new Date() : null;
+            
+            if (status === "ativo") {
+            await Student.updateOne(
+                { _id: id_student },
+                {
+                    $set: {
+                        status: status,
+                        departureDate: null
+                    }
+                }
+            );
+        }
+
+            if (status === "transferido" || status === "inativo") {
+                // Atualiza o status do aluno
+                await Student.updateOne(
+                    { _id: id_student },
+                    {
+                        $set: {
+                            status: status,
+                            departureDate: exitDate
+                        },
+                        ...(status === "transferido" && { $pull: { id_class: { $in: studentClassId } } }) // Remove turma apenas se não estiver ativando
+                    }
+                );
+            }
+
+            // Se for transferido, adiciona o aluno à lista de transferências
+            if (status === "transferido") {
+
+                await Class.updateOne(
+                    { _id: studentClassId },
+                    { $pull: { id_student: id_student } }
+                );
+
+                await Class.updateOne(
+                    { _id: studentClassId },
+                    { $push: { transferStudents: id_student } }
+                );
+            }
+
+            res.json({ message: "Status atualizado com sucesso!", /*student*/ });
+        } catch (error) {
+            res.status(500).json({ message: "Erro ao atualizar status", error });
         }
     }
 

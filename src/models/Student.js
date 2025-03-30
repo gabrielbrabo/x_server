@@ -115,11 +115,8 @@ const studentschema = new mongoose.Schema(
                 type: mongoose.Types.ObjectId,
                 ref: 'IndividualForm'
             }
-        ],/*
-        status: {
-            type: String,
-            enum: ["active", "inactive"],
-        },*/
+        ],
+        status: { type: String, enum: ["ativo", "transferido", "inativo"], default: "ativo" }
     },
     {
         timestamps: true

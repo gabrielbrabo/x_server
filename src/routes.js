@@ -38,6 +38,8 @@ routes.post('/register/class/:id', ClassController.create)
 routes.post('/register/student/:id', StudentController.create)
 
 routes.post('/add/student', ClassController.addStudent)
+routes.post('/returned-studen', ClassController.returnedStudent)
+
 routes.post('/add/teacher', ClassController.addTeacher)
 routes.post('/add/teacher02', ClassController.addTeacher02)
 routes.post('/add/physicalEducationTeacher', ClassController.addPhysicalTeacher)
@@ -152,6 +154,8 @@ routes.get('/check-employee/:cpf', EmployeeController.EmpExist)
 
 routes.get('/student-details/:id', StudentController. getStudentById)
 routes.post('/student-update/:id', StudentController.updateStudent)
+routes.post('/status-update', StudentController.updateStatus)
+
 routes.get('/class-details/:id', ClassController.getclassById)
 routes.post('/class-update/:id', ClassController.updateClass)
 routes.post('/student', StudentController.index)

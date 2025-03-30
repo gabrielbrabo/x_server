@@ -32,6 +32,12 @@ const classschema = new mongoose.Schema(
                 ref: 'student'
             }
         ],
+        transferStudents: [
+            {
+                type: mongoose.Types.ObjectId,
+                ref: 'student'
+            }
+        ],
         id_employee: [
             {
                 type: mongoose.Types.ObjectId,

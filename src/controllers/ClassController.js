@@ -1,15 +1,15 @@
-const Class = require( "../models/Class")
-const School = require( "../models/School")
-const Student = require( "../models/Student")
-const Employee = require( "../models/Employee");
-const AddTeacher = require( "../models/AddTeacher");
+const Class = require("../models/Class")
+const School = require("../models/School")
+const Student = require("../models/Student")
+const Employee = require("../models/Employee");
+const AddTeacher = require("../models/AddTeacher");
 const modelClass = require("../models/Class");
 const Matter = require("../models/Matter");
 
 class ClassController {
-  
+
     async create(req, res) {
-        const { year, serie, level, shift, classroom_number} = req.body;
+        const { year, serie, level, shift, classroom_number } = req.body;
 
         const { id } = req.params;
 
@@ -32,8 +32,8 @@ class ClassController {
 
         if (!id) {
             return res
-            .status(422)
-            .json({ msg: "Id da escola e obrigatorio!" });
+                .status(422)
+                .json({ msg: "Id da escola e obrigatorio!" });
         }
 
         // check if class exists
@@ -43,20 +43,20 @@ class ClassController {
 
         if (clss) {
 
-            const Res = clss.map( result => {
-                if(result.serie == serie.toUpperCase()) {
+            const Res = clss.map(result => {
+                if (result.serie == serie.toUpperCase()) {
                     return result.year
                 }
             })
-            
-            if (Res) { 
+
+            if (Res) {
                 const fil = Res.filter((fill) => {
-                    if(fill == year) {
+                    if (fill == year) {
                         return fill
                     }
                 })
                 console.log("filter", fil)
-                if(fil.length > 0) {    
+                if (fil.length > 0) {
                     return res.status(422).json({ msg: "Essa truma ja esta cadastrada!" });
                 }
             }
@@ -65,30 +65,30 @@ class ClassController {
 
         // create user
         const newclass = new Class({
-            year: year, 
-            serie: serie.toUpperCase(), 
-            level: level.toUpperCase(), 
-            shift: shift.toUpperCase(), 
+            year: year,
+            serie: serie.toUpperCase(),
+            level: level.toUpperCase(),
+            shift: shift.toUpperCase(),
             classroom_number: classroom_number,
             id_school: id
         })
 
         try {
-            
+
             const newClass = await newclass.save()
-            
+
             await School.updateOne({
                 _id: id
             }, {
                 $push: {
-                    id_class: newClass._id      
+                    id_class: newClass._id
                 }
             })
             res.status(200).json({
                 msg: 'Turma cadastrado com sucesso.'
             })
 
-        } catch (err){
+        } catch (err) {
             res.status(500).json({
                 msg: 'Error ao cadastra uma turma.'
             })
@@ -97,7 +97,7 @@ class ClassController {
 
     async index(req, res) {
 
-        const {idSchool} = req.body;
+        const { idSchool } = req.body;
 
         try {
             const clss = await School.findById({
@@ -126,7 +126,9 @@ class ClassController {
             const clss = await Class.findById({
                 _id: id
             }).populate('id_student').populate('id_employee')
-              .populate('id_matter').populate('classRegentTeacher').populate('classRegentTeacher02').populate('physicalEducationTeacher')
+                .populate('id_matter').populate('classRegentTeacher')
+                .populate('classRegentTeacher02').populate('physicalEducationTeacher')
+                .populate('transferStudents')
             if (clss) {
                 return res.json({
                     data: [clss],
@@ -155,44 +157,44 @@ class ClassController {
         // Check if the student is already registered in a class
         const student = await Student.find({ _id: id_student });
         //console.log("filter", student)
-        if(student){
-            const stdt = student.map(clss =>{
+        if (student) {
+            const stdt = student.map(clss => {
                 return clss.id_class
             })
-            
+
             const filter = stdt.find(fill => {
                 return fill
             })
             console.log("filter", filter)
-           
-            if(filter.length > 0){
+
+            if (filter.length > 0) {
                 console.log("filter01", filter)
                 const cla = await modelClass.find({ _id: filter });
-                
+
                 //const date = new Date();
                 const currentYear = new Date().getFullYear();
 
-                const result = cla.map(clss =>{
+                const result = cla.map(clss => {
                     return clss.year
                 })
 
-                if(currentYear == result) {
+                if (currentYear == result) {
                     //console.log("currentYear", currentYear)
                     //console.log("filter", result)
-                    return res.status(422).json({result, msg: "Esse aluno ja esta cadastrado em uma turma!" }); 
-                }            
+                    return res.status(422).json({ result, msg: "Esse aluno ja esta cadastrado em uma turma!" });
+                }
             }
             console.log("filter02", filter)
-            
+
         }
         //console.log(filter)
         try {
-            
+
             await Student.updateOne({
                 _id: id_student
             }, {
                 $push: {
-                    id_class: id_class      
+                    id_class: id_class
                 }
             })
 
@@ -200,14 +202,14 @@ class ClassController {
                 _id: id_class
             }, {
                 $push: {
-                    id_student: id_student      
+                    id_student: id_student
                 }
             })
             res.status(200).json({
                 msg: 'Turma cadastrado com sucesso.'
             })
 
-        } catch (err){
+        } catch (err) {
             res.status(500).json({
                 msg: 'Error ao cadastra uma turma.'
             })
@@ -227,16 +229,16 @@ class ClassController {
 
         // Check if the student is already registered in a class
         const student = await Student.find({ _id: id_student });
-        if(! student) {
+        if (!student) {
             return res.status(422).json({ msg: "O estudante não existe!" });
         }
         try {
-            
+
             await Student.updateOne({
                 _id: id_student
             }, {
                 $pull: {
-                    id_class: id_class      
+                    id_class: id_class
                 }
             })
 
@@ -244,20 +246,20 @@ class ClassController {
                 _id: id_class
             }, {
                 $pull: {
-                    id_student: id_student      
+                    id_student: id_student
                 }
             })
             res.status(200).json({
                 msg: 'Estudante removido com sucesso.'
             })
 
-        } catch (err){
+        } catch (err) {
             res.status(500).json({
                 msg: 'Error ao cadastra uma turma.'
             })
         }
     }
-    
+
     async removeTeacher(req, res) {
         const { id_teacher, id_class, /*id_matter, addTeacher*/ } = req.body;
         // validations
@@ -269,20 +271,20 @@ class ClassController {
         }
 
         try {
-            
+
             await modelClass.updateOne({
                 _id: id_class
             }, {
                 $pull: {
-                    id_employee: id_teacher      
+                    id_employee: id_teacher
                 }
             })
-            
+
             await modelClass.updateOne({
                 _id: id_class
             }, {
                 $pull: {
-                    classRegentTeacher: id_teacher      
+                    classRegentTeacher: id_teacher
                 }
             })
 
@@ -290,16 +292,16 @@ class ClassController {
                 _id: id_teacher
             }, {
                 $pull: {
-                    id_class: id_class      
+                    id_class: id_class
                 }
             })
-           console.log('emp', id_teacher)
-           console.log('class', id_class)
+            console.log('emp', id_teacher)
+            console.log('class', id_class)
             res.status(200).json({
                 msg: 'Estudante removido com sucesso.'
             })
 
-        } catch (err){
+        } catch (err) {
             res.status(500).json({
                 msg: 'Error ao cadastra uma turma.'
             })
@@ -307,7 +309,7 @@ class ClassController {
     }
 
     async addTeacher(req, res) {
-        const { id_employee, id_class, /*id_matter*/} = req.body;
+        const { id_employee, id_class, /*id_matter*/ } = req.body;
 
         // validations
         if (!id_employee) {
@@ -323,25 +325,25 @@ class ClassController {
         }*/
 
         // Check if the student is already registered in a class
-        const clss = await Class.find({ _id: id_class});
+        const clss = await Class.find({ _id: id_class });
         const currentYear = new Date().getFullYear()
         if (clss) {
             const cl = clss.map(result => {
                 return result.year
             })
-            if(cl != currentYear) {
+            if (cl != currentYear) {
                 return res.status(422).json({ msg: "Essa turma não e atual!" });
             }
             console.log("cl", cl)
             console.log("currentYear", currentYear)
-            const teacher = clss.find( tchr => {
+            const teacher = clss.find(tchr => {
                 return tchr
-            }).id_employee.filter( res => {
+            }).id_employee.filter(res => {
                 return res == id_employee
             })
 
-            if(teacher.length > 0) { 
-                console.log("filter", teacher)   
+            if (teacher.length > 0) {
+                console.log("filter", teacher)
                 return res.status(422).json({ msg: "Esse Professor ja esta cadastrado nessa turma!" });
             }
 
@@ -349,12 +351,12 @@ class ClassController {
         }
 
         try {
-            
+
             await Employee.updateOne({
                 _id: id_employee
             }, {
                 $push: {
-                    id_class: id_class      
+                    id_class: id_class
                 }
             })
 
@@ -362,7 +364,7 @@ class ClassController {
                 _id: id_class
             }, {
                 $push: {
-                    id_employee: id_employee,    
+                    id_employee: id_employee,
                 }
             })
 
@@ -370,39 +372,39 @@ class ClassController {
                 _id: id_class
             }, {
                 $push: {
-                    classRegentTeacher: id_employee,    
+                    classRegentTeacher: id_employee,
                 }
             })
 
-           /* await Matter.updateOne({
-                _id: id_matter
-            }, {
-                $push: {
-                    id_class: id_class      
-                }
-            })
-
-            await Class.updateOne({
-                _id: id_class
-            }, {
-                $push: {
-                    id_matter: id_matter      
-                }
-            })*/
+            /* await Matter.updateOne({
+                 _id: id_matter
+             }, {
+                 $push: {
+                     id_class: id_class      
+                 }
+             })
+ 
+             await Class.updateOne({
+                 _id: id_class
+             }, {
+                 $push: {
+                     id_matter: id_matter      
+                 }
+             })*/
 
             res.status(200).json({
                 msg: 'Turma cadastrado com sucesso.'
             })
 
-        } catch (err){
+        } catch (err) {
             res.status(500).json({
                 msg: 'Error ao cadastra uma turma.'
             })
         }
     }
-    
+
     async addTeacher02(req, res) {
-        const { id_employee, id_class, /*id_matter*/} = req.body;
+        const { id_employee, id_class, /*id_matter*/ } = req.body;
 
         // validations
         if (!id_employee) {
@@ -414,25 +416,25 @@ class ClassController {
         }
 
         // Check if the student is already registered in a class
-        const clss = await Class.find({ _id: id_class});
+        const clss = await Class.find({ _id: id_class });
         const currentYear = new Date().getFullYear()
         if (clss) {
             const cl = clss.map(result => {
                 return result.year
             })
-            if(cl != currentYear) {
+            if (cl != currentYear) {
                 return res.status(422).json({ msg: "Essa turma não e atual!" });
             }
             console.log("cl", cl)
             console.log("currentYear", currentYear)
-            const teacher = clss.find( tchr => {
+            const teacher = clss.find(tchr => {
                 return tchr
-            }).id_employee.filter( res => {
+            }).id_employee.filter(res => {
                 return res == id_employee
             })
 
-            if(teacher.length > 0) { 
-                console.log("filter", teacher)   
+            if (teacher.length > 0) {
+                console.log("filter", teacher)
                 return res.status(422).json({ msg: "Esse Professor ja esta cadastrado nessa turma!" });
             }
 
@@ -440,12 +442,12 @@ class ClassController {
         }
 
         try {
-            
+
             await Employee.updateOne({
                 _id: id_employee
             }, {
                 $push: {
-                    id_class: id_class      
+                    id_class: id_class
                 }
             })
 
@@ -453,7 +455,7 @@ class ClassController {
                 _id: id_class
             }, {
                 $push: {
-                    id_employee: id_employee,    
+                    id_employee: id_employee,
                 }
             })
 
@@ -461,7 +463,7 @@ class ClassController {
                 _id: id_class
             }, {
                 $push: {
-                    classRegentTeacher02: id_employee,    
+                    classRegentTeacher02: id_employee,
                 }
             })
 
@@ -469,13 +471,13 @@ class ClassController {
                 msg: 'Turma cadastrado com sucesso.'
             })
 
-        } catch (err){
+        } catch (err) {
             res.status(500).json({
                 msg: 'Error ao cadastra uma turma.'
             })
         }
     }
-    
+
     async addPhysicalTeacher(req, res) {
         const { id_employee, id_class, } = req.body;
 
@@ -493,25 +495,25 @@ class ClassController {
         }*/
 
         // Check if the student is already registered in a class
-        const clss = await Class.find({ _id: id_class});
+        const clss = await Class.find({ _id: id_class });
         const currentYear = new Date().getFullYear()
         if (clss) {
             const cl = clss.map(result => {
                 return result.year
             })
-            if(cl != currentYear) {
+            if (cl != currentYear) {
                 return res.status(422).json({ msg: "Essa turma não e atual!" });
             }
             console.log("cl", cl)
             console.log("currentYear", currentYear)
-            const teacher = clss.find( tchr => {
+            const teacher = clss.find(tchr => {
                 return tchr
-            }).id_employee.filter( res => {
+            }).id_employee.filter(res => {
                 return res == id_employee
             })
 
-            if(teacher.length > 0) { 
-                console.log("filter", teacher)   
+            if (teacher.length > 0) {
+                console.log("filter", teacher)
                 return res.status(422).json({ msg: "Esse Professor ja esta cadastrado nessa turma!" });
             }
 
@@ -519,12 +521,12 @@ class ClassController {
         }
 
         try {
-            
+
             await Employee.updateOne({
                 _id: id_employee
             }, {
                 $push: {
-                    id_class: id_class      
+                    id_class: id_class
                 }
             })
 
@@ -532,7 +534,7 @@ class ClassController {
                 _id: id_class
             }, {
                 $push: {
-                    id_employee: id_employee,    
+                    id_employee: id_employee,
                 }
             })
 
@@ -540,31 +542,31 @@ class ClassController {
                 _id: id_class
             }, {
                 $push: {
-                    physicalEducationTeacher: id_employee,    
+                    physicalEducationTeacher: id_employee,
                 }
             })
 
-           /* await Matter.updateOne({
-                _id: id_matter
-            }, {
-                $push: {
-                    id_class: id_class      
-                }
-            })
-
-            await Class.updateOne({
-                _id: id_class
-            }, {
-                $push: {
-                    id_matter: id_matter      
-                }
-            })*/
+            /* await Matter.updateOne({
+                 _id: id_matter
+             }, {
+                 $push: {
+                     id_class: id_class      
+                 }
+             })
+ 
+             await Class.updateOne({
+                 _id: id_class
+             }, {
+                 $push: {
+                     id_matter: id_matter      
+                 }
+             })*/
 
             res.status(200).json({
                 msg: 'Turma cadastrado com sucesso.'
             })
 
-        } catch (err){
+        } catch (err) {
             res.status(500).json({
                 msg: 'Error ao cadastra uma turma.'
             })
@@ -582,20 +584,20 @@ class ClassController {
         }
 
         try {
-            
+
             await modelClass.updateOne({
                 _id: id_class
             }, {
                 $pull: {
-                    id_employee: id_teacher      
+                    id_employee: id_teacher
                 }
             })
-            
+
             await modelClass.updateOne({
                 _id: id_class
             }, {
                 $pull: {
-                    physicalEducationTeacher: id_teacher      
+                    physicalEducationTeacher: id_teacher
                 }
             })
 
@@ -603,30 +605,30 @@ class ClassController {
                 _id: id_teacher
             }, {
                 $pull: {
-                    id_class: id_class      
+                    id_class: id_class
                 }
             })
-           console.log('emp', id_teacher)
-           console.log('class', id_class)
+            console.log('emp', id_teacher)
+            console.log('class', id_class)
             res.status(200).json({
                 msg: 'Estudante removido com sucesso.'
             })
 
-        } catch (err){
+        } catch (err) {
             res.status(500).json({
                 msg: 'Error ao cadastra uma turma.'
             })
         }
     }
-    
+
     async getclassById(req, res) {
         try {
             const cla$$ = await Class.findById(req.params.id);
             if (!cla$$) {
-              return res.status(404).json({ error: 'Employee not found' });
+                return res.status(404).json({ error: 'Employee not found' });
             }
             res.json(cla$$);
-          }catch (err) {
+        } catch (err) {
             console.error(err);
             return res.status(500).json({ error: "Internal Server Error" });
         }
@@ -637,7 +639,7 @@ class ClassController {
             const { id } = req.params;
             const cla$$ = await Class.findByIdAndUpdate(id, req.body, { new: true });
             if (!cla$$) {
-              return res.status(404).json({ error: 'Employee not found' });
+                return res.status(404).json({ error: 'Employee not found' });
             }
             res.json(cla$$);
         } catch (err) {
@@ -650,19 +652,72 @@ class ClassController {
         try {
             const { id } = req.params;
             const cla$$ = await Class.findById(id);
-    
+
             if (!cla$$) {
                 return res.status(404).json();
             }
-    
+
             await cla$$.deleteOne();
-    
+
             return res.status(200).json();
         } catch (err) {
             console.error(err);
             return res.status(500).json({ error: "Internal Server Error" });
         }
     }
+    async returnedStudent(req, res) {
+        try {
+            const { id_student, id_class } = req.body;
+            console.log( 'res', req.body)
+            try {// Encontra a turma pelo ID
+                const classData = await modelClass.findById(id_class);
+                if (!classData) {
+                    return res.status(404).json({ error: "Turma não encontrada" });
+                }
+
+                // Verifica se o aluno está na lista de transferidos
+                if (!classData.transferStudents.includes(id_student)) {
+                    return res.status(400).json({ error: "Aluno não está na lista de transferidos" });
+                }
+
+                // Remove o aluno do array de transferidos
+                await modelClass.updateOne({
+                    _id: id_class
+                }, {
+                    $pull: {
+                        transferStudents: id_student
+                    }
+                })
+
+                // Adiciona o aluno de volta à lista de alunos ativos
+                await modelClass.updateOne({
+                    _id: id_class
+                }, {
+                    $push: {
+                        id_student: id_student
+                    }
+                })
+
+                await Student.updateOne({
+                    _id: id_student
+                }, {
+                    $push: {
+                        id_class: id_class
+                    }
+                })
+
+                // Salva as alterações no banco de dados
+                return res.status(200).json({ success: true, message: "Aluno retornado com sucesso" });
+
+            } catch (err) {
+                console.error(err);
+                return res.status(500).json({ error: "Erro interno do servidor" });
+            }
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
 }
-  
+
 module.exports = new ClassController();
