@@ -38,6 +38,7 @@ routes.post('/register/class/:id', ClassController.create)
 routes.post('/register/student/:id', StudentController.create)
 
 routes.post('/add/student', ClassController.addStudent)
+routes.post('/reassign-student', ClassController.ReassignStudent)
 routes.post('/returned-studen', ClassController.returnedStudent)
 
 routes.post('/add/teacher', ClassController.addTeacher)

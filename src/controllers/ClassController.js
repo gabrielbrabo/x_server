@@ -665,10 +665,11 @@ class ClassController {
             return res.status(500).json({ error: "Internal Server Error" });
         }
     }
+
     async returnedStudent(req, res) {
         try {
             const { id_student, id_class } = req.body;
-            console.log( 'res', req.body)
+            console.log('res', req.body)
             try {// Encontra a turma pelo ID
                 const classData = await modelClass.findById(id_class);
                 if (!classData) {
@@ -708,6 +709,72 @@ class ClassController {
 
                 // Salva as alterações no banco de dados
                 return res.status(200).json({ success: true, message: "Aluno retornado com sucesso" });
+
+            } catch (err) {
+                console.error(err);
+                return res.status(500).json({ error: "Erro interno do servidor" });
+            }
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async ReassignStudent(req, res) {
+        try {
+            const { id_student, oldClass, newClass } = req.body;
+            console.log('res', req.body)
+            try {// Encontra a turma pelo ID
+                const classData = await modelClass.findById(newClass);
+                if (!classData) {
+                    return res.status(404).json({ error: "Turma não encontrada" });
+                }
+
+                const student = await Student.findById(id_student);
+                if (!student) {
+                    return res.status(404).json({ message: "Aluno não encontrado" });
+                }
+
+                // Remove o aluno do array de alunos
+                await modelClass.updateOne({
+                    _id: oldClass
+                }, {
+                    $pull: {
+                        id_student: id_student
+                    }
+                })
+
+                await modelClass.updateOne(
+                    { _id: oldClass },
+                    { $push: { transferStudents: id_student } }
+                );
+
+                await Student.updateOne({
+                    _id: id_student
+                }, {
+                    $pull: {
+                        id_class: oldClass
+                    }
+                })
+
+                await modelClass.updateOne({
+                    _id: newClass
+                }, {
+                    $push: {
+                        id_student: id_student
+                    }
+                })
+
+                await Student.updateOne({
+                    _id: id_student
+                }, {
+                    $push: {
+                        id_class: newClass
+                    }
+                })
+
+                // Salva as alterações no banco de dados
+                return res.status(200).json({ success: true, message: "Aluno remanejado com sucesso" });
 
             } catch (err) {
                 console.error(err);
