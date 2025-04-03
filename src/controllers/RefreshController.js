@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/Employee')
+const Employee = require('../models/Employee')
 const authConfig = require('../config/auth')
 
 class RefreshController {
@@ -25,6 +26,23 @@ class RefreshController {
         const id_matter = user.id_matter
         const id_class = user.id_class
         const id_reporter_card = user.id_reporter_card
+
+        const usersWithSameCpf = await Employee.find({ cpf: user.cpf });
+
+        if (usersWithSameCpf.length > 1) {
+            if (usersWithSameCpf.length > 1) {
+                const schools = usersWithSameCpf.map(user => user.id_school); // Adapte conforme necessário para pegar informações da escola
+                console.log("schools", schools);
+                return res.json({
+                    msg: "Você tem mais de uma escola registrada.",
+                    schools: schools.map(school => ({
+                        id: school,
+                        name: school.name, // Substitua pelo nome real da escola que você terá em seu banco de dados
+                        cpf: user.cpf
+                    })),
+                });
+            }
+        }
         
         return res.json({
             
