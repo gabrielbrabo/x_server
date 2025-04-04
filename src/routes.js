@@ -129,6 +129,7 @@ routes.post('/get-num-grade', GradeController.GetNumGrade)
 routes.post('/get-grade', GradeController.GetGrade)
 
 routes.post('/grade-daily', GradeController.IndexGradeDaily)
+routes.post('/activities-daily', GradeController.IndexActivitiesDaily)
 routes.post('/grade-daily-teacher02', GradeController.IndexGradeDailyTeacher02)
 routes.post('/numerical-grade-daily', GradeController.IndexNumericalGradeDaily)
 
