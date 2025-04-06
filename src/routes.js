@@ -48,6 +48,8 @@ routes.post('/remove/physicalEducationTeacher', ClassController.removePhysicalTe
 
 routes.post('/register/matter/:id', MatterController.create)
 routes.post('/add/matter', MatterController.addMatter)
+routes.post('/update/matter', MatterController.update)
+
 routes.post('/register/card', ReportCardController.create)
 
 routes.post('/register/final-concepts', FinalConcepts.create)

@@ -257,5 +257,24 @@ class MatterController {
             })
         }
     }
+
+    async update(req, res) {
+
+        const { update_Matter, update_Name } = req.body;
+
+        const matter = await Matter.findByIdAndUpdate(update_Matter, { name: update_Name }, { new: true });
+
+        try {
+            if (!matter) {
+                return res.status(404).json({ message: 'Matter not found' });
+            }
+            res.json(matter);
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
 }
 module.exports = new MatterController();
