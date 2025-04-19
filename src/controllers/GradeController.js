@@ -47,7 +47,7 @@ class GradeController {
             })*/
             res.status(200).json({
                 msg: 'Conta profissional cadastrado com sucesso.',
-                activity: activity._id
+                activity: activity
             })
 
         } catch (err) {

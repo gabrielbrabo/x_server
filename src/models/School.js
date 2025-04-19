@@ -22,7 +22,7 @@ const schoolschema = new mongoose.Schema(
             type: String,
             required: true
         },
-        avatar:{
+        avatar: {
             type: String,
             ref: 'PostFile',
         },
@@ -44,6 +44,10 @@ const schoolschema = new mongoose.Schema(
         logo: {
             type: mongoose.Types.ObjectId,
             ref: 'FileLogo'
+        },
+        educationDepartment: {
+            type: mongoose.Types.ObjectId,
+            ref: 'education-department'
         },
         id_employee: [
             {

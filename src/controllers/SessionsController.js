@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const EducationDepartment = require('../models/EducationDepartment')
 const User = require('../models/School')
 const Employee = require('../models/Employee')
 const authConfig = require('../config/auth')
@@ -168,6 +169,42 @@ class SessionController {
         });
     }
 
+    async sessionEducationDepartment(req, res) {
+        const { id } = req.body;
+
+        // validations
+        if (!id) {
+            return res.status(421).json({ msg: "O id é obrigatório!" });
+        }
+
+        // check if user exists
+        const user = await EducationDepartment.findOne({ _id: id });
+
+        if (!user) {
+            return res.status(404).json({ msg: "Usuário não encontrado!" });
+        }
+
+        console.log(user)
+        const name = user.name
+        const _id  = user._id
+        const id_employee = user.id_employee
+        const type = user.type
+        const schools = user.id_school
+
+        return res.json({
+
+            _id,
+            name,
+            type,
+            id_employee,
+            schools,
+
+
+            token: jwt.sign({ _id }, authConfig.secret, {
+                expiresIn: authConfig.expiresIn,
+            })
+        })
+    }
 
 }
 
