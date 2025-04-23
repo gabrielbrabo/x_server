@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 const EducationDepartment = require('../models/EducationDepartment')
 const User = require('../models/School')
+const EmployeeEducationDepartment = require('../models/EmployeeEducationDepartment')
 const Employee = require('../models/Employee')
 const authConfig = require('../config/auth')
 const bcrypt = require('bcryptjs')
@@ -201,6 +202,67 @@ class SessionController {
 
 
             token: jwt.sign({ _id }, authConfig.secret, {
+                expiresIn: authConfig.expiresIn,
+            })
+        })
+    }
+
+    async sessionEmployeeEducationDepartment(req, res) {
+        const { cpf, password } = req.body;
+
+        // validations
+        if (!cpf) {
+            return res.status(421).json({ msg: "O cpf é obrigatório!" });
+        }
+
+        if (!password) {
+            return res.status(422).json({ msg: "A senha é obrigatória!" });
+        }
+
+        // check if user exists
+        const users = await EmployeeEducationDepartment.findOne({ cpf: cpf, password: password })//.populate('id_school');
+        const populateLogo = await EmployeeEducationDepartment.findOne({ cpf: cpf }).populate('idEducationDepartment');
+        console.log("uses", populateLogo)
+        if (!users) {
+            return res.status(404).json({ msg: "Cpf ou senha esta errado!" });
+        }
+        /*const usersWithSameCpf = await EmployeeEducationDepartment.find({ cpf: cpf });
+
+        if (usersWithSameCpf.length > 1) {
+            if (usersWithSameCpf.length > 1) {
+                const schools = usersWithSameCpf.map(user => user.idEducationDepartment); // Adapte conforme necessário para pegar informações da escola
+                console.log("schools", schools);
+                return res.json({
+                    msg: "Você tem mais de uma escola registrada.",
+                    schools: schools.map(school => ({
+                        id: school,
+                        name: school.name // Substitua pelo nome real da escola que você terá em seu banco de dados
+                    })),
+                });
+            }
+        }*/
+
+        // Se o usuário tiver apenas um registro
+        //console.log(users)
+        const id = users._id
+        const name = users.name
+        const CPF = users.cpf
+        const positionAtEducationDepartment = users.positionAtEducationDepartment
+        const type = users.type
+        const idEducationDepartment = users.idEducationDepartment
+        //const logoSchool = populateLogo.id_school.logo
+        //const assessmentFormat = populateLogo.id_school.assessmentFormat
+
+        return res.json({
+
+            id,
+            CPF,
+            name,
+            positionAtEducationDepartment,
+            type,
+            idEducationDepartment,
+
+            token: jwt.sign({ id }, authConfig.secret, {
                 expiresIn: authConfig.expiresIn,
             })
         })

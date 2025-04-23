@@ -31,7 +31,7 @@ class SchoolController {
         const userExists = await User.findOne({ email: email });
 
         if (userExists) {
-            return res.json({ email, msg: "Por favor, utilize outro e-mail!" });
+            return res.status(422).json({ email, msg: "Por favor, utilize outro e-mail!" });
         }
 
         // create password

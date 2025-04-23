@@ -18,7 +18,7 @@ const educationDepartmentSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        avatar:{
+        avatar: {
             type: String,
             ref: 'PostFile',
         },
@@ -28,6 +28,10 @@ const educationDepartmentSchema = new mongoose.Schema(
         state: {
             type: String,
         },
+        address: {
+            type: String,
+            required: true,
+        },
         logo: {
             type: mongoose.Types.ObjectId,
             ref: 'FileLogo'
@@ -35,11 +39,11 @@ const educationDepartmentSchema = new mongoose.Schema(
         id_employee: [
             {
                 type: mongoose.Types.ObjectId,
-                ref: 'employee'
+                ref: 'employeeEducationDepartment'
             }
         ],
         id_school: {
-            type: mongoose.Types.ObjectId, 
+            type: mongoose.Types.ObjectId,
             ref: 'school',
         },
         status: {

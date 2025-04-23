@@ -21,6 +21,7 @@ const routes = express.Router()
 routes.post('/register/education-department', EducationDepartmentController.create)
 routes.post('/register/school', SchoolController.create)
 routes.post('/session/education-department', SessionsController.sessionEducationDepartment)
+routes.post('/session/employee-education-department', SessionsController.sessionEmployeeEducationDepartment)
 routes.post('/session/school', SessionsController.sessionSchool)
 routes.post('/session/employee', SessionsController.sessionEmployee)
 routes.post('/forgot-password', EmployeeController.ForgotPassword)
@@ -30,6 +31,7 @@ routes.post('/login-with-school', SessionsController.loginWithSchool)
 routes.post('/refresh/employee', RefreshController.checkToken)
 
 routes.post('/school/index', SchoolController.index)
+routes.post('/education-department/index-name', EducationDepartmentController.indexName)
 routes.post('/index-school', SchoolController.indexSchools)
 
 routes.use(auth)
@@ -37,7 +39,10 @@ routes.use(auth)
 routes.post('/get/school', SchoolController.getSchool)
 
 routes.post('/register/employee/:id', EmployeeController.create)
+routes.post('/register/employee-education-department/:id', EducationDepartmentController.NewEmpEducationDepartament)
+
 routes.post('/register/class/:id', ClassController.create)
+
 routes.post('/register/student/:id', StudentController.create)
 
 routes.post('/add/student', ClassController.addStudent)

@@ -1,4 +1,5 @@
 const EducationDepartment = require("../models/EducationDepartment")
+const EmployeeEducationDepartment = require("../models/EmployeeEducationDepartment")
 //const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const authConfig = require('../config/auth')
@@ -10,7 +11,9 @@ class EducationDepartmentController {
             name,
             email,
             municipality,
-            state, } = req.body;
+            state, 
+            address
+        } = req.body;
 
         // validations
         if (!name) {
@@ -23,6 +26,10 @@ class EducationDepartmentController {
 
         if (!municipality) {
             return res.status(422).json({ msg: "O municipio e obrigatorio!" });
+        }
+        
+        if (!address) {
+            return res.status(422).json({ msg: "O endereço e obrigatorio!" });
         }
 
         if (!state) {
@@ -44,6 +51,7 @@ class EducationDepartmentController {
             email,
             municipality,
             state,
+            address,
             type: "education-department"
         });
 
@@ -66,6 +74,75 @@ class EducationDepartmentController {
 
         } else {
             res.status(500).json({ msg: error });
+        }
+    }
+
+    async NewEmpEducationDepartament(req, res) {
+        const { name, dateOfBirth, cpf, rg, email, cellPhone, address, positionAtEducationDepartment, password, confirmpassword } = req.body;
+        const { id } = req.params;
+        console.log("Dados recebidos:", req.body); // Adicione este log
+        // Validations
+        if (!name) {
+            return res.status(422).json({ msg: "O nome é obrigatório!" });
+        }
+        if (!cpf) {
+            return res.status(422).json({ msg: "O cpf é obrigatório!" });
+        }
+        if (!positionAtEducationDepartment) {
+            return res.status(422).json({ msg: "O cargo do funcionário é obrigatório!" });
+        }
+        if (!password) {
+            return res.status(422).json({ msg: "A senha é obrigatória!" });
+        }
+        if (password != confirmpassword) {
+            return res.status(422).json({ msg: "A senha e a confirmação precisam ser iguais!" });
+        }
+
+        // Check if user exists with the same CPF and id_school
+        const userExists = await EmployeeEducationDepartment.findOne({ cpf: cpf, idEducationDepartment: id });
+        if (userExists) {
+            return res.status(422).json({ msg: "Esse CPF já está cadastrado para esta escola!" });
+        }
+
+        // Create password hash
+        //const salt = await bcrypt.genSalt(12);
+        //const passwordHash = await bcrypt.hash(password, salt);
+
+        // Create new user
+        const user = new EmployeeEducationDepartment({
+            name: name.toUpperCase(),
+            dateOfBirth,
+            cpf,
+            rg,
+            email,
+            cellPhone,
+            address: address.toUpperCase(),
+            type: 'employee',
+            positionAtEducationDepartment: positionAtEducationDepartment.toUpperCase(),
+            idEducationDepartment: id,
+            password: password
+        });
+
+        try {
+            console.log("Criando usuário...");
+            const employee = await user.save();
+
+            console.log("Atualizando escola...");
+            await EducationDepartment.updateOne(
+                { _id: id },
+                { $push: { id_employee: employee._id } }
+            );
+
+            res.status(200).json({
+                name_employee: employee.name,
+                id_employee: employee._id,
+                msg: 'Conta profissional cadastrada com sucesso.'
+            });
+        } catch (err) {
+            console.error("Erro ao cadastrar:", err);
+            res.status(500).json({
+                msg: 'Erro ao cadastrar uma conta profissional.'
+            });
         }
     }
 
@@ -94,13 +171,13 @@ class EducationDepartmentController {
         }
     }
 
-    async index(req, res) {
+    async indexName(req, res) {
 
-        const { idSchool } = req.body;
+        const { idEducationDepartment } = req.body;
 
         try {
-            const school = await User.findById({
-                _id: idSchool
+            const school = await EducationDepartment.findById({
+                _id: idEducationDepartment
             })
 
             if (school) {

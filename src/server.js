@@ -1,15 +1,15 @@
-const express = require('express')
-const app = express()
-const mongoose = require("mongoose");
+const express = require('express');
+const app = express();
 const morgan = require("morgan");
-const cors = require('cors')
+const cors = require('cors');
 const path = require("path");
-const scheduleBimesterUpdates = require('./middlewares/schedule'); // Importa o agendamento
+const scheduleBimesterUpdates = require('./middlewares/schedule');
+const connectWithRetry = require("./database"); // <-- aqui
 
 require("dotenv").config();
 
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 app.use(require("./routes"));
@@ -19,24 +19,14 @@ app.use(
 );
 
 app.use(cors({
-  origin: 'http://localhost:3000',  // Onde o frontend está rodando
+  origin: 'http://localhost:3000',
 }));
 
-// Iniciar o agendamento
 scheduleBimesterUpdates();
 
-//user e password de acesso ao banco de dados
-const dbUser = process.env.DB_USER;
-const dbPassword = process.env.DB_PASS;
-const dataBase = process.env.dataBase;
-
-mongoose
-  .connect(
-    `mongodb+srv://${dbUser}:${dbPassword}@escolarx.7ebaqd0.mongodb.net/${dataBase}?retryWrites=true&w=majority`,
-    //{ useNewUrlParser: true },
-  )
-  .then(() => {
-    console.log("Conectou ao banco!");
-    app.listen( process.env.PORT || 5000);
-  })
-  .catch((err) => console.log(err));
+// inicia a conexão com reconector automático
+connectWithRetry().then(() => {
+  app.listen(process.env.PORT || 5000, () => {
+    console.log(`🚀 Servidor rodando na porta ${process.env.PORT || 5000}`);
+  });
+});
