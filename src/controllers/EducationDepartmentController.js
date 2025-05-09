@@ -146,20 +146,19 @@ class EducationDepartmentController {
         }
     }
 
-    async getSchool(req, res) {
+    async index (req, res) {
 
-        const { idSchool } = req.body;
-        console.log("idSchool", idSchool)
+        const { idEducationDepartment } = req.body;
+
         try {
-            const school = await User.findById({
-                _id: idSchool
-            })
+            const schools = await EducationDepartment.findById({
+                _id: idEducationDepartment
+            }).populate('id_schools')
+            .populate('id_employee')
 
-            // console.log()
-
-            if (school) {
+            if (schools) {
                 return res.json({
-                    data: school,
+                    data: schools,
                     message: 'Sucess'
                 })
             }
@@ -194,7 +193,7 @@ class EducationDepartmentController {
         }
     }
 
-    async indexSchools(req, res) {
+    /*async indexSchool(req, res) {
         const { idSchools } = req.body; // Recebe um array de IDs de escolas
 
         if (!Array.isArray(idSchools)) {
@@ -222,7 +221,7 @@ class EducationDepartmentController {
                 message: 'Houve um erro no servidor!'
             });
         }
-    }
+    }*/
 
     async update(req, res) {
         try {

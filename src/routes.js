@@ -36,6 +36,8 @@ routes.post('/index-school', SchoolController.indexSchools)
 
 routes.use(auth)
 
+routes.post('/index-info', EducationDepartmentController.index)
+
 routes.post('/get/school', SchoolController.getSchool)
 
 routes.post('/register/employee/:id', EmployeeController.create)
@@ -156,6 +158,7 @@ routes.post('/card/IV_th_quarter', ReportCardController.IV_th_quarter)*/
 routes.post('/employee', EmployeeController.index)
 routes.get('/employee-details/:id', EmployeeController. getEmployeeById)
 routes.post('/employee-update/:id', EmployeeController.updateEmployee)
+
 routes.post('/record-class-taught', EmployeeController.RecordClassTaught)
 routes.post('/destroy/class', EmployeeController.DestroyClass)
 routes.post('/index-record-class', EmployeeController.indexRecordClassTaught)

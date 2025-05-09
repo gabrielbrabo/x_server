@@ -461,7 +461,7 @@ class GradeController {
                 .populate('id_vThQuarter')
                 .populate('id_viThQuarter');
 
-            console.log("activity", activity);
+            //console.log("activity", activity);
 
             if (activity) {
                 return res.json({
@@ -500,8 +500,8 @@ class GradeController {
                 return res
             }
         })
-        console.log("grade", grade)
-        console.log("grd", grd)
+        //console.log("grade", grade)
+       // console.log("grd", grd)
         try {
             if (grd) {
                 return res.json({
@@ -561,7 +561,7 @@ class GradeController {
 
         const grade = await Grade.find({ id_class: id_class }).populate('id_student');
 
-        console.log("grade", grade)
+        //console.log("grade", grade)
 
         const grd = grade.map(res => {
             if (res.year == year) {
@@ -574,7 +574,7 @@ class GradeController {
                 return res
             }
         })
-        console.log("grd", grd)
+       // console.log("grd", grd)
 
         try {
             if (grd) {
@@ -597,7 +597,7 @@ class GradeController {
 
         const grade = await NumericalGrade.find({ id_student: id_student }).populate('id_student').populate('id_matter').populate('id_teacher').populate('id_class').populate('id_iStQuarter').populate('id_iiNdQuarter').populate('id_iiiRdQuarter').populate('id_ivThQuarter').populate('id_vThQuarter').populate('id_viThQuarter');
 
-        console.log("grade", grade)
+        //console.log("grade", grade)
 
         const grd = grade.map(res => {
             if (res.year == year) {
@@ -608,7 +608,7 @@ class GradeController {
                 return res
             }
         })
-        console.log("grd", grd)
+        //console.log("grd", grd)
 
         try {
             if (grd) {
@@ -631,7 +631,7 @@ class GradeController {
 
         const grade = await Grade.find({ id_student: id_student }).populate('id_student');
 
-        console.log("grade", grade)
+        //console.log("grade", grade)
 
         const grd = grade.map(res => {
             if (res.year == year) {
@@ -642,7 +642,7 @@ class GradeController {
                 return res
             }
         })
-        console.log("grd", grd)
+        //console.log("grd", grd)
 
         try {
             if (grd) {

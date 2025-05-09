@@ -1,4 +1,5 @@
 const User = require( "../models/School")
+const EducationDepartment = require( "../models/EducationDepartment")
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const authConfig = require('../config/auth')
@@ -6,16 +7,16 @@ const authConfig = require('../config/auth')
 class SchoolController {
   
     async create(req, res) {
-        const { name, email, password, confirmpassword } = req.body;
-
+        const { name, city, address, assessmentFormat, password, confirmpassword, educationDep } = req.body;
+        console.log("dados", req.body)
         // validations
         if (!name) {
             return res.status(422).json({ msg: "O nome é obrigatório!" });
         }
 
-        if (!email) {
+       /* if (!email) {
             return res.status(422).json({ msg: "O email é obrigatório!" });
-        }
+        }*/
 
         if (!password) {
             return res.status(422).json({ msg: "A senha é obrigatória!" });
@@ -28,11 +29,11 @@ class SchoolController {
         }
 
         // check if user exists
-        const userExists = await User.findOne({ email: email });
+       /* const userExists = await User.findOne({ email: email });
 
         if (userExists) {
             return res.status(422).json({ email, msg: "Por favor, utilize outro e-mail!" });
-        }
+        }*/
 
         // create password
         const salt = await bcrypt.genSalt(12);
@@ -41,24 +42,33 @@ class SchoolController {
         // create user
         const user = new User({
             name,
-            email,
-            assessmentFormat: 'grade',
+            //email,
+            city, 
+            address,
+            assessmentFormat,
             type: "school",
-            password: passwordHash
+            password: passwordHash,
+            educationDepartment: educationDep
         });
 
         if(user) {
             await user.save();
 
+            console.log("Atualizando departemento de educação...");
+            await EducationDepartment.updateOne(
+                { _id: educationDep },
+                { $push: { id_schools: user._id } }
+            );
+
             const name = user.name
-            const email = user.email
+            //const email = user.email
             const assessmentFormat = user.assessmentFormat
             const { id } = user
 
             return res.json({
             
                 id,
-                email,
+                //email,
                 name,
                 assessmentFormat,
                 token: jwt.sign({ id }, authConfig.secret, {

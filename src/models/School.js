@@ -6,14 +6,10 @@ const schoolschema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        email: {
+        /*email: {
             type: String,
-            required: true,
-            index: {
-                unique: true
-            },
-            unique: true
-        },
+            //required: true,
+        },*/
         password: {
             type: String,
             required: true,
@@ -28,15 +24,11 @@ const schoolschema = new mongoose.Schema(
         },
         city: {
             type: String,
+            required: true,
         },
-        district: {
+        address: {
             type: String,
-        },
-        street: {
-            type: String,
-        },
-        number: {
-            type: String,
+            required: true,
         },
         assessmentFormat: {
             type: String,

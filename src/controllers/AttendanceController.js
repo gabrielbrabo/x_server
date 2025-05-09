@@ -2,6 +2,8 @@ const Attendance = require("../models/Attendance")
 const testAttendance = require("../models/TestAttendance")
 const Student = require("../models/Student")
 
+const mongoose = require('mongoose');
+
 class AttendanceController {
 
     async createAttendance(req, res) {
@@ -172,16 +174,19 @@ class AttendanceController {
 
             // Busque as presenças que estão entre essas datas
             const attendance = await Attendance.find({
-                id_student: id_student,
-                id_teacher: id_teacher,
-                // Comparar diretamente com as datas de início e fim
+                id_student: new mongoose.Types.ObjectId(id_student),
+                id_teacher: new mongoose.Types.ObjectId(id_teacher),
                 date: {
-                    $gte: startDate, // Maior ou igual à data de início
-                    $lte: endDate    // Menor ou igual à data de fim
+                  $gte: startDate,
+                  $lte: endDate
                 }
-            }).populate('id_student');
+              }).populate('id_student');              
 
-            console.log("attendance", attendance);
+            //console.log("attendance", attendance);
+
+            console.log("id_teacher req:", typeof id_teacher, id_teacher);
+            console.log("id_teacher DB:", attendance[0]?.id_teacher);
+
 
             if (attendance.length > 0) {
                 return res.json({

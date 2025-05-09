@@ -42,10 +42,12 @@ const educationDepartmentSchema = new mongoose.Schema(
                 ref: 'employeeEducationDepartment'
             }
         ],
-        id_school: {
-            type: mongoose.Types.ObjectId,
-            ref: 'school',
-        },
+        id_schools: [
+            {
+                type: mongoose.Types.ObjectId,
+                ref: 'school',
+            }
+        ],
         status: {
             type: String,
             enum: ["active", "inactive"],
