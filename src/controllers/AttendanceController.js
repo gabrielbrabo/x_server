@@ -174,15 +174,15 @@ class AttendanceController {
 
             // Busque as presenças que estão entre essas datas
             const attendance = await Attendance.find({
-                id_student: new mongoose.Types.ObjectId(id_student),
-                id_teacher: new mongoose.Types.ObjectId(id_teacher),
+                id_student: id_student,
+                id_teacher: id_teacher,
                 date: {
                   $gte: startDate,
                   $lte: endDate
                 }
               }).populate('id_student');              
 
-            //console.log("attendance", attendance);
+            console.log("attendance", attendance);
 
             console.log("id_teacher req:", typeof id_teacher, id_teacher);
             console.log("id_teacher DB:", attendance[0]?.id_teacher);
