@@ -32,11 +32,12 @@ routes.post('/refresh/employee', RefreshController.checkToken)
 
 routes.post('/school/index', SchoolController.index)
 routes.post('/education-department/index-name', EducationDepartmentController.indexName)
-routes.post('/index-school', SchoolController.indexSchools)
+routes.post('/index-schools', SchoolController.indexSchools)
 
 routes.use(auth)
 
 routes.post('/index-info', EducationDepartmentController.index)
+routes.post('/index-school', EducationDepartmentController.indexSchool)
 
 routes.post('/get/school', SchoolController.getSchool)
 

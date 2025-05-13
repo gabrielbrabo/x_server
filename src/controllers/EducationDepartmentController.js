@@ -1,5 +1,6 @@
 const EducationDepartment = require("../models/EducationDepartment")
 const EmployeeEducationDepartment = require("../models/EmployeeEducationDepartment")
+const School = require("../models/School")
 //const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const authConfig = require('../config/auth')
@@ -11,7 +12,7 @@ class EducationDepartmentController {
             name,
             email,
             municipality,
-            state, 
+            state,
             address
         } = req.body;
 
@@ -27,7 +28,7 @@ class EducationDepartmentController {
         if (!municipality) {
             return res.status(422).json({ msg: "O municipio e obrigatorio!" });
         }
-        
+
         if (!address) {
             return res.status(422).json({ msg: "O endereço e obrigatorio!" });
         }
@@ -146,7 +147,7 @@ class EducationDepartmentController {
         }
     }
 
-    async index (req, res) {
+    async index(req, res) {
 
         const { idEducationDepartment } = req.body;
 
@@ -154,7 +155,7 @@ class EducationDepartmentController {
             const schools = await EducationDepartment.findById({
                 _id: idEducationDepartment
             }).populate('id_schools')
-            .populate('id_employee')
+                .populate('id_employee')
 
             if (schools) {
                 return res.json({
@@ -193,35 +194,36 @@ class EducationDepartmentController {
         }
     }
 
-    /*async indexSchool(req, res) {
-        const { idSchools } = req.body; // Recebe um array de IDs de escolas
+    async indexSchool(req, res) {
+        const { idSchool } = req.body;
 
-        if (!Array.isArray(idSchools)) {
-            return res.status(400).json({ message: 'idSchools deve ser um array de IDs' });
-        }
+        console.log("id da escola", idSchool)
 
         try {
-            // Busca todas as escolas cujos IDs estão no array 'idSchools'
-            const schools = await User.find({
-                _id: { $in: idSchools }
-            });
+            const school = await School.findById({
+                _id: idSchool
+            }).populate('id_employee')
+                .populate('id_matter')
+                .populate('id_class')
+                .populate('id_student')
+                .populate('id_iStQuarter')
+                .populate('id_iiNdQuarter')
+                .populate('id_iiiRdQuarter')
+                .populate('id_ivThQuarter')
 
-            // Verifica se encontrou as escolas
-            if (schools && schools.length > 0) {
+            if (school) {
                 return res.json({
-                    data: schools.map(school => ({ id: school._id, name: school.name })),
-                    message: 'Success'
-                });
-            } else {
-                return res.status(404).json({ message: 'Nenhuma escola encontrada com os IDs fornecidos' });
+                    data: school,
+                    message: 'Sucess'
+                })
             }
         } catch (err) {
-            console.error(err);
+            console.log(err)
             res.status(500).json({
-                message: 'Houve um erro no servidor!'
-            });
+                message: 'there was an error on server side!'
+            })
         }
-    }*/
+    }
 
     async update(req, res) {
         try {
