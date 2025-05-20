@@ -403,9 +403,9 @@ class EmployeeController {
         }).populate('id_teacher')
 
         const idTeacher = cla$$.id_teacher._id
-        
-        console.log("$$",cla$$)
-        console.log("idClass",idClass)
+
+        console.log("$$", cla$$)
+        console.log("idClass", idClass)
 
         try {
 
@@ -415,13 +415,13 @@ class EmployeeController {
                 _id: idTeacher
             }, {
                 $pull: {
-                    id_recordClassTaught: idClass   
+                    id_recordClassTaught: idClass
                 }
             })
             res.status(200).json({
                 msg: 'Aula removida com sucesso.'
             })
-        } catch (err){
+        } catch (err) {
             res.status(500).json({
                 msg: 'Error ao cadastra uma turma.'
             })
@@ -566,10 +566,12 @@ class EmployeeController {
             }
         }
 
-        return res.json({ msg: `Foi enviado um link de recupreação de senha para o email: ${userEmail.email}, Identifique o email e click no link para recupera a senha.` });
+        return res.json({
+            msg: `Enviamos um link de recuperação de senha para o e-mail: ${userEmail.email}. Por favor, verifique sua caixa de entrada. Se não localizá-lo, confira também a pasta de spam ou lixo eletrônico.`
+        });
     }
 
-    async ResetPassword (req, res) {
+    async ResetPassword(req, res) {
         const { cpf, id, token, newPassword } = req.body;
 
         try {
@@ -612,8 +614,8 @@ class EmployeeController {
             res.status(500).json({ error: 'Erro interno do servidor.' });
         }
     }
-    
-    async updatePassword (req, res) {
+
+    async updatePassword(req, res) {
         const { cpf, id, password, newPassword } = req.body;
 
         try {

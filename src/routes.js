@@ -24,11 +24,15 @@ routes.post('/session/education-department', SessionsController.sessionEducation
 routes.post('/session/employee-education-department', SessionsController.sessionEmployeeEducationDepartment)
 routes.post('/session/school', SessionsController.sessionSchool)
 routes.post('/session/employee', SessionsController.sessionEmployee)
+routes.post('/forgot-password-education-department', EducationDepartmentController.ForgotPasswordEduDep)
 routes.post('/forgot-password', EmployeeController.ForgotPassword)
+routes.post('/reset-password-education-department', EducationDepartmentController.ResetPasswordEducationDepartment )
 routes.post('/reset-password', EmployeeController.ResetPassword )
 routes.post('/update-password', EmployeeController.updatePassword )
+routes.post('/update-password-emp-edu-dep', EducationDepartmentController.updatePassword )
 routes.post('/login-with-school', SessionsController.loginWithSchool)
 routes.post('/refresh/employee', RefreshController.checkToken)
+routes.post('/refresh/employee-dep-edu', RefreshController.checkTokenEduDep)
 
 routes.post('/school/index', SchoolController.index)
 routes.post('/education-department/index-name', EducationDepartmentController.indexName)
@@ -62,6 +66,7 @@ routes.post('/add/matter', MatterController.addMatter)
 routes.post('/update/matter', MatterController.update)
 
 routes.post('/register/card', ReportCardController.create)
+routes.post('/allTheBulletins', ReportCardController.allTheBulletins)
 
 routes.post('/register/final-concepts', FinalConcepts.create)
 routes.post('/get/final-concepts', FinalConcepts.GetGradeFinalConcepts)
@@ -157,8 +162,11 @@ routes.post('/card/III_rd_quarter', ReportCardController.III_rd_quarter)
 routes.post('/card/IV_th_quarter', ReportCardController.IV_th_quarter)*/
 
 routes.post('/employee', EmployeeController.index)
+routes.post('/employee-dep-edu', EducationDepartmentController.indexEmpEduDep)
 routes.get('/employee-details/:id', EmployeeController. getEmployeeById)
+routes.get('/employee-details-edu-dep/:id', EducationDepartmentController. getEmployeeDepEduById)
 routes.post('/employee-update/:id', EmployeeController.updateEmployee)
+routes.post('/employee-edu-dep-update/:id', EducationDepartmentController.updateEmployee)
 
 routes.post('/record-class-taught', EmployeeController.RecordClassTaught)
 routes.post('/destroy/class', EmployeeController.DestroyClass)
@@ -180,6 +188,7 @@ routes.post('/matter', MatterController.index)
 routes.get('/getMatter/:id', MatterController.getMatter)
 
 routes.post('/student/info/:id', StudentController.InfoIndex)
+routes.post('/employee-education-department/info/:id', EducationDepartmentController.InfoIndexEduDep)
 routes.post('/employee/info/:id', EmployeeController.InfoIndex)
 routes.post('/class/info/:id', ClassController.InfoIndex)
 

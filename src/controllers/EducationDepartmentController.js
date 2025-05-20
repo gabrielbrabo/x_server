@@ -1,7 +1,7 @@
 const EducationDepartment = require("../models/EducationDepartment")
 const EmployeeEducationDepartment = require("../models/EmployeeEducationDepartment")
 const School = require("../models/School")
-//const bcrypt = require('bcryptjs')
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken')
 const authConfig = require('../config/auth')
 
@@ -278,6 +278,228 @@ class EducationDepartmentController {
             if (school) {
                 return res.json({
                     data: school,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+
+    async ForgotPasswordEduDep(req, res) {
+
+        const { cpf } = req.body;
+        console.log("dados do front", cpf)
+
+        function generateResetToken() {
+            return crypto.randomBytes(32).toString('hex'); // Gera um token aleatório em formato hexadecimal
+        }
+
+        const user = await EmployeeEducationDepartment.find({ cpf });
+        if (!user) {
+            return res.status(404).send('Usuário não encontrado.');
+        }
+
+        const userEmail = user.find(res => {
+            return res
+        })
+
+        const Schemas = userEmail._id; // Substitua isso por sua lógica dinâmica, se necessário
+        const email = userEmail.email; // Substitua isso por sua lógica dinâmica, se necessário
+        console.log("usuario", user)
+        console.log("userEmail", userEmail)
+        console.log("email", email)
+        console.log("Schemas", Schemas)
+
+        const resetToken = generateResetToken(); // Função para criar um token
+        console.log("resetToken", resetToken)
+        userEmail.resetToken = resetToken;
+        userEmail.resetTokenExpiry = Date.now() + 3600000; // 1 hora
+        await userEmail.save();
+
+
+        const nodemailer = require('nodemailer');
+
+        const baseUrl = process.env.BASE_URL;
+        const resetLink = `${baseUrl}/reset-password-education-department/${cpf}/${Schemas}/${resetToken}`;
+        sendEmail(email, resetLink);
+
+        async function sendEmail(email, resetLink) {
+            const transporter = nodemailer.createTransport({
+                service: 'gmail', // ou outro serviço de e-mail
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASS,
+                },
+            });
+
+            const mailOptions = {
+                from: 'gsgxdevelopement@gmail.com',
+                to: email,
+                subject: 'Redefinição de Senha',
+                text: `Clique aqui para redefinir sua senha: ${resetLink}`,
+            };
+
+            try {
+                await transporter.sendMail(mailOptions);
+                console.log(`E-mail enviado para ${email}`);
+            } catch (error) {
+                console.error('Erro ao enviar e-mail:', error);
+            }
+        }
+
+        return res.json({
+            msg: `Enviamos um link de recuperação de senha para o e-mail: ${userEmail.email}. Por favor, verifique sua caixa de entrada. Se não localizá-lo, confira também a pasta de spam ou lixo eletrônico.`
+        });
+    }
+
+    async ResetPasswordEducationDepartment(req, res) {
+        const { cpf, id, token, newPassword } = req.body;
+
+        try {
+            // 1. Verifica se o usuário existe pelo CPF
+            const user = await EmployeeEducationDepartment.findById(id);
+            if (!user) {
+                return res.status(404).json({ error: 'Usuário não encontrado.' });
+            }
+
+            // 2. Verifica se o token é válido
+            if (user.resetToken !== token) {
+                return res.status(400).json({ error: 'Token inválido.' });
+            }
+
+            // 3. Verifica se o token expirou
+            if (Date.now() > user.resetTokenExpiry) {
+                return res.status(400).json({ error: 'Token expirado.' });
+            }
+
+            // 4. Gera um hash da nova senha
+            //const salt = await bcrypt.genSalt(10);
+            //const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+            // 5. Atualiza a senha e remove o token
+            user.password = newPassword;
+            user.resetToken = null;
+            user.resetTokenExpiry = null;
+            await user.save();
+
+            // 6. Atualiza outros modelos que possuem o mesmo CPF
+            const updateData = { password: newPassword };
+            await Promise.all([
+                EmployeeEducationDepartment.updateMany({ cpf }, updateData),
+                // Adicione outros modelos conforme necessário
+            ]);
+
+            res.json({ message: 'Senha atualizada com sucesso. Agora podera fazer login com a nova senha.' });
+        } catch (error) {
+            console.error('Erro ao redefinir senha:', error);
+            res.status(500).json({ error: 'Erro interno do servidor.' });
+        }
+    }
+
+    async InfoIndexEduDep(req, res) {
+
+        const { id } = req.params;
+
+        try {
+            const employee = await EmployeeEducationDepartment.findById({
+                _id: id
+            }).populate('idEducationDepartment')
+            /*const info = await AddTeacher.find({
+                id_teacher: id
+            }).populate('id_class')*/
+            //console.log("info", info)
+            if (employee /*&& info*/) {
+                return res.json({
+                    data: [employee],
+                    //info: [info],
+                    message: 'Sucess'
+                })
+            } /*else {
+                return res.json({
+                    data: [employee],
+                    message: 'Sucess'
+                })
+            }*/
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+
+    async getEmployeeDepEduById(req, res) {
+        try {
+            const employee = await EmployeeEducationDepartment.findById(req.params.id);
+            if (!employee) {
+                return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(employee);
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async updateEmployee(req, res) {
+        try {
+            const { id } = req.params;
+            const employee = await EmployeeEducationDepartment.findByIdAndUpdate(id, req.body, { new: true });
+            if (!employee) {
+                return res.status(404).json({ error: 'Employee not found' });
+            }
+            res.json(employee);
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async updatePassword(req, res) {
+        const { cpf, id, password, newPassword } = req.body;
+
+        try {
+            // 1. Verifica se o usuário existe pelo CPF
+            const user = await EmployeeEducationDepartment.findOne({ _id: id, password: password });
+            if (!user) {
+                return res.status(404).json({ error: 'Senha atual errada ou usuário não encontrado.' });
+            }
+
+            console.log("user", user)
+            console.log("password", password)
+            user.password = newPassword;
+            await user.save();
+
+            // 6. Atualiza outros modelos que possuem o mesmo CPF
+            const updateData = { password: newPassword };
+            await Promise.all([
+                EmployeeEducationDepartment.updateMany({ cpf }, updateData),
+                // Adicione outros modelos conforme necessário
+            ]);
+
+            res.json({ message: 'Senha atualizada com sucesso.' });
+        } catch (error) {
+            console.error('Erro ao redefinir senha:', error);
+            res.status(500).json({ error: 'Erro interno do servidor.' });
+        }
+    }
+
+    async indexEmpEduDep(req, res) {
+
+        const { idEducationDepartment } = req.body;
+
+        try {
+            const employee = await EducationDepartment.findById({
+                _id: idEducationDepartment
+            }).populate('id_employee')
+
+            if (employee) {
+                return res.json({
+                    data: employee.id_employee,
                     message: 'Sucess'
                 })
             }
