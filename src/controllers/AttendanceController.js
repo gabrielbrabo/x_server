@@ -177,10 +177,10 @@ class AttendanceController {
                 id_student: id_student,
                 id_teacher: id_teacher,
                 date: {
-                  $gte: startDate,
-                  $lte: endDate
+                    $gte: startDate,
+                    $lte: endDate
                 }
-              }).populate('id_student');              
+            }).populate('id_student');
 
             console.log("attendance", attendance);
 
