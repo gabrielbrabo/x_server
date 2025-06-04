@@ -307,6 +307,53 @@ class ClassController {
             })
         }
     }
+    async removeTeacher02(req, res) {
+        const { id_teacher, id_class, /*id_matter, addTeacher*/ } = req.body;
+        // validations
+        if (!id_teacher) {
+            return res.status(422).json({ msg: "O id do estudante é obrigatório!" });
+        }
+        if (!id_class) {
+            return res.status(422).json({ msg: "A id da turma é obrigatório!" });
+        }
+
+        try {
+
+            await modelClass.updateOne({
+                _id: id_class
+            }, {
+                $pull: {
+                    id_employee: id_teacher
+                }
+            })
+
+            await modelClass.updateOne({
+                _id: id_class
+            }, {
+                $pull: {
+                    classRegentTeacher02: id_teacher
+                }
+            })
+
+            await Employee.updateOne({
+                _id: id_teacher
+            }, {
+                $pull: {
+                    id_class: id_class
+                }
+            })
+            console.log('emp', id_teacher)
+            console.log('class', id_class)
+            res.status(200).json({
+                msg: 'Estudante removido com sucesso.'
+            })
+
+        } catch (err) {
+            res.status(500).json({
+                msg: 'Error ao cadastra uma turma.'
+            })
+        }
+    }
 
     async addTeacher(req, res) {
         const { id_employee, id_class, /*id_matter*/ } = req.body;

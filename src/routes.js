@@ -212,6 +212,7 @@ routes.post('/destroy-employee/:id', EmployeeController.destroy)
 routes.post('/destroy-student/:id', StudentController.destroy)
 routes.post('/remove/student', ClassController.removeStudent)
 routes.post('/remove/teacher', ClassController.removeTeacher)
+routes.post('/remove/teacher02', ClassController.removeTeacher02)
 routes.post('/remove/matter', MatterController.removeMatter)
 
 routes.post('/create-individual-form', IndividualFormController.createIndividualForm)
