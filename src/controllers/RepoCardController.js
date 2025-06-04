@@ -127,11 +127,11 @@ class RepoCardController {
             .populate('classRegentTeacher')
             .populate('physicalEducationTeacher');
 
-           // console.log("cla$$", cla$$)
-            const physicalEducationTeacherId = (cla$$.physicalEducationTeacher && cla$$.physicalEducationTeacher.length > 0)
+        // console.log("cla$$", cla$$)
+        const physicalEducationTeacherId = (cla$$.physicalEducationTeacher && cla$$.physicalEducationTeacher.length > 0)
             ? String(cla$$.physicalEducationTeacher[0]._id)
             : null;
-          
+
 
         let bimonthly = null;
 
@@ -360,6 +360,10 @@ class RepoCardController {
             .populate('classRegentTeacher')
             .populate('physicalEducationTeacher');
 
+        // console.log("cla$$", cla$$)
+        const physicalEducationTeacherId = (cla$$.physicalEducationTeacher && cla$$.physicalEducationTeacher.length > 0)
+            ? String(cla$$.physicalEducationTeacher[0]._id)
+            : null;
 
         let bimonthly = null;
 
@@ -393,14 +397,15 @@ class RepoCardController {
                 Number(bimonthly.endday),
                 23, 59, 59 // inclui até o final do dia
             );
-            console.log("bimonthly", bimonthly)
-            console.log("startDate", startDate, "endDate", endDate)
+           // console.log("bimonthly", bimonthly)
+           // console.log("startDate", startDate, "endDate", endDate)
             attendance = await Attendance.find({
                 id_class: idClass, // Filtra pela turma
                 date: {
                     $gte: startDate, // Maior ou igual a data de início
                     $lte: endDate    // Menor ou igual a data de fim
-                }
+                },
+                id_teacher: { $ne: physicalEducationTeacherId }
             }).populate('id_teacher');
         }
 
