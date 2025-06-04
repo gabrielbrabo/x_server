@@ -132,7 +132,6 @@ class RepoCardController {
             ? String(cla$$.physicalEducationTeacher[0]._id)
             : null;
 
-
         let bimonthly = null;
 
         if (id_iStQuarter) {
@@ -283,12 +282,26 @@ class RepoCardController {
             const cla$$ = await Class.findOne({ _id: idClass })
                 .populate('id_student')
                 .populate('classRegentTeacher');
+            // console.log("cla$$", cla$$)
+            const physicalEducationTeacherId = (cla$$.physicalEducationTeacher && cla$$.physicalEducationTeacher.length > 0)
+                ? String(cla$$.physicalEducationTeacher[0]._id)
+                : null;
 
             // 🔍 Busca todas as notas da turma no ano atual
             const gradesAll = await NumericalGrade.find({
                 id_class: idClass,
                 year: currentYear
             }).populate('id_matter');
+
+            let attendance = [];
+
+            attendance = await Attendance.find({
+                id_class: idClass, // Filtra pela turma
+                year: currentYear,
+                id_teacher: { $ne: physicalEducationTeacherId }
+            }).populate('id_teacher');
+
+            console.log("attendance", attendance)
 
             const boletins = cla$$.id_student.map((aluno) => {
                 const notasAluno = gradesAll.filter(g => String(g.id_student) === String(aluno._id));
@@ -397,8 +410,8 @@ class RepoCardController {
                 Number(bimonthly.endday),
                 23, 59, 59 // inclui até o final do dia
             );
-           // console.log("bimonthly", bimonthly)
-           // console.log("startDate", startDate, "endDate", endDate)
+            // console.log("bimonthly", bimonthly)
+            // console.log("startDate", startDate, "endDate", endDate)
             attendance = await Attendance.find({
                 id_class: idClass, // Filtra pela turma
                 date: {
