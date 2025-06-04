@@ -120,13 +120,18 @@ class RepoCardController {
             id_ivThQuarter,
         } = req.body.idClass;
 
-        console.log("dados dos boletins", req.body)
+        //console.log("dados dos boletins", req.body)
 
         const cla$$ = await Class.findOne({ _id: idClass })
             .populate('id_student')
             .populate('classRegentTeacher')
             .populate('physicalEducationTeacher');
 
+           // console.log("cla$$", cla$$)
+            const physicalEducationTeacherId = (cla$$.physicalEducationTeacher && cla$$.physicalEducationTeacher.length > 0)
+            ? String(cla$$.physicalEducationTeacher[0]._id)
+            : null;
+          
 
         let bimonthly = null;
 
@@ -160,28 +165,20 @@ class RepoCardController {
                 Number(bimonthly.endday),
                 23, 59, 59 // inclui até o final do dia
             );
-            console.log("bimonthly", bimonthly)
-            console.log("startDate", startDate, "endDate", endDate)
+            //console.log("bimonthly", bimonthly)
+            //console.log("startDate", startDate, "endDate", endDate)
+
             attendance = await Attendance.find({
                 id_class: idClass, // Filtra pela turma
                 date: {
                     $gte: startDate, // Maior ou igual a data de início
                     $lte: endDate    // Menor ou igual a data de fim
-                }
+                },
+                id_teacher: { $ne: physicalEducationTeacherId }
             }).populate('id_teacher');
+
+            //console.log("attendance", attendance)
         }
-
-        //const classRegentTeacher = cla$$
-
-        // 🔎 Filtrando os registros onde o professor NÃO é de Educação Física
-        /* const filteredAttendance = attendance.filter(item => {
-             const teacherId = item.id_teacher._id.toString();
-             return !physicalEducationTeachers.includes(teacherId);
-         });*/
-
-
-        //console.log("filteredAttendance", filteredAttendance)
-        //console.log("classRegentTeacher", classRegentTeacher)
 
         const filter = {};
 
@@ -276,6 +273,76 @@ class RepoCardController {
             error: error.message
         });
     }
+
+    async allTheFinalBulletinsGrades(req, res) {
+        try {
+            const { idClass } = req.body;
+
+            const currentYear = new Date().getFullYear().toString(); // 🔥 Ano atual como string
+
+            const cla$$ = await Class.findOne({ _id: idClass })
+                .populate('id_student')
+                .populate('classRegentTeacher');
+
+            // 🔍 Busca todas as notas da turma no ano atual
+            const gradesAll = await NumericalGrade.find({
+                id_class: idClass,
+                year: currentYear
+            }).populate('id_matter');
+
+            const boletins = cla$$.id_student.map((aluno) => {
+                const notasAluno = gradesAll.filter(g => String(g.id_student) === String(aluno._id));
+
+                const notasPorMateria = {};
+
+                notasAluno.forEach((g) => {
+                    const nomeMateria = g.id_matter?.name || 'Matéria não definida';
+                    const nota = parseFloat(String(g.studentGrade).replace(',', '.')) || 0;
+
+                    if (!notasPorMateria[nomeMateria]) {
+                        notasPorMateria[nomeMateria] = {
+                            notasPorBimestre: [],
+                            notaFinal: 0
+                        };
+                    }
+
+                    notasPorMateria[nomeMateria].notasPorBimestre.push(nota);
+                    notasPorMateria[nomeMateria].notaFinal += nota;
+                });
+
+                return {
+                    id: aluno._id,
+                    nome: aluno.name,
+                    materias: notasPorMateria
+                };
+            });
+
+            return res.status(200).json({
+                success: true,
+                message: "Boletins finais gerados com sucesso.",
+                data: {
+                    boletins,
+                    turma: {
+                        id: cla$$._id,
+                        nome: cla$$.name_class,
+                        regente: cla$$.classRegentTeacher.map(teacher => ({
+                            id: teacher._id,
+                            nome: teacher.name
+                        })),
+                    }
+                }
+            });
+
+        } catch (error) {
+            console.error("Erro ao gerar boletins:", error);
+            return res.status(500).json({
+                success: false,
+                message: "Erro ao gerar boletins.",
+                error: error.message
+            });
+        }
+    }
+
 
     async allTheBulletinsConcept(req, res) {
         const {
