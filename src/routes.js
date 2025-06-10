@@ -67,8 +67,9 @@ routes.post('/update/matter', MatterController.update)
 
 routes.post('/register/card', ReportCardController.create)
 routes.post('/allTheBulletins-grades', ReportCardController.allTheBulletinsGrades)
-routes.post('/allTheFinalBulletins-grades', ReportCardController.allTheFinalBulletinsGrades)
+//routes.post('/allTheFinalBulletins-grades', ReportCardController.allTheFinalBulletinsGrades)
 routes.post('/allTheBulletins-concept', ReportCardController.allTheBulletinsConcept)
+routes.post('/allTheFinalBulletins-concept', ReportCardController.allTheFinalBulletinsConcept)
 
 routes.post('/register/final-concepts', FinalConcepts.create)
 routes.post('/get/final-concepts', FinalConcepts.GetGradeFinalConcepts)

@@ -4,6 +4,7 @@ const Cards = require("../models/Report_card")
 const Matter = require("../models/Matter")
 const NumericalGrade = require("../models/NumericalGrade")
 const Concept = require("../models/Grade")
+const FinalConcepts = require("../models/FinalConcepts")
 const Attendance = require("../models/Attendance")
 
 const I_stQuarter = require("../models/I_stQuarter")
@@ -273,90 +274,6 @@ class RepoCardController {
         });
     }
 
-    async allTheFinalBulletinsGrades(req, res) {
-        try {
-            const { idClass } = req.body;
-
-            const currentYear = new Date().getFullYear().toString(); // 🔥 Ano atual como string
-
-            const cla$$ = await Class.findOne({ _id: idClass })
-                .populate('id_student')
-                .populate('classRegentTeacher');
-            // console.log("cla$$", cla$$)
-            const physicalEducationTeacherId = (cla$$.physicalEducationTeacher && cla$$.physicalEducationTeacher.length > 0)
-                ? String(cla$$.physicalEducationTeacher[0]._id)
-                : null;
-
-            // 🔍 Busca todas as notas da turma no ano atual
-            const gradesAll = await NumericalGrade.find({
-                id_class: idClass,
-                year: currentYear
-            }).populate('id_matter');
-
-            let attendance = [];
-
-            attendance = await Attendance.find({
-                id_class: idClass, // Filtra pela turma
-                year: currentYear,
-                id_teacher: { $ne: physicalEducationTeacherId }
-            }).populate('id_teacher');
-
-            console.log("attendance", attendance)
-
-            const boletins = cla$$.id_student.map((aluno) => {
-                const notasAluno = gradesAll.filter(g => String(g.id_student) === String(aluno._id));
-
-                const notasPorMateria = {};
-
-                notasAluno.forEach((g) => {
-                    const nomeMateria = g.id_matter?.name || 'Matéria não definida';
-                    const nota = parseFloat(String(g.studentGrade).replace(',', '.')) || 0;
-
-                    if (!notasPorMateria[nomeMateria]) {
-                        notasPorMateria[nomeMateria] = {
-                            notasPorBimestre: [],
-                            notaFinal: 0
-                        };
-                    }
-
-                    notasPorMateria[nomeMateria].notasPorBimestre.push(nota);
-                    notasPorMateria[nomeMateria].notaFinal += nota;
-                });
-
-                return {
-                    id: aluno._id,
-                    nome: aluno.name,
-                    materias: notasPorMateria
-                };
-            });
-
-            return res.status(200).json({
-                success: true,
-                message: "Boletins finais gerados com sucesso.",
-                data: {
-                    boletins,
-                    turma: {
-                        id: cla$$._id,
-                        nome: cla$$.name_class,
-                        regente: cla$$.classRegentTeacher.map(teacher => ({
-                            id: teacher._id,
-                            nome: teacher.name
-                        })),
-                    }
-                }
-            });
-
-        } catch (error) {
-            console.error("Erro ao gerar boletins:", error);
-            return res.status(500).json({
-                success: false,
-                message: "Erro ao gerar boletins.",
-                error: error.message
-            });
-        }
-    }
-
-
     async allTheBulletinsConcept(req, res) {
         const {
             idClass,
@@ -445,6 +362,119 @@ class RepoCardController {
                 if (id_ivThQuarter) filter.id_ivThQuarter = id_ivThQuarter;
 
                 const grades = await Concept.find(filter).populate('id_matter');
+
+                //console.log("grades", grades);
+
+                const totalPorMateria = {};
+
+                grades.forEach((g) => {
+                    const nomeMateria = g.id_matter?.name || 'Matéria não definida';
+                    const nota = g.studentGrade;
+
+                    if (!totalPorMateria[nomeMateria]) {
+                        totalPorMateria[nomeMateria] = nota;  // Se não existe, inicia com o conceito atual
+                    } else {
+                        totalPorMateria[nomeMateria] += `, ${nota}`; // Se já existe, concatena
+                    }
+                });
+
+
+                // 🔥 Frequência desse aluno no período filtrado
+                const freqAluno = attendance.filter(
+                    (a) => String(a.id_student) === String(aluno._id)
+                );
+
+                const totalAulas = freqAluno.length;
+                const totalPresencas = freqAluno.filter((a) => a.status === "P").length;
+                const totalFaltas = freqAluno.filter((a) => a.status === "F").length;
+                const totalFaltasJustificadas = freqAluno.filter((a) => a.status === "FJ").length;
+
+                return {
+                    id: aluno._id,
+                    nome: aluno.name,
+                    totalPorMateria,
+                    frequencia: {
+                        totalAulas,
+                        totalPresencas,
+                        totalFaltas,
+                        totalFaltasJustificadas,
+                        percentualPresenca: totalAulas > 0 ? ((totalPresencas / totalAulas) * 100).toFixed(2) + "%" : "0%",
+                        percentualFaltas: totalAulas > 0 ? ((totalFaltas / totalAulas) * 100).toFixed(2) + "%" : "0%",
+                        percentualFaltasJustificadas: totalAulas > 0 ? ((totalFaltasJustificadas / totalAulas) * 100).toFixed(2) + "%" : "0%",
+                    }
+                };
+            })
+        );
+
+        // Retorno com informações da turma e dos professores
+        return res.status(200).json({
+            success: true,
+            message: "Boletins gerados com sucesso.",
+            data: {
+                boletins,
+                turma: {
+                    id: cla$$._id,
+                    nome: cla$$.name_class,
+                    regente: cla$$.classRegentTeacher.map(teacher => ({
+                        id: teacher._id,
+                        nome: teacher.name
+                    })),
+                },
+                /*bimestre: {
+                    totalGrade: bimonthly.totalGrade,
+                    averageGrade: bimonthly.averageGrade,
+                }*/
+            }
+        });
+
+    } catch(error) {
+        console.error("Erro ao gerar boletins:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Erro ao gerar boletins.",
+            error: error.message
+        });
+    }
+
+    async allTheFinalBulletinsConcept(req, res) {
+        const {
+            idClass,
+        } = req.body.idClass;
+
+        console.log("dados dos boletins", req.body)
+
+        const cla$$ = await Class.findOne({ _id: idClass })
+            .populate('id_student')
+            .populate('classRegentTeacher')
+            .populate('physicalEducationTeacher');
+
+        // console.log("cla$$", cla$$)
+        const physicalEducationTeacherId = (cla$$.physicalEducationTeacher && cla$$.physicalEducationTeacher.length > 0)
+            ? String(cla$$.physicalEducationTeacher[0]._id)
+            : null;
+
+        //let bimonthly = null;
+
+        const currentYear = new Date().getFullYear().toString(); // 🔥 Ano atual como string
+
+        // Se bimonthly tiver dados de data, monta o intervalo
+        let attendance = [];
+        attendance = await Attendance.find({
+            id_class: idClass, // Filtra pela turma
+            year: currentYear,
+            id_teacher: { $ne: physicalEducationTeacherId }
+        }).populate('id_teacher');
+
+        // Para cada aluno, busca suas notas e soma por matéria
+        const boletins = await Promise.all(
+            cla$$.id_student.map(async (aluno) => {
+                const filter = {
+                    id_student: aluno._id,
+                    id_class: idClass,
+                    year: currentYear,
+                };
+
+                const grades = await FinalConcepts.find(filter).populate('id_matter');
 
                 //console.log("grades", grades);
 
