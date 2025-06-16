@@ -1,7 +1,19 @@
-/*const mongoose = require("mongoose")
+const mongoose = require("mongoose")
 
 const report_cardschema = new mongoose.Schema(
     {
+        nameStudent: {
+            type: String,
+            required: true,
+        },
+        nameTeacher: {
+            type: String,
+            required: true,
+        },
+        nameSchool: {
+            type: String,
+            required: true,
+        },
         year: {
             type: String,
             required: true,
@@ -11,23 +23,16 @@ const report_cardschema = new mongoose.Schema(
         },
         totalGrade: {
             type: String,
-            required: true,
+            //required: true,
         },
         averageGrade: {
             type: String,
-            required: true,
+            //required: true,
         },
         studentGrade: {
-            type: String,
-            required: true,
-        },
-        idBimonthly: {
-            type: String,
-            required: true,
-        },
-        status: {
-            type: String,
-        },
+            type: Map,
+            of: Number,
+          },
         id_iStQuarter: {
             type: mongoose.Types.ObjectId,
             ref: 'I_stQuarter'
@@ -44,28 +49,31 @@ const report_cardschema = new mongoose.Schema(
             type: mongoose.Types.ObjectId,
             ref: 'IV_thQuarter'
         },
-        id_attendance: [
-            {
-                type: mongoose.Types.ObjectId,
-                ref: 'attendance'
-            }
-        ],
-        id_matter: {
-            type: mongoose.Types.ObjectId,
-            ref: 'matter'
+        frequencia: {
+            totalAulas: { type: Number },
+            totalPresencas: { type: Number },
+            totalFaltas: { type: Number },
+            totalFaltasJustificadas: { type: Number },
+            percentualPresenca: { type: String },
+            percentualFaltas: { type: String },
+            percentualFaltasJustificadas: { type: String },
         },
         id_student: {
             type: mongoose.Types.ObjectId,
             ref: 'student'
         },
-        id_employee: {
+        idTeacher: {
             type: mongoose.Types.ObjectId,
             ref: 'employee'
-        }
+        },
+        idClass: {
+            type: mongoose.Types.ObjectId,
+            ref: 'class'
+        },
     },
     {
         timestamps: true
     }
 );
 
-module.exports = mongoose.model("report_card", report_cardschema);*/
+module.exports = mongoose.model("report_card", report_cardschema);

@@ -251,7 +251,7 @@ class EmployeeController {
     }
 
     async RecordClassTaught(req, res) {
-        const { day, month, year, description, id_teacher, id_class } = req.body;
+        const { day, month, year, description, id_teacher, id_teacher02, id_class } = req.body;
 
         // validations
         if (!day) {
@@ -265,7 +265,7 @@ class EmployeeController {
 
         //const school = await School.findOne({ _id: id_school });
 
-        const existingRecordClassTaught = await RecordClassTaught.find({ id_teacher: id_teacher })
+        const existingRecordClassTaught = await RecordClassTaught.find({ id_class: id_class })
 
         console.log("existingBimonthly", existingRecordClassTaught)
         if (existingRecordClassTaught) {
@@ -297,6 +297,7 @@ class EmployeeController {
             year,
             description,
             id_teacher,
+            id_teacher02,
             id_class
         });
 
@@ -327,22 +328,23 @@ class EmployeeController {
         const {
             year,
             id_class,
-            id_employee
+            //id_employee
         } = req.body;
 
         try {
             const recordClass = await RecordClassTaught.find({
                 id_class: id_class
             }).populate('id_teacher').populate('id_class')
+            .populate('id_teacher02')
 
             if (recordClass) {
                 const result = recordClass.map(Res => {
                     if (Res.year == year) {
 
-                        if (Res.id_teacher._id == id_employee) {
+                        //if (Res.id_teacher._id == id_employee) {
 
                             return Res
-                        }
+                        //}
                     }
                 }).filter(Res => {
                     if (Res !== null) {

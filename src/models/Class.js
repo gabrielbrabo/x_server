@@ -23,7 +23,7 @@ const classschema = new mongoose.Schema(
             required: true,
         },
         id_school: {
-            type: mongoose.Types.ObjectId, 
+            type: mongoose.Types.ObjectId,
             ref: 'school',
         },
         id_student: [
@@ -74,6 +74,28 @@ const classschema = new mongoose.Schema(
                 ref: 'matter'
             }
         ],
+        dailyStatus: {
+            type: Object,
+            default: {
+                "1º BIMESTRE": {
+                    regentTeacher: "aberto",
+                    physicalEducationTeacher: "aberto"
+                },
+                "2º BIMESTRE": {
+                    regentTeacher: "aberto",
+                    physicalEducationTeacher: "aberto"
+                },
+                "3º BIMESTRE": {
+                    regentTeacher: "aberto",
+                    physicalEducationTeacher: "aberto"
+                },
+                "4º BIMESTRE": {
+                    regentTeacher: "aberto",
+                    physicalEducationTeacher: "aberto"
+                }
+            }
+        }
+
     },
     {
         timestamps: true

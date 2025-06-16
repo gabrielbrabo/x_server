@@ -6,6 +6,7 @@ const ClassController = require( "./controllers/ClassController")
 const StudentController = require( "./controllers/StudentController")
 const MatterController = require( "./controllers/MatterContoller")
 const ReportCardController = require( "./controllers/RepoCardController")
+const DailyController = require( "./controllers/DailyController")
 const FinalConcepts = require( "./controllers/FinalConcepts")
 const AttendanceController = require( "./controllers/AttendanceController")
 const BimonthlyController = require( "./controllers/BimonthlyController")
@@ -64,6 +65,8 @@ routes.post('/remove/physicalEducationTeacher', ClassController.removePhysicalTe
 routes.post('/register/matter/:id', MatterController.create)
 routes.post('/add/matter', MatterController.addMatter)
 routes.post('/update/matter', MatterController.update)
+
+routes.post('/register/Daily', DailyController.create)
 
 routes.post('/register/card', ReportCardController.create)
 routes.post('/allTheBulletins-grades', ReportCardController.allTheBulletinsGrades)

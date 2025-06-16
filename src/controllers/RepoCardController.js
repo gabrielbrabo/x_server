@@ -1,3 +1,4 @@
+const ReportCard = require("../models/Report_card")
 const Employee = require("../models/Employee")
 const Student = require("../models/Student")
 const Cards = require("../models/Report_card")
@@ -16,100 +17,153 @@ const Class = require("../models/Class")
 class RepoCardController {
 
     async create(req, res) {
-        const { year, bimonthly, totalGrade, averageGrade, studentGrade, idBimonthly, id_matter, id_employee, id_student } = req.body;
+        const {
+            year,
+            idClass,
+            id_iStQuarter,
+            id_iiNdQuarter,
+            id_iiiRdQuarter,
+            id_ivThQuarter,
+        } = req.body;
 
-        // validations
-        if (!year) {
-            return res.status(422).json({ msg: "O Ano é obrigatório!" });
+        if (!year) return res.status(422).json({ msg: "O Ano é obrigatório!" });
+        if (!idClass) return res.status(422).json({ msg: "O ID turma é obrigatório!" });
+
+        const cla$$ = await Class.findOne({ _id: idClass })
+            .populate('id_school')
+            .populate('id_student')
+            .populate('classRegentTeacher')
+            .populate('physicalEducationTeacher');
+
+        //console.log("$$", cla$$)
+
+        const physicalEducationTeacherId = (cla$$.physicalEducationTeacher && cla$$.physicalEducationTeacher.length > 0)
+            ? String(cla$$.physicalEducationTeacher[0]._id)
+            : null;
+
+        // Monta dinamicamente o filtro com base nos bimestres recebidos, ano e turma
+        const filter = { idClass, year };
+        if (id_iStQuarter) filter.id_iStQuarter = id_iStQuarter;
+        if (id_iiNdQuarter) filter.id_iiNdQuarter = id_iiNdQuarter;
+        if (id_iiiRdQuarter) filter.id_iiiRdQuarter = id_iiiRdQuarter;
+        if (id_ivThQuarter) filter.id_ivThQuarter = id_ivThQuarter;
+
+        // Verifica e remove boletins existentes da turma no ano e bimestres informados
+        const existingReports = await ReportCard.find(filter);
+
+        if (existingReports.length > 0) {
+            console.log("Boletins a serem removidos:", existingReports.map(r => ({
+                id: r._id,
+                aluno: r.nameStudent,
+                bimestre: r.bimonthly
+            })));
+
+            await ReportCard.deleteMany(filter);
         }
 
-        if (!id_matter) {
-            return res.status(422).json({ msg: "A serie da turma é obrigatório!" });
-        }
+        await Promise.all(
+            cla$$.id_student.map(async (aluno) => {
 
-        if (!id_employee) {
-            return res.status(422).json({ msg: "O nivel da turma é obrigatório!" });
-        }
+                const studentName = aluno.name;
+                const teacherNames = cla$$.classRegentTeacher?.map(t => t.name).join(', ') || "Professor não definido";
+                const idTeacher = cla$$.classRegentTeacher?.map(t => t._id).join(', ') || "Professor não definido";
+                const schoolNames = cla$$.id_school.name;
 
-        if (!id_student) {
-            return res.status(422).json({ msg: "o turno é obrigatória!" });
-        }
+                //console.log("schoolNames", schoolNames)
 
-        // check if class exists
-        const student = await Student.findOne({ _id: id_student });
 
-        const card = await Cards.find({ _id: student.id_reporter_card });
+                let bimonthly = null;
 
-        if (card) {
+                if (id_iStQuarter) bimonthly = await I_stQuarter.findOne({ _id: id_iStQuarter });
+                if (id_iiNdQuarter) bimonthly = await II_ndQuarter.findOne({ _id: id_iiNdQuarter });
+                if (id_iiiRdQuarter) bimonthly = await III_rdQuarter.findOne({ _id: id_iiiRdQuarter });
+                if (id_ivThQuarter) bimonthly = await IV_thQuarter.findOne({ _id: id_ivThQuarter });
 
-            const Res = card.map(result => {
-                if (result.year == year) {
-                    if (result.bimonthly == bimonthly) {
-                        if (result.id_matter == id_matter) {
-                            return result
-                        }
+                if (!bimonthly) return;
+
+                //console.log("bimonthly", bimonthly)
+
+                const startDate = new Date(bimonthly.startyear, bimonthly.startmonth - 1, bimonthly.startday);
+                const endDate = new Date(bimonthly.endyear, bimonthly.endmonth - 1, bimonthly.endday, 23, 59, 59);
+
+                const attendance = await Attendance.find({
+                    id_class: idClass,
+                    date: { $gte: startDate, $lte: endDate },
+                    id_teacher: { $ne: physicalEducationTeacherId },
+                }).populate('id_teacher');
+
+                const filter = {
+                    id_student: aluno._id,
+                    id_class: idClass,
+                };
+
+                // Adiciona condições ao filtro de acordo com os IDs de bimestres recebidos
+                if (id_iStQuarter) filter.id_iStQuarter = id_iStQuarter;
+                if (id_iiNdQuarter) filter.id_iiNdQuarter = id_iiNdQuarter;
+                if (id_iiiRdQuarter) filter.id_iiiRdQuarter = id_iiiRdQuarter;
+                if (id_ivThQuarter) filter.id_ivThQuarter = id_ivThQuarter;
+
+                let grades = [];
+
+                if (filter.id_iStQuarter || filter.id_iiNdQuarter || filter.id_iiiRdQuarter || filter.id_ivThQuarter) {
+                    grades = await NumericalGrade.find(filter).populate('id_matter');
+                }
+
+                const totalPorMateria = {};
+                grades.forEach((g) => {
+                    const nomeMateria = g.id_matter?.name || 'Matéria não definida';
+                    const nota = typeof g.studentGrade === 'number'
+                        ? g.studentGrade
+                        : parseFloat(String(g.studentGrade).replace(',', '.')) || 0;
+
+
+                    if (!totalPorMateria[nomeMateria]) {
+                        totalPorMateria[nomeMateria] = 0;
                     }
-                }
-            }).filter((fill) => {
-                return fill
+
+                    totalPorMateria[nomeMateria] += nota;
+                });
+
+                const freqAluno = attendance.filter(a => String(a.id_student) === String(aluno._id));
+
+                const totalAulas = freqAluno.length;
+                const totalPresencas = freqAluno.filter((a) => a.status === "P").length;
+                const totalFaltas = freqAluno.filter((a) => a.status === "F").length;
+                const totalFaltasJustificadas = freqAluno.filter((a) => a.status === "FJ").length;
+
+                const report = new ReportCard({
+                    nameStudent: studentName,
+                    nameTeacher: teacherNames,
+                    nameSchool: schoolNames,
+                    year,
+                    bimonthly: bimonthly.bimonthly,
+                    id_iStQuarter,
+                    id_iiNdQuarter,
+                    id_iiiRdQuarter,
+                    id_ivThQuarter,
+                    id_student: aluno._id,
+                    idTeacher: idTeacher,
+                    idClass: idClass,
+                    studentGrade: totalPorMateria,
+                    frequencia: {
+                        totalAulas,
+                        totalPresencas,
+                        totalFaltas,
+                        totalFaltasJustificadas,
+                        percentualPresenca: totalAulas > 0 ? ((totalPresencas / totalAulas) * 100).toFixed(2) + "%" : "0%",
+                        percentualFaltas: totalAulas > 0 ? ((totalFaltas / totalAulas) * 100).toFixed(2) + "%" : "0%",
+                        percentualFaltasJustificadas: totalAulas > 0 ? ((totalFaltasJustificadas / totalAulas) * 100).toFixed(2) + "%" : "0%",
+                    },
+                    totalGrade: bimonthly.totalGrade,
+                    averageGrade: bimonthly.averageGrade,
+                });
+
+                await report.save();
+                //console.log("Boletim salvo:", report);
             })
+        );
 
-            if (Res.length > 0) {
-                return res.status(422).json({ Res, msg: "Esse aluno ja tem um boletinho cadastrado!" });
-            }
-            console.log("card", Res)
-        }
-
-        // create user
-        const newreportCards = new Cards({
-            year: year,
-            bimonthly: bimonthly.toUpperCase(),
-            totalGrade: totalGrade,
-            averageGrade: averageGrade,
-            studentGrade: studentGrade,
-            idBimonthly: idBimonthly,
-            id_matter: id_matter,
-            id_employee: id_employee,
-            id_student: id_student
-        })
-
-        try {
-
-            const reportCards = await newreportCards.save()
-
-            await Student.updateOne({
-                _id: id_student
-            }, {
-                $push: {
-                    id_reporter_card: reportCards._id
-                }
-            })
-
-            await Employee.updateOne({
-                _id: id_employee
-            }, {
-                $push: {
-                    id_reporter_card: reportCards._id
-                }
-            })
-
-            await Matter.updateOne({
-                _id: id_matter
-            }, {
-                $push: {
-                    id_reporter_card: reportCards._id
-                }
-            })
-
-            res.status(200).json({
-                msg: 'Turma cadastrado com sucesso.'
-            })
-
-        } catch (err) {
-            res.status(500).json({
-                msg: 'Error ao cadastra uma turma.'
-            })
-        }
+        return res.status(201).json({ msg: "Boletins gerados com sucesso!" });
     }
 
     async allTheBulletinsGrades(req, res) {
