@@ -335,7 +335,7 @@ class EmployeeController {
         const {
             year,
             id_class,
-            //id_employee
+            id_employee
         } = req.body;
 
         try {
@@ -348,10 +348,10 @@ class EmployeeController {
                 const result = recordClass.map(Res => {
                     if (Res.year == year) {
 
-                        //if (Res.id_teacher._id == id_employee) {
+                        if (Res.id_teacher._id == id_employee) {
 
                         return Res
-                        //}
+                        }
                     }
                 }).filter(Res => {
                     if (Res !== null) {
