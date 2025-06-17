@@ -3,6 +3,7 @@ const User = require("../models/Employee")
 const School = require("../models/School")
 const AddTeacher = require("../models/AddTeacher")
 const RecordClassTaught = require("../models/RecordClassTaught")
+const Class = require("../models/Class")
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs')
 
@@ -263,17 +264,23 @@ class EmployeeController {
         }
 
 
-        //const school = await School.findOne({ _id: id_school });
+        const cla$$ = await Class.findOne({ _id: id_class })
+            .populate('physicalEducationTeacher');
+
+        const physicalEducationTeacherId = (cla$$.physicalEducationTeacher && cla$$.physicalEducationTeacher.length > 0)
+            ? String(cla$$.physicalEducationTeacher[0]._id)
+            : null;
 
         const existingRecordClassTaught = await RecordClassTaught.find({ id_class: id_class })
 
-        console.log("existingBimonthly", existingRecordClassTaught)
+        console.log("id_teacher", id_teacher)
+        console.log("physicalEducationTeacherId", physicalEducationTeacherId)
         if (existingRecordClassTaught) {
             const result = existingRecordClassTaught.map(Res => {
                 if (Res.year == year) {
                     if (Res.month == month) {
                         if (Res.day == day) {
-                            if (Res.id_class == id_class) {
+                            if (id_teacher !== physicalEducationTeacherId) {
                                 return Res
                             }
                         }
@@ -290,14 +297,14 @@ class EmployeeController {
                 return res.status(422).json({ msg: "A aula ja foi definido voçê so podera editalo!" });
             }
         }
-
+        
         const recordClassTaught = new RecordClassTaught({
             day,
             month,
             year,
             description,
             id_teacher,
-            id_teacher02,
+            id_teacher02: String(id_teacher) === physicalEducationTeacherId ? null : id_teacher02,
             id_class
         });
 
@@ -335,7 +342,7 @@ class EmployeeController {
             const recordClass = await RecordClassTaught.find({
                 id_class: id_class
             }).populate('id_teacher').populate('id_class')
-            .populate('id_teacher02')
+                .populate('id_teacher02')
 
             if (recordClass) {
                 const result = recordClass.map(Res => {
@@ -343,7 +350,7 @@ class EmployeeController {
 
                         //if (Res.id_teacher._id == id_employee) {
 
-                            return Res
+                        return Res
                         //}
                     }
                 }).filter(Res => {
@@ -433,7 +440,7 @@ class EmployeeController {
     async RecordClassTaughtDaily(req, res) {
 
         const {
-            year, id_teacher, id_class, startd, startm, starty, endd, endm, endy
+            year, /*id_teacher,*/ id_class, startd, startm, starty, endd, endm, endy
         } = req.body;
 
         try {
@@ -453,13 +460,13 @@ class EmployeeController {
             // Busque as presenças que correspondem aos critérios
             const classes = await RecordClassTaught.find({
                 year: year,
-                id_teacher: id_teacher,
+                //id_teacher: id_teacher,
                 id_class: id_class,
                 date: {
                     $gte: startDate, // Maior ou igual à data de início
                     $lte: endDate    // Menor ou igual à data de fim
                 }
-            }).populate('id_teacher id_class');
+            }).populate('id_teacher id_class id_teacher02');
 
             console.log("classes", classes);
 
