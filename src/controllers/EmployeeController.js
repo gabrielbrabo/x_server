@@ -440,7 +440,7 @@ class EmployeeController {
     async RecordClassTaughtDaily(req, res) {
 
         const {
-            year, /*id_teacher,*/ id_class, startd, startm, starty, endd, endm, endy
+            year, id_teacher, id_class, startd, startm, starty, endd, endm, endy
         } = req.body;
 
         try {
@@ -460,7 +460,7 @@ class EmployeeController {
             // Busque as presenças que correspondem aos critérios
             const classes = await RecordClassTaught.find({
                 year: year,
-                //id_teacher: id_teacher,
+                id_teacher: id_teacher,
                 id_class: id_class,
                 date: {
                     $gte: startDate, // Maior ou igual à data de início
