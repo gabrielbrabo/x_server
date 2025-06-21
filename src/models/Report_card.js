@@ -1,4 +1,5 @@
 const mongoose = require("mongoose")
+const { Schema } = mongoose; // <- necessário para usar Schema.Types.Mixed
 
 const report_cardschema = new mongoose.Schema(
     {
@@ -31,8 +32,8 @@ const report_cardschema = new mongoose.Schema(
         },
         studentGrade: {
             type: Map,
-            of: Number,
-          },
+            of: Schema.Types.Mixed,
+        },
         id_iStQuarter: {
             type: mongoose.Types.ObjectId,
             ref: 'I_stQuarter'

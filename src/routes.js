@@ -68,7 +68,8 @@ routes.post('/update/matter', MatterController.update)
 
 routes.post('/register/Daily', DailyController.create)
 
-routes.post('/register/card', ReportCardController.create)
+routes.post('/register/card', ReportCardController.createCardGrade)
+routes.post('/register/card-concept', ReportCardController.createCardConcept)
 routes.post('/allTheBulletins-grades', ReportCardController.allTheBulletinsGrades)
 //routes.post('/allTheFinalBulletins-grades', ReportCardController.allTheFinalBulletinsGrades)
 routes.post('/allTheBulletins-concept', ReportCardController.allTheBulletinsConcept)
@@ -123,6 +124,8 @@ routes.post('/reopen_iii_rdQuarter/:id', BimonthlyController.reopenIII_rdQuarter
 routes.post('/toclose_iii_rdQuarter/:id', BimonthlyController.tocloseIII_rdQuarter)
 routes.post('/reopen_iv_thQuarter/:id', BimonthlyController.reopenIV_thQuarter)
 routes.post('/toclose_iv_thQuarter/:id', BimonthlyController.tocloseIV_thQuarter)
+
+routes.post('/closeBimesterDiary', BimonthlyController.closeBimesterDiary)
 
 routes.post('/create-activity', GradeController.createActivity)
 routes.post('/get-activity', GradeController.GetActivity)

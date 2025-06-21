@@ -16,6 +16,8 @@ const III_rdQuarter = require("../models/III_rdQuarter")
 const IV_thQuarter = require("../models/IV_thQuarter")
 const Class = require("../models/Class")
 
+const mongoose = require("mongoose");
+
 class DailyController {
 
     async create(req, res) {
@@ -26,8 +28,8 @@ class DailyController {
             id_iiNdQuarter,
             id_iiiRdQuarter,
             id_ivThQuarter,
-        } = req.body;
-
+        } = req.body.year;
+        console.log(req.body)
         if (!year) return res.status(422).json({ msg: "O Ano é obrigatório!" });
         if (!idClass) return res.status(422).json({ msg: "O ID turma é obrigatório!" });
 
@@ -85,19 +87,79 @@ class DailyController {
 
         //console.log("bimonthly", bimonthly)
 
-        const startDate = new Date(bimonthly.startyear, bimonthly.startmonth - 1, bimonthly.startday);
-        const endDate = new Date(bimonthly.endyear, bimonthly.endmonth - 1, bimonthly.endday, 23, 59, 59);
+        //const startDate = new Date(bimonthly.startyear, bimonthly.startmonth - 1, bimonthly.startday);
+        //const endDate = new Date(bimonthly.endyear, bimonthly.endmonth - 1, bimonthly.endday, 23, 59, 59);
+        const startDate = new Date(`${bimonthly.startyear}-${String(bimonthly.startmonth).padStart(2, '0')}-${String(bimonthly.startday).padStart(2, '0')}T00:00:00.000Z`);
+        const endDate = new Date(`${bimonthly.endyear}-${String(bimonthly.endmonth).padStart(2, '0')}-${String(bimonthly.endday).padStart(2, '0')}T23:59:59.999Z`);
 
-        const attendance = await Attendance.find({
-            id_class: idClass,
-            date: { $gte: startDate, $lte: endDate },
-            id_teacher: { $ne: physicalEducationTeacherId },
-        }).populate('id_teacher');
+        const mongoose = require("mongoose");
 
-        const recordClassTaught = await RecordClassTaught.find({
-            id_class: idClass,
-            date: { $gte: startDate, $lte: endDate },
-        })
+        const attendance = await Attendance.aggregate([
+            {
+                $match: {
+                    id_class: new mongoose.Types.ObjectId(idClass),
+                    id_teacher: { $ne: physicalEducationTeacherId ? new mongoose.Types.ObjectId(physicalEducationTeacherId) : null }
+                }
+            },
+            {
+                $addFields: {
+                    dateOnly: {
+                        $dateFromParts: {
+                            year: { $year: "$date" },
+                            month: { $month: "$date" },
+                            day: { $dayOfMonth: "$date" }
+                        }
+                    }
+                }
+            },
+            {
+                $addFields: {
+                    dateOnly: {
+                        $dateFromParts: {
+                            year: { $year: "$date" },
+                            month: { $month: "$date" },
+                            day: { $dayOfMonth: "$date" }
+                        }
+                    }
+                }
+            },
+            {
+                $match: {
+                    dateOnly: {
+                        $gte: new Date(startDate.toISOString().split("T")[0]),
+                        $lte: new Date(endDate.toISOString().split("T")[0])
+                    }
+                }
+            }
+        ]);
+
+
+        console.log("startDate", startDate.toISOString());
+        console.log("endDate", endDate.toISOString());
+
+        const recordClassTaught = await RecordClassTaught.aggregate([
+            {
+                $match: {
+                    id_class: new mongoose.Types.ObjectId(idClass)
+                }
+            },
+            {
+                $addFields: {
+                    dateOnly: {
+                        $dateFromParts: {
+                            year: { $toInt: "$year" },
+                            month: { $toInt: "$month" },
+                            day: { $toInt: "$day" }
+                        }
+                    }
+                }
+            },
+            {
+                $match: {
+                    dateOnly: { $gte: startDate, $lte: endDate }
+                }
+            }
+        ]);
 
         const filter = {
             id_class: idClass,
@@ -148,7 +210,13 @@ class DailyController {
         await daily.save();
         //console.log("daily salvo:", daily);
 
-        return res.status(201).json({ msg: "diario gerados com sucesso!" });
+        // Recarrega o documento com populate
+        const populatedDaily = await Daily.findById(daily._id).populate("studentGrade");
+
+        return res.status(201).json({
+            msg: "Diário gerado com sucesso!",
+            daily: populatedDaily
+        });
     }
 
 }

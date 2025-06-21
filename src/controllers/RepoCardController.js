@@ -16,7 +16,7 @@ const Class = require("../models/Class")
 
 class RepoCardController {
 
-    async create(req, res) {
+    async createCardGrade(req, res) {
         const {
             year,
             idClass,
@@ -24,7 +24,7 @@ class RepoCardController {
             id_iiNdQuarter,
             id_iiiRdQuarter,
             id_ivThQuarter,
-        } = req.body;
+        } = req.body.year;
 
         if (!year) return res.status(422).json({ msg: "O Ano é obrigatório!" });
         if (!idClass) return res.status(422).json({ msg: "O ID turma é obrigatório!" });
@@ -83,14 +83,49 @@ class RepoCardController {
 
                 //console.log("bimonthly", bimonthly)
 
-                const startDate = new Date(bimonthly.startyear, bimonthly.startmonth - 1, bimonthly.startday);
-                const endDate = new Date(bimonthly.endyear, bimonthly.endmonth - 1, bimonthly.endday, 23, 59, 59);
+                const startDate = new Date(`${bimonthly.startyear}-${String(bimonthly.startmonth).padStart(2, '0')}-${String(bimonthly.startday).padStart(2, '0')}T00:00:00.000Z`);
+                const endDate = new Date(`${bimonthly.endyear}-${String(bimonthly.endmonth).padStart(2, '0')}-${String(bimonthly.endday).padStart(2, '0')}T23:59:59.999Z`);
 
-                const attendance = await Attendance.find({
-                    id_class: idClass,
-                    date: { $gte: startDate, $lte: endDate },
-                    id_teacher: { $ne: physicalEducationTeacherId },
-                }).populate('id_teacher');
+                const mongoose = require("mongoose");
+
+                const attendance = await Attendance.aggregate([
+                    {
+                        $match: {
+                            id_class: new mongoose.Types.ObjectId(idClass),
+                            id_teacher: { $ne: physicalEducationTeacherId ? new mongoose.Types.ObjectId(physicalEducationTeacherId) : null }
+                        }
+                    },
+                    {
+                        $addFields: {
+                            dateOnly: {
+                                $dateFromParts: {
+                                    year: { $year: "$date" },
+                                    month: { $month: "$date" },
+                                    day: { $dayOfMonth: "$date" }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        $addFields: {
+                            dateOnly: {
+                                $dateFromParts: {
+                                    year: { $year: "$date" },
+                                    month: { $month: "$date" },
+                                    day: { $dayOfMonth: "$date" }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        $match: {
+                            dateOnly: {
+                                $gte: new Date(startDate.toISOString().split("T")[0]),
+                                $lte: new Date(endDate.toISOString().split("T")[0])
+                            }
+                        }
+                    }
+                ]);
 
                 const filter = {
                     id_student: aluno._id,
@@ -166,6 +201,185 @@ class RepoCardController {
         return res.status(201).json({ msg: "Boletins gerados com sucesso!" });
     }
 
+    async createCardConcept(req, res) {
+        const {
+            year,
+            idClass,
+            id_iStQuarter,
+            id_iiNdQuarter,
+            id_iiiRdQuarter,
+            id_ivThQuarter,
+        } = req.body;
+
+        if (!year) return res.status(422).json({ msg: "O Ano é obrigatório!" });
+        if (!idClass) return res.status(422).json({ msg: "O ID turma é obrigatório!" });
+
+        const cla$$ = await Class.findOne({ _id: idClass })
+            .populate('id_school')
+            .populate('id_student')
+            .populate('classRegentTeacher')
+            .populate('physicalEducationTeacher');
+
+        //console.log("$$", cla$$)
+
+        const physicalEducationTeacherId = (cla$$.physicalEducationTeacher && cla$$.physicalEducationTeacher.length > 0)
+            ? String(cla$$.physicalEducationTeacher[0]._id)
+            : null;
+
+        // Monta dinamicamente o filtro com base nos bimestres recebidos, ano e turma
+        const filter = { idClass, year };
+        if (id_iStQuarter) filter.id_iStQuarter = id_iStQuarter;
+        if (id_iiNdQuarter) filter.id_iiNdQuarter = id_iiNdQuarter;
+        if (id_iiiRdQuarter) filter.id_iiiRdQuarter = id_iiiRdQuarter;
+        if (id_ivThQuarter) filter.id_ivThQuarter = id_ivThQuarter;
+
+        // Verifica e remove boletins existentes da turma no ano e bimestres informados
+        const existingReports = await ReportCard.find(filter);
+
+        if (existingReports.length > 0) {
+            console.log("Boletins a serem removidos:", existingReports.map(r => ({
+                id: r._id,
+                aluno: r.nameStudent,
+                bimestre: r.bimonthly
+            })));
+
+            await ReportCard.deleteMany(filter);
+        }
+
+        await Promise.all(
+            cla$$.id_student.map(async (aluno) => {
+
+                const studentName = aluno.name;
+                const teacherNames = cla$$.classRegentTeacher?.map(t => t.name).join(', ') || "Professor não definido";
+                const idTeacher = cla$$.classRegentTeacher?.map(t => t._id).join(', ') || "Professor não definido";
+                const schoolNames = cla$$.id_school.name;
+
+                //console.log("schoolNames", schoolNames)
+
+
+                let bimonthly = null;
+
+                if (id_iStQuarter) bimonthly = await I_stQuarter.findOne({ _id: id_iStQuarter });
+                if (id_iiNdQuarter) bimonthly = await II_ndQuarter.findOne({ _id: id_iiNdQuarter });
+                if (id_iiiRdQuarter) bimonthly = await III_rdQuarter.findOne({ _id: id_iiiRdQuarter });
+                if (id_ivThQuarter) bimonthly = await IV_thQuarter.findOne({ _id: id_ivThQuarter });
+
+                if (!bimonthly) return;
+
+                //console.log("bimonthly", bimonthly)
+
+                const startDate = new Date(`${bimonthly.startyear}-${String(bimonthly.startmonth).padStart(2, '0')}-${String(bimonthly.startday).padStart(2, '0')}T00:00:00.000Z`);
+                const endDate = new Date(`${bimonthly.endyear}-${String(bimonthly.endmonth).padStart(2, '0')}-${String(bimonthly.endday).padStart(2, '0')}T23:59:59.999Z`);
+
+                const mongoose = require("mongoose");
+
+                const attendance = await Attendance.aggregate([
+                    {
+                        $match: {
+                            id_class: new mongoose.Types.ObjectId(idClass),
+                            id_teacher: { $ne: physicalEducationTeacherId ? new mongoose.Types.ObjectId(physicalEducationTeacherId) : null }
+                        }
+                    },
+                    {
+                        $addFields: {
+                            dateOnly: {
+                                $dateFromParts: {
+                                    year: { $year: "$date" },
+                                    month: { $month: "$date" },
+                                    day: { $dayOfMonth: "$date" }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        $addFields: {
+                            dateOnly: {
+                                $dateFromParts: {
+                                    year: { $year: "$date" },
+                                    month: { $month: "$date" },
+                                    day: { $dayOfMonth: "$date" }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        $match: {
+                            dateOnly: {
+                                $gte: new Date(startDate.toISOString().split("T")[0]),
+                                $lte: new Date(endDate.toISOString().split("T")[0])
+                            }
+                        }
+                    }
+                ]);
+
+                const filter = {
+                    id_student: aluno._id,
+                    id_class: idClass,
+                };
+
+                // Adiciona condições ao filtro de acordo com os IDs de bimestres recebidos
+                if (id_iStQuarter) filter.id_iStQuarter = id_iStQuarter;
+                if (id_iiNdQuarter) filter.id_iiNdQuarter = id_iiNdQuarter;
+                if (id_iiiRdQuarter) filter.id_iiiRdQuarter = id_iiiRdQuarter;
+                if (id_ivThQuarter) filter.id_ivThQuarter = id_ivThQuarter;
+
+                //let grades = [];
+
+                const grades = await Concept.find(filter).populate('id_matter');
+
+                console.log("grades", grades);
+                const totalPorMateria = {};
+
+                grades.forEach((g) => {
+                    const nomeMateria = g.id_matter?.name || 'Matéria não definida';
+                    const nota = g.studentGrade;
+
+                    if (!totalPorMateria[nomeMateria]) {
+                        totalPorMateria[nomeMateria] = nota;  // Se não existe, inicia com o conceito atual
+                    } else {
+                        totalPorMateria[nomeMateria] += `, ${nota}`; // Se já existe, concatena
+                    }
+                });
+
+                const freqAluno = attendance.filter(a => String(a.id_student) === String(aluno._id));
+
+                const totalAulas = freqAluno.length;
+                const totalPresencas = freqAluno.filter((a) => a.status === "P").length;
+                const totalFaltas = freqAluno.filter((a) => a.status === "F").length;
+                const totalFaltasJustificadas = freqAluno.filter((a) => a.status === "FJ").length;
+
+                const report = new ReportCard({
+                    nameStudent: studentName,
+                    nameTeacher: teacherNames,
+                    nameSchool: schoolNames,
+                    year,
+                    bimonthly: bimonthly.bimonthly,
+                    id_iStQuarter,
+                    id_iiNdQuarter,
+                    id_iiiRdQuarter,
+                    id_ivThQuarter,
+                    id_student: aluno._id,
+                    idTeacher: idTeacher,
+                    idClass: idClass,
+                    studentGrade: totalPorMateria,
+                    frequencia: {
+                        totalAulas,
+                        totalPresencas,
+                        totalFaltas,
+                        totalFaltasJustificadas,
+                        percentualPresenca: totalAulas > 0 ? ((totalPresencas / totalAulas) * 100).toFixed(2) + "%" : "0%",
+                        percentualFaltas: totalAulas > 0 ? ((totalFaltas / totalAulas) * 100).toFixed(2) + "%" : "0%",
+                        percentualFaltasJustificadas: totalAulas > 0 ? ((totalFaltasJustificadas / totalAulas) * 100).toFixed(2) + "%" : "0%",
+                    },
+                });
+
+                await report.save();
+                //console.log("Boletim salvo:", report);
+            })
+        );
+        return res.status(201).json({ msg: "Boletins gerados com sucesso!" });
+    }
+
     async allTheBulletinsGrades(req, res) {
         const {
             idClass,
@@ -208,7 +422,7 @@ class RepoCardController {
         // Se bimonthly tiver dados de data, monta o intervalo
         let attendance = [];
         if (bimonthly) {
-            const startDate = new Date(
+            /*const startDate = new Date(
                 Number(bimonthly.startyear),
                 Number(bimonthly.startmonth) - 1, // mês começa em 0 no JS
                 Number(bimonthly.startday)
@@ -229,7 +443,51 @@ class RepoCardController {
                     $lte: endDate    // Menor ou igual a data de fim
                 },
                 id_teacher: { $ne: physicalEducationTeacherId }
-            }).populate('id_teacher');
+            }).populate('id_teacher');*/
+
+            const startDate = new Date(`${bimonthly.startyear}-${String(bimonthly.startmonth).padStart(2, '0')}-${String(bimonthly.startday).padStart(2, '0')}T00:00:00.000Z`);
+            const endDate = new Date(`${bimonthly.endyear}-${String(bimonthly.endmonth).padStart(2, '0')}-${String(bimonthly.endday).padStart(2, '0')}T23:59:59.999Z`);
+
+            const mongoose = require("mongoose");
+
+            attendance = await Attendance.aggregate([
+                {
+                    $match: {
+                        id_class: new mongoose.Types.ObjectId(idClass),
+                        id_teacher: { $ne: physicalEducationTeacherId ? new mongoose.Types.ObjectId(physicalEducationTeacherId) : null }
+                    }
+                },
+                {
+                    $addFields: {
+                        dateOnly: {
+                            $dateFromParts: {
+                                year: { $year: "$date" },
+                                month: { $month: "$date" },
+                                day: { $dayOfMonth: "$date" }
+                            }
+                        }
+                    }
+                },
+                {
+                    $addFields: {
+                        dateOnly: {
+                            $dateFromParts: {
+                                year: { $year: "$date" },
+                                month: { $month: "$date" },
+                                day: { $dayOfMonth: "$date" }
+                            }
+                        }
+                    }
+                },
+                {
+                    $match: {
+                        dateOnly: {
+                            $gte: new Date(startDate.toISOString().split("T")[0]),
+                            $lte: new Date(endDate.toISOString().split("T")[0])
+                        }
+                    }
+                }
+            ]);
 
             //console.log("attendance", attendance)
         }
@@ -370,27 +628,49 @@ class RepoCardController {
         // Se bimonthly tiver dados de data, monta o intervalo
         let attendance = [];
         if (bimonthly) {
-            const startDate = new Date(
-                Number(bimonthly.startyear),
-                Number(bimonthly.startmonth) - 1, // mês começa em 0 no JS
-                Number(bimonthly.startday)
-            );
-            const endDate = new Date(
-                Number(bimonthly.endyear),
-                Number(bimonthly.endmonth) - 1, // mês começa em 0 no JS
-                Number(bimonthly.endday),
-                23, 59, 59 // inclui até o final do dia
-            );
-            // console.log("bimonthly", bimonthly)
-            // console.log("startDate", startDate, "endDate", endDate)
-            attendance = await Attendance.find({
-                id_class: idClass, // Filtra pela turma
-                date: {
-                    $gte: startDate, // Maior ou igual a data de início
-                    $lte: endDate    // Menor ou igual a data de fim
+            const startDate = new Date(`${bimonthly.startyear}-${String(bimonthly.startmonth).padStart(2, '0')}-${String(bimonthly.startday).padStart(2, '0')}T00:00:00.000Z`);
+            const endDate = new Date(`${bimonthly.endyear}-${String(bimonthly.endmonth).padStart(2, '0')}-${String(bimonthly.endday).padStart(2, '0')}T23:59:59.999Z`);
+
+            const mongoose = require("mongoose");
+
+            attendance = await Attendance.aggregate([
+                {
+                    $match: {
+                        id_class: new mongoose.Types.ObjectId(idClass),
+                        id_teacher: { $ne: physicalEducationTeacherId ? new mongoose.Types.ObjectId(physicalEducationTeacherId) : null }
+                    }
                 },
-                id_teacher: { $ne: physicalEducationTeacherId }
-            }).populate('id_teacher');
+                {
+                    $addFields: {
+                        dateOnly: {
+                            $dateFromParts: {
+                                year: { $year: "$date" },
+                                month: { $month: "$date" },
+                                day: { $dayOfMonth: "$date" }
+                            }
+                        }
+                    }
+                },
+                {
+                    $addFields: {
+                        dateOnly: {
+                            $dateFromParts: {
+                                year: { $year: "$date" },
+                                month: { $month: "$date" },
+                                day: { $dayOfMonth: "$date" }
+                            }
+                        }
+                    }
+                },
+                {
+                    $match: {
+                        dateOnly: {
+                            $gte: new Date(startDate.toISOString().split("T")[0]),
+                            $lte: new Date(endDate.toISOString().split("T")[0])
+                        }
+                    }
+                }
+            ]);
         }
 
         const filter = {};
