@@ -209,7 +209,7 @@ class RepoCardController {
             id_iiNdQuarter,
             id_iiiRdQuarter,
             id_ivThQuarter,
-        } = req.body;
+        } = req.body.year;
 
         if (!year) return res.status(422).json({ msg: "O Ano é obrigatório!" });
         if (!idClass) return res.status(422).json({ msg: "O ID turma é obrigatório!" });

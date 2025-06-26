@@ -270,7 +270,7 @@ class EmployeeController {
         const physicalEducationTeacherId = (cla$$.physicalEducationTeacher && cla$$.physicalEducationTeacher.length > 0)
             ? String(cla$$.physicalEducationTeacher[0]._id)
             : null;
-
+        
         const existingRecordClassTaught = await RecordClassTaught.find({ id_class: id_class })
 
         console.log("id_teacher", id_teacher)
@@ -280,7 +280,7 @@ class EmployeeController {
                 if (Res.year == year) {
                     if (Res.month == month) {
                         if (Res.day == day) {
-                            if (id_teacher !== physicalEducationTeacherId) {
+                            if (Res.id_teacher == id_teacher) {
                                 return Res
                             }
                         }
@@ -297,7 +297,7 @@ class EmployeeController {
                 return res.status(422).json({ msg: "A aula ja foi definido voçê so podera editalo!" });
             }
         }
-        
+
         const recordClassTaught = new RecordClassTaught({
             day,
             month,
@@ -350,7 +350,7 @@ class EmployeeController {
 
                         if (Res.id_teacher._id == id_employee) {
 
-                        return Res
+                            return Res
                         }
                     }
                 }).filter(Res => {

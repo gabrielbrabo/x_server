@@ -66,7 +66,9 @@ routes.post('/register/matter/:id', MatterController.create)
 routes.post('/add/matter', MatterController.addMatter)
 routes.post('/update/matter', MatterController.update)
 
-routes.post('/register/Daily', DailyController.create)
+routes.post('/register/Daily', DailyController.createDailyGrade)
+routes.post('/register/Daily-concept', DailyController.createDailyConcept)
+routes.post('/index-Daily', DailyController.IndexDaily)
 
 routes.post('/register/card', ReportCardController.createCardGrade)
 routes.post('/register/card-concept', ReportCardController.createCardConcept)
