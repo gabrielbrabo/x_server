@@ -252,7 +252,7 @@ class EmployeeController {
     }
 
     async RecordClassTaught(req, res) {
-        const { day, month, year, description, id_teacher, id_teacher02, id_class } = req.body;
+        const { day, month, year, description, id_teacher, /*id_teacher02,*/ id_class } = req.body;
 
         // validations
         if (!day) {
@@ -304,7 +304,7 @@ class EmployeeController {
             year,
             description,
             id_teacher,
-            id_teacher02: String(id_teacher) === physicalEducationTeacherId ? null : id_teacher02,
+            //id_teacher02: String(id_teacher) === physicalEducationTeacherId ? null : id_teacher02,
             id_class
         });
 

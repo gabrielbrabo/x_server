@@ -449,18 +449,49 @@ class DailyController {
             if (id_ivThQuarter) filter.id_ivThQuarter = new mongoose.Types.ObjectId(id_ivThQuarter);
 
             const dailies = await Daily.find(filter)
-                /*.populate({
+                .populate({
                     path: 'idActivity',
-                    populate: {
-                        path: 'studentGrades',
-                        model: 'numericalGrade' // nome exato do seu model Mongoose
-                    }
-                })*/
-                .populate('idActivity')
-                .populate('studentGrade')
+                    populate: [
+                        {
+                            path: 'studentGrades',
+                            model: 'numericalGrade',
+                            populate: {
+                                path: 'id_student',
+                                model: 'student'
+                            }
+                        },
+                        {
+                            path: 'id_teacher',
+                            model: 'employee'
+                        },
+                        {
+                            path: 'id_matter',
+                            model: 'matter'
+                        }
+                    ]
+                })
+                .populate({
+                    path: 'studentGrade',
+                    populate: [
+                        {
+                            path: 'id_matter',
+                            model: 'matter',
+                        },
+                        {
+                            path: 'id_student',
+                            model: 'student',
+                        },
+                    ]
+                })
                 .populate('studentConcept')
                 .populate('attendance')
-                .populate('id_recordClassTaught')
+                .populate({
+                    path: 'id_recordClassTaught',
+                    populate: {
+                        path: 'id_teacher',
+                        model: 'employee' // ou o nome correto do seu model de professor
+                    }
+                })
                 .populate('id_FinalConcepts')
                 .populate('id_individualForm')
                 .populate('id_student')
