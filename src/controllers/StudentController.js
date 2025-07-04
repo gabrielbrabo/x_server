@@ -173,11 +173,11 @@ class StudentController {
 
     async AttendanceIndex(req, res) {
 
-        const { month, year, id_student, id_matter, id_teacher } = req.body;
+        const { month, year, id_student, id_matter, /*id_teacher*/ } = req.body;
 
         const attendance = await Attendance.find({
             id_student: id_student,
-            id_teacher: id_teacher
+            //id_teacher: id_teacher
         });
 
         try {

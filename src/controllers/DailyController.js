@@ -52,7 +52,7 @@ class DailyController {
         if (id_iiiRdQuarter) filterRemove.id_iiiRdQuarter = id_iiiRdQuarter;
         if (id_ivThQuarter) filterRemove.id_ivThQuarter = id_ivThQuarter;
 
-        const existingDaily = await Daily.find(filterRemove);
+        /*const existingDaily = await Daily.find(filterRemove);
 
         if (existingDaily.length > 0) {
             console.log("Diario a ser removido:", existingDaily.map(r => ({
@@ -71,6 +71,39 @@ class DailyController {
         const nameRegentTeacher = (cla$$.classRegentTeacher || []).map(t => t.name).join(', ') || "Professor não definido";
         const nameRegentTeacher02 = (cla$$.classRegentTeacher02 || []).map(t => t.name).join(', ') || "Professor não definido";
         const namephysicalEducationTeacher = (cla$$.physicalEducationTeacher || []).map(t => t.name).join(', ') || "Professor não definido";
+        */
+
+        // Busca existente e salva nomes:
+        const existingDaily = await Daily.findOne(filterRemove);
+        const oldNameRegentTeacher = existingDaily?.nameRegentTeacher;
+        const oldNameRegentTeacher02 = existingDaily?.nameRegentTeacher02;
+        const oldNamePhysicalEducationTeacher = existingDaily?.namephysicalEducationTeacher;
+
+        const oldIdRegentTeacher = existingDaily?.idRegentTeacher;
+        const oldIdRegentTeacher02 = existingDaily?.idRegentTeacher02;
+        const oldIdPhysicalEducationTeacher = existingDaily?.idPhysicalEducationTeacher;
+
+
+        // Se existir, apaga:
+        if (existingDaily) {
+            console.log("Diário a ser removido:", {
+                id: existingDaily._id,
+                Classe: existingDaily.nameClass,
+                bimestre: existingDaily.bimonthly
+            });
+
+            await Daily.deleteMany(filterRemove);
+        }
+
+        // IDs: usa antigos ou pega da turma
+        const idRegentTeacher = oldIdRegentTeacher?.length > 0 ? oldIdRegentTeacher : (cla$$.classRegentTeacher || []).map(t => t._id);
+        const idRegentTeacher02 = oldIdRegentTeacher02?.length > 0 ? oldIdRegentTeacher02 : (cla$$.classRegentTeacher02 || []).map(t => t._id);
+        const idphysicalEducationTeacher = oldIdPhysicalEducationTeacher?.length > 0 ? oldIdPhysicalEducationTeacher : (cla$$.physicalEducationTeacher || []).map(t => t._id);
+
+        // Pega os nomes da turma OU mantém antigos:
+        const nameRegentTeacher = oldNameRegentTeacher || (cla$$.classRegentTeacher || []).map(t => t.name).join(', ') || "Professor não definido";
+        const nameRegentTeacher02 = oldNameRegentTeacher02 || (cla$$.classRegentTeacher02 || []).map(t => t.name).join(', ') || "Professor não definido";
+        const namephysicalEducationTeacher = oldNamePhysicalEducationTeacher || (cla$$.physicalEducationTeacher || []).map(t => t.name).join(', ') || "Professor não definido";
 
         const schoolNames = cla$$.id_school.name;
 
@@ -251,25 +284,37 @@ class DailyController {
         if (id_iiiRdQuarter) filterRemove.id_iiiRdQuarter = id_iiiRdQuarter;
         if (id_ivThQuarter) filterRemove.id_ivThQuarter = id_ivThQuarter;
 
-        const existingDaily = await Daily.find(filterRemove);
+        // Busca existente e salva nomes:
+        const existingDaily = await Daily.findOne(filterRemove);
+        const oldNameRegentTeacher = existingDaily?.nameRegentTeacher;
+        const oldNameRegentTeacher02 = existingDaily?.nameRegentTeacher02;
+        const oldNamePhysicalEducationTeacher = existingDaily?.namephysicalEducationTeacher;
 
-        if (existingDaily.length > 0) {
-            console.log("Diario a ser removido:", existingDaily.map(r => ({
-                id: r._id,
-                Classe: r.nameClass,
-                bimestre: r.bimonthly
-            })));
+        const oldIdRegentTeacher = existingDaily?.idRegentTeacher;
+        const oldIdRegentTeacher02 = existingDaily?.idRegentTeacher02;
+        const oldIdPhysicalEducationTeacher = existingDaily?.idPhysicalEducationTeacher;
+
+
+        // Se existir, apaga:
+        if (existingDaily) {
+            console.log("Diário a ser removido:", {
+                id: existingDaily._id,
+                Classe: existingDaily.nameClass,
+                bimestre: existingDaily.bimonthly
+            });
 
             await Daily.deleteMany(filterRemove);
         }
 
-        const idRegentTeacher = (cla$$.classRegentTeacher || []).map(t => t._id);
-        const idRegentTeacher02 = (cla$$.classRegentTeacher02 || []).map(t => t._id);
-        const idphysicalEducationTeacher = (cla$$.physicalEducationTeacher || []).map(t => t._id);
+        // IDs: usa antigos ou pega da turma
+        const idRegentTeacher = oldIdRegentTeacher?.length > 0 ? oldIdRegentTeacher : (cla$$.classRegentTeacher || []).map(t => t._id);
+        const idRegentTeacher02 = oldIdRegentTeacher02?.length > 0 ? oldIdRegentTeacher02 : (cla$$.classRegentTeacher02 || []).map(t => t._id);
+        const idphysicalEducationTeacher = oldIdPhysicalEducationTeacher?.length > 0 ? oldIdPhysicalEducationTeacher : (cla$$.physicalEducationTeacher || []).map(t => t._id);
 
-        const nameRegentTeacher = (cla$$.classRegentTeacher || []).map(t => t.name).join(', ') || "Professor não definido";
-        const nameRegentTeacher02 = (cla$$.classRegentTeacher02 || []).map(t => t.name).join(', ') || "Professor não definido";
-        const namephysicalEducationTeacher = (cla$$.physicalEducationTeacher || []).map(t => t.name).join(', ') || "Professor não definido";
+        // Pega os nomes da turma OU mantém antigos:
+        const nameRegentTeacher = oldNameRegentTeacher || (cla$$.classRegentTeacher || []).map(t => t.name).join(', ') || "Professor não definido";
+        const nameRegentTeacher02 = oldNameRegentTeacher02 || (cla$$.classRegentTeacher02 || []).map(t => t.name).join(', ') || "Professor não definido";
+        const namephysicalEducationTeacher = oldNamePhysicalEducationTeacher || (cla$$.physicalEducationTeacher || []).map(t => t.name).join(', ') || "Professor não definido";
 
         const schoolNames = cla$$.id_school.name;
 
@@ -483,7 +528,19 @@ class DailyController {
                         },
                     ]
                 })
-                .populate('studentConcept')
+                .populate({
+                    path: 'studentConcept',
+                    populate: [
+                        {
+                            path: 'id_matter',
+                            model: 'matter',
+                        },
+                        {
+                            path: 'id_student',
+                            model: 'student',
+                        },
+                    ]
+                })
                 .populate('attendance')
                 .populate({
                     path: 'id_recordClassTaught',
@@ -492,8 +549,37 @@ class DailyController {
                         model: 'employee' // ou o nome correto do seu model de professor
                     }
                 })
-                .populate('id_FinalConcepts')
-                .populate('id_individualForm')
+                .populate({
+                    path: 'id_FinalConcepts',
+                    populate: [
+                        {
+                            path: 'id_matter',
+                            model: 'matter',
+                        },
+                        {
+                            path: 'id_student',
+                            model: 'student',
+                        },
+                    ]
+                })
+                .populate({
+                    path: 'id_individualForm',
+                    populate: [
+                        {
+                            path: 'id_student',
+                            model: 'student',
+                        },
+                        {
+                            path: 'id_teacher',
+                            model: 'employee' // ou o nome correto do seu model de professor
+                        },
+                        {
+                            path: 'id_teacher02',
+                            model: 'employee' // ou o nome correto do seu model de professor
+                        },
+
+                    ]
+                })
                 .populate('id_student')
                 .populate('transferStudents')
 

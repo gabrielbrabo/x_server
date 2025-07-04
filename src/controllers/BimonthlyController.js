@@ -1490,6 +1490,33 @@ class BimonthlyController {
             return res.status(500).json({ msg: "Erro interno do servidor." });
         }
     };
+    async reOpenBimesterDiary(req, res) {
+        try {
+            const { idClass, bimester, field } = req.body;
+
+            if (!idClass || !bimester || !field) {
+                return res.status(400).json({ msg: "Campos obrigatórios ausentes." });
+            }
+
+            const updatePath = `dailyStatus.${bimester}.${field}`;
+
+            const result = await Class.updateOne(
+                { _id: idClass },
+                { $set: { [updatePath]: "aberto" } }
+            );
+
+            if (result.modifiedCount === 0) {
+                return res.status(404).json({ msg: "Turma não encontrada ou já atualizada." });
+            }
+
+            return res.status(200).json({
+                msg: `Status '${field}' do '${bimester}' fechado com sucesso.`
+            });
+        } catch (error) {
+            console.error("Erro ao fechar status do diário:", error);
+            return res.status(500).json({ msg: "Erro interno do servidor." });
+        }
+    };
 }
 
 module.exports = new BimonthlyController();
