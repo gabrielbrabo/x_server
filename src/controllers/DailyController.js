@@ -30,7 +30,7 @@ class DailyController {
             id_iiiRdQuarter,
             id_ivThQuarter,
         } = req.body.year;
-        console.log(req.body)
+        console.log("log daily", req.body)
         if (!year) return res.status(422).json({ msg: "O Ano é obrigatório!" });
         if (!idClass) return res.status(422).json({ msg: "O ID turma é obrigatório!" });
 

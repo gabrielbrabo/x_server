@@ -45,6 +45,8 @@ routes.post('/index-info', EducationDepartmentController.index)
 routes.post('/index-school', EducationDepartmentController.indexSchool)
 
 routes.post('/get/school', SchoolController.getSchool)
+routes.post('/get/schoolYear', SchoolController.getSchoolYear)
+routes.post('/update/schoolYear', SchoolController.updateSchoolYear)
 
 routes.post('/register/employee/:id', EmployeeController.create)
 routes.post('/register/employee-education-department/:id', EducationDepartmentController.NewEmpEducationDepartament)

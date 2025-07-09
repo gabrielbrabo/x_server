@@ -93,6 +93,11 @@ const schoolschema = new mongoose.Schema(
             type: String,
             enum: ["active", "inactive"],
         },
+        schoolYear: {
+            type: Number,
+            default: new Date().getFullYear(),
+            required: true
+        },
     },
     {
         timestamps: true

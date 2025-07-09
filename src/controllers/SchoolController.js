@@ -222,6 +222,60 @@ class SchoolController {
             })
         }
     }
+    
+    async getSchoolYear (req, res) {
+
+        const {idSchool} = req.body;
+
+        try {
+            const school = await User.findById({
+                _id: idSchool
+            })
+
+           // console.log()
+
+            if (school) {
+                return res.json({
+                    data: school.schoolYear,
+                    message: 'Sucess'
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.status(500).json({
+                message: 'there was an error on server side!'
+            })
+        }
+    }
+    
+    async updateSchoolYear(req, res) {
+        const { idSchool, newSchoolYear } = req.body;
+      
+        try {
+          const updatedSchool = await User.findByIdAndUpdate(
+            idSchool,
+            { $set: { schoolYear: newSchoolYear } },
+            { new: true }
+          );
+      
+          if (updatedSchool) {
+            return res.json({
+              data: updatedSchool.schoolYear,
+              message: 'Ano letivo atualizado com sucesso!'
+            });
+          } else {
+            return res.status(404).json({
+              message: 'Escola não encontrada!'
+            });
+          }
+        } catch (err) {
+          console.log(err);
+          res.status(500).json({
+            message: 'Houve um erro no servidor!'
+          });
+        }
+      }
+      
 }
   
 module.exports = new SchoolController();

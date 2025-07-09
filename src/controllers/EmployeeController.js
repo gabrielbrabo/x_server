@@ -260,9 +260,12 @@ class EmployeeController {
         }
 
         if (!year) {
-            return res.status(422).json({ msg: "A data do fim é obrigatório!" });
+            return res.status(422).json({ msg: "O ano é obrigatório!" });
         }
-
+        
+        if (isNaN(parseInt(year)) || parseInt(year) < 1 || parseInt(year) > 9999) {
+            return res.status(422).json({ msg: "Ano inválido!" });
+        }        
 
         const cla$$ = await Class.findOne({ _id: id_class })
             .populate('physicalEducationTeacher');
