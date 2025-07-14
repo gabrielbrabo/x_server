@@ -790,8 +790,8 @@ class RepoCardController {
             : null;
 
         //let bimonthly = null;
-
-        const currentYear = new Date().getFullYear().toString(); // 🔥 Ano atual como string
+        console.log('ano da turma', cla$$.year)
+        const currentYear = cla$$.year; // 🔥 Ano atual como string
 
         // Se bimonthly tiver dados de data, monta o intervalo
         let attendance = [];
