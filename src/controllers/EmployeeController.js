@@ -261,11 +261,17 @@ class EmployeeController {
 
         if (!year) {
             return res.status(422).json({ msg: "O ano é obrigatório!" });
+        } 
+        if (!id_teacher) {
+            return res.status(422).json({ msg: "O professor é obrigatório!" });
         }
-        
+        if (!id_class) {
+            return res.status(422).json({ msg: "O turma é obrigatória!" });
+        }
+
         if (isNaN(parseInt(year)) || parseInt(year) < 1 || parseInt(year) > 9999) {
             return res.status(422).json({ msg: "Ano inválido!" });
-        }        
+        }
 
         const cla$$ = await Class.findOne({ _id: id_class })
             .populate('physicalEducationTeacher');
@@ -273,7 +279,7 @@ class EmployeeController {
         const physicalEducationTeacherId = (cla$$.physicalEducationTeacher && cla$$.physicalEducationTeacher.length > 0)
             ? String(cla$$.physicalEducationTeacher[0]._id)
             : null;
-        
+
         const existingRecordClassTaught = await RecordClassTaught.find({ id_class: id_class })
 
         console.log("id_teacher", id_teacher)
@@ -341,6 +347,8 @@ class EmployeeController {
             id_employee
         } = req.body;
 
+        console.log("dados do front", req.body)
+
         try {
             const recordClass = await RecordClassTaught.find({
                 id_class: id_class
@@ -349,6 +357,8 @@ class EmployeeController {
 
             if (recordClass) {
                 const result = recordClass.map(Res => {
+
+                    console.log("resposta db", Res)
                     if (Res.year == year) {
 
                         if (Res.id_teacher._id == id_employee) {
