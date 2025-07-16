@@ -12,6 +12,9 @@ class StudentController {
             dateOfBirth,
             sex,
             race,
+            cpf,
+            rg,
+            Registration,
             fatherCellPhone,
             entryDate,
             admissionDate,
@@ -89,6 +92,9 @@ class StudentController {
             dateOfBirth: dateOfBirth,
             sex: sex,
             race: race,
+            cpf: cpf,
+            rg: rg,
+            Registration: Registration,
             fatherCellPhone: fatherCellPhone,
             entryDate: entryDate,
             admissionDate: admissionDate,
@@ -261,7 +267,7 @@ class StudentController {
         const { id_student, status, exitDate } = req.body;
         const validStatuses = ["ativo", "transferido", "inativo"];
 
-        console.log("id_student", id_student, "status", status, "exitDate",  exitDate)
+        console.log("id_student", id_student, "status", status, "exitDate", exitDate)
 
         // Verifica se o status enviado é válido
         if (!validStatuses.includes(status)) {
@@ -280,19 +286,19 @@ class StudentController {
         try {
 
             // Define a data de saída se o aluno for transferido ou inativado
-           // const exitDate = (status === "transferido" || status === "inativo") ? new Date() : null;
-            
+            // const exitDate = (status === "transferido" || status === "inativo") ? new Date() : null;
+
             if (status === "ativo") {
-            await Student.updateOne(
-                { _id: id_student },
-                {
-                    $set: {
-                        status: status,
-                        departureDate: null
+                await Student.updateOne(
+                    { _id: id_student },
+                    {
+                        $set: {
+                            status: status,
+                            departureDate: null
+                        }
                     }
-                }
-            );
-        }
+                );
+            }
 
             if (status === "transferido" || status === "inativo") {
                 // Atualiza o status do aluno

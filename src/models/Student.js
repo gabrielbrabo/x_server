@@ -30,13 +30,16 @@ const studentschema = new mongoose.Schema(
         departureDate: {
             type: String,
         },
-        /*cpf: {
+        cpf: {
             type: String,
             //unique: true
         },
         rg: {
             type: String,
-        },*/
+        },
+        Registration: {
+            type: String,
+        },
         motherName: {
             type: String,
         },
