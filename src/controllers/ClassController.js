@@ -62,16 +62,25 @@ class ClassController {
             }
 
         }
-
+        // Função para gerar o código da turma (ex: 20254821)
+        const gerarClassCode = (ano) => {
+            const aleatorio = Math.floor(1000 + Math.random() * 9000); // Gera 4 dígitos
+            return `${ano}${aleatorio}`;
+        };
+        
         // create user
+        const classCode = gerarClassCode(year);
+
         const newclass = new Class({
             year: year,
             serie: serie.toUpperCase(),
             level: level.toUpperCase(),
             shift: shift.toUpperCase(),
             classroom_number: classroom_number,
-            id_school: id
-        })
+            id_school: id,
+            classCode: classCode
+        });
+
 
         try {
 

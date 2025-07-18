@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const employeesEducationDepartmentchema = new mongoose.Schema(
     {
+        EmployeeCode: {
+            type: String,
+            required: true,
+            unique: true
+        },
         name: {
             type: String,
             required: true,

@@ -2,6 +2,11 @@ const mongoose = require("mongoose")
 
 const classschema = new mongoose.Schema(
     {
+        classCode: {
+            type: String,
+            required: true,
+            unique: true
+        },
         year: {
             type: String,
             required: true,

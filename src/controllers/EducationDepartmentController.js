@@ -108,7 +108,9 @@ class EducationDepartmentController {
         // Create password hash
         //const salt = await bcrypt.genSalt(12);
         //const passwordHash = await bcrypt.hash(password, salt);
-
+        const gerarCodigo = () => {
+            return String(Math.floor(Math.random() * 9000000) + 1000000);
+        };
         // Create new user
         const user = new EmployeeEducationDepartment({
             name: name.toUpperCase(),
@@ -120,6 +122,7 @@ class EducationDepartmentController {
             address: address.toUpperCase(),
             type: 'employee',
             positionAtEducationDepartment: positionAtEducationDepartment.toUpperCase(),
+            EmployeeCode: gerarCodigo(),
             idEducationDepartment: id,
             password: password
         });

@@ -39,7 +39,9 @@ class EmployeeController {
         // Create password hash
         //const salt = await bcrypt.genSalt(12);
         //const passwordHash = await bcrypt.hash(password, salt);
-
+        const gerarCodigo = () => {
+            return String(Math.floor(Math.random() * 9000000) + 1000000);
+        };
         // Create new user
         const user = new User({
             name: name.toUpperCase(),
@@ -51,6 +53,7 @@ class EmployeeController {
             address: address.toUpperCase(),
             type: 'employee',
             position_at_school: position_at_school.toUpperCase(),
+            EmployeeCode: gerarCodigo(),
             id_school: id,
             password: password
         });
@@ -261,7 +264,7 @@ class EmployeeController {
 
         if (!year) {
             return res.status(422).json({ msg: "O ano é obrigatório!" });
-        } 
+        }
         if (!id_teacher) {
             return res.status(422).json({ msg: "O professor é obrigatório!" });
         }
