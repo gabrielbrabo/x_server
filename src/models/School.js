@@ -2,6 +2,11 @@ const mongoose = require("mongoose")
 
 const schoolschema = new mongoose.Schema(
     {
+        SchoolCode: {
+            type: String,
+            required: true,
+            unique: true
+        },
         name: {
             type: String,
             required: true,

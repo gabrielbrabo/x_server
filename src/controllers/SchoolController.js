@@ -39,6 +39,10 @@ class SchoolController {
         const salt = await bcrypt.genSalt(12);
         const passwordHash = await bcrypt.hash(password, salt);
 
+        const gerarCodigo = () => {
+            return String(Math.floor(Math.random() * 9000000) + 1000000);
+        };
+
         // create user
         const user = new User({
             name,
@@ -48,7 +52,8 @@ class SchoolController {
             assessmentFormat,
             type: "school",
             password: passwordHash,
-            educationDepartment: educationDep
+            educationDepartment: educationDep,
+            SchoolCode: gerarCodigo(),
         });
 
         if(user) {
@@ -162,18 +167,11 @@ class SchoolController {
     async update(req, res) {
         try {
             const { id } = req.params;
-            const { email, password } = req.body;
-            const user = await User.findById(id);
-  
-            if (!user) {
-                return res.status(404).json();
+            const school = await User.findByIdAndUpdate(id, req.body, { new: true });
+            if (!school) {
+                return res.status(404).json({ error: 'Employee not found' });
             }
-
-            const encryptedPassword = await createPasswordHash(password)
-  
-            await user.updateOne({email, password: encryptedPassword });
-    
-            return res.status(200).json();
+            res.json(school);
         } catch (err) {
             console.error(err);
             return res.status(500).json({ error: "Internal Server Error" });

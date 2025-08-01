@@ -1,20 +1,20 @@
-const EducationDepartmentController = require( "./controllers/EducationDepartmentController")
-const SchoolController = require( "./controllers/SchoolController")
-const SessionsController = require( "./controllers/SessionsController")
-const EmployeeController = require( "./controllers/EmployeeController")
-const ClassController = require( "./controllers/ClassController")
-const StudentController = require( "./controllers/StudentController")
-const MatterController = require( "./controllers/MatterContoller")
-const ReportCardController = require( "./controllers/RepoCardController")
-const DailyController = require( "./controllers/DailyController")
-const FinalConcepts = require( "./controllers/FinalConcepts")
-const AttendanceController = require( "./controllers/AttendanceController")
-const BimonthlyController = require( "./controllers/BimonthlyController")
-const GradeController = require( "./controllers/GradeController")
-const IndividualFormController = require( "./controllers/IndividualFormController")
-const RefreshController = require( "./controllers/RefreshController")
+const EducationDepartmentController = require("./controllers/EducationDepartmentController")
+const SchoolController = require("./controllers/SchoolController")
+const SessionsController = require("./controllers/SessionsController")
+const EmployeeController = require("./controllers/EmployeeController")
+const ClassController = require("./controllers/ClassController")
+const StudentController = require("./controllers/StudentController")
+const MatterController = require("./controllers/MatterContoller")
+const ReportCardController = require("./controllers/RepoCardController")
+const DailyController = require("./controllers/DailyController")
+const FinalConcepts = require("./controllers/FinalConcepts")
+const AttendanceController = require("./controllers/AttendanceController")
+const BimonthlyController = require("./controllers/BimonthlyController")
+const GradeController = require("./controllers/GradeController")
+const IndividualFormController = require("./controllers/IndividualFormController")
+const RefreshController = require("./controllers/RefreshController")
 
-const auth = require ("./middlewares/auth")
+const auth = require("./middlewares/auth")
 
 const express = require('express')
 const routes = express.Router()
@@ -27,10 +27,10 @@ routes.post('/session/school', SessionsController.sessionSchool)
 routes.post('/session/employee', SessionsController.sessionEmployee)
 routes.post('/forgot-password-education-department', EducationDepartmentController.ForgotPasswordEduDep)
 routes.post('/forgot-password', EmployeeController.ForgotPassword)
-routes.post('/reset-password-education-department', EducationDepartmentController.ResetPasswordEducationDepartment )
-routes.post('/reset-password', EmployeeController.ResetPassword )
-routes.post('/update-password', EmployeeController.updatePassword )
-routes.post('/update-password-emp-edu-dep', EducationDepartmentController.updatePassword )
+routes.post('/reset-password-education-department', EducationDepartmentController.ResetPasswordEducationDepartment)
+routes.post('/reset-password', EmployeeController.ResetPassword)
+routes.post('/update-password', EmployeeController.updatePassword)
+routes.post('/update-password-emp-edu-dep', EducationDepartmentController.updatePassword)
 routes.post('/login-with-school', SessionsController.loginWithSchool)
 routes.post('/refresh/employee', RefreshController.checkToken)
 routes.post('/refresh/employee-dep-edu', RefreshController.checkTokenEduDep)
@@ -44,6 +44,7 @@ routes.use(auth)
 routes.post('/index-info', EducationDepartmentController.index)
 routes.post('/index-school', EducationDepartmentController.indexSchool)
 
+routes.post('/updateSchool/:id', SchoolController.update)
 routes.post('/get/school', SchoolController.getSchool)
 routes.post('/get/schoolYear', SchoolController.getSchoolYear)
 routes.post('/update/schoolYear', SchoolController.updateSchoolYear)
@@ -71,6 +72,7 @@ routes.post('/update/matter', MatterController.update)
 routes.post('/register/Daily', DailyController.createDailyGrade)
 routes.post('/register/Daily-concept', DailyController.createDailyConcept)
 routes.post('/index-Daily', DailyController.IndexDaily)
+routes.post('/index-AllDaily', DailyController.IndexAllDaily)
 
 routes.post('/register/card', ReportCardController.createCardGrade)
 routes.post('/register/card-concept', ReportCardController.createCardConcept)
@@ -177,8 +179,8 @@ routes.post('/card/IV_th_quarter', ReportCardController.IV_th_quarter)*/
 
 routes.post('/employee', EmployeeController.index)
 routes.post('/employee-dep-edu', EducationDepartmentController.indexEmpEduDep)
-routes.get('/employee-details/:id', EmployeeController. getEmployeeById)
-routes.get('/employee-details-edu-dep/:id', EducationDepartmentController. getEmployeeDepEduById)
+routes.get('/employee-details/:id', EmployeeController.getEmployeeById)
+routes.get('/employee-details-edu-dep/:id', EducationDepartmentController.getEmployeeDepEduById)
 routes.post('/employee-update/:id', EmployeeController.updateEmployee)
 routes.post('/employee-edu-dep-update/:id', EducationDepartmentController.updateEmployee)
 
@@ -190,7 +192,7 @@ routes.post('/update-record-class/adm', EmployeeController.updateRecordClassTaug
 routes.post('/record-class-daily', EmployeeController.RecordClassTaughtDaily)
 routes.get('/check-employee/:cpf', EmployeeController.EmpExist)
 
-routes.get('/student-details/:id', StudentController. getStudentById)
+routes.get('/student-details/:id', StudentController.getStudentById)
 routes.post('/student-update/:id', StudentController.updateStudent)
 routes.post('/status-update', StudentController.updateStatus)
 
@@ -246,9 +248,17 @@ const multerConfig = require('./config/multer')
 
 routes.post("/post-file-logo/:id", multer(multerConfig).single("file"), async (req, res) => {
 
+    console.log("req.file:", req.file);
+    if (!req.file) {
+        return res.status(400).json({ msg: "Nenhum arquivo enviado." });
+    }
+
     const { originalname: name, size, key, location: url = "" } = req.file;
-    
+
     const { id } = req.params;
+
+    console.log("File recebido:", req.file);
+    console.log("ID escola:", req.params.id);
 
     const post = new postFileLogo({
         name,
@@ -264,24 +274,25 @@ routes.post("/post-file-logo/:id", multer(multerConfig).single("file"), async (r
             _id: id
         }, {
             $push: {
-                logo: postLogo._id   
+                logo: postLogo._id
             }
         })
         res.status(200).json({
             msg: ' sucesso.'
         })
-    } catch (err){
+    } catch (err) {
         res.status(500).json({
             msg: 'Error.'
         })
     }
 });
 
-routes.post("/get-logo", async (req, res) => {
+routes.post("/get-logo/:id", async (req, res) => {
 
-    const { idlogo } = req.body;
+    //const { idlogo } = req.body;
+    const { id } = req.params;
 
-    const logo = await postFileLogo.findOne({ _id: idlogo });
+    const logo = await postFileLogo.findOne({ id_school: id });
 
     console.log(logo)
     //const posts = await PostFile.find();
@@ -292,7 +303,7 @@ routes.post("/get-logo", async (req, res) => {
 });
 
 routes.delete("/delete-logo/:id", async (req, res) => {
-    
+
     const fs = require("fs");
     const path = require("path");
     const { promisify } = require("util");
@@ -303,15 +314,15 @@ routes.delete("/delete-logo/:id", async (req, res) => {
     const { id } = req.params;
 
     const posts = await postFileLogo.findById(id);
-  
+
     await School.updateOne({
         _id: id_school
     }, {
         $pull: {
-            logo: posts._id      
+            logo: posts._id
         }
     })
-    
+
     await posts.deleteOne();
 
     if (process.env.STORAGE_TYPE === "s3") {
@@ -319,17 +330,17 @@ routes.delete("/delete-logo/:id", async (req, res) => {
             Bucket: process.env.BUCKET_NAME,
             Key: posts.key
         })
-        .promise()
-        .then(response => {
-            console.log(response.status);
-        })
-        .catch(response => {
-            console.log(response.status);
-        });
+            .promise()
+            .then(response => {
+                console.log(response.status);
+            })
+            .catch(response => {
+                console.log(response.status);
+            });
         return res.send();
     } else {
         promisify(fs.unlink)(
-          path.resolve(__dirname,  "..", "tmp", "uploads", posts.key)
+            path.resolve(__dirname, "..", "tmp", "uploads", posts.key)
         )
         return res.send();
     }

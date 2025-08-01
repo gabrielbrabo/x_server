@@ -595,6 +595,97 @@ class DailyController {
         }
     }
 
+    async IndexAllDaily(req, res) {
+        try {
+            const { idClass: idClass, yearClass: year } = req.body.idClass;
+
+            console.log("dados do front", req.body)
+
+            if (!idClass || !year) {
+                return res.status(422).json({ msg: "ID da turma e ano são obrigatórios!" });
+            }
+
+            const filter = {
+                idClass: new mongoose.Types.ObjectId(idClass)
+            };
+
+            const dailies = await Daily.find(filter)
+                .populate({
+                    path: 'idActivity',
+                    populate: [
+                        {
+                            path: 'studentGrades',
+                            model: 'numericalGrade',
+                            populate: { path: 'id_student', model: 'student' }
+                        },
+                        { path: 'id_teacher', model: 'employee' },
+                        { path: 'id_matter', model: 'matter' }
+                    ]
+                })
+                .populate({
+                    path: 'studentGrade',
+                    populate: [
+                        { path: 'id_matter', model: 'matter' },
+                        { path: 'id_student', model: 'student' }
+                    ]
+                })
+                .populate({
+                    path: 'studentConcept',
+                    populate: [
+                        { path: 'id_matter', model: 'matter' },
+                        { path: 'id_student', model: 'student' }
+                    ]
+                })
+                .populate('attendance')
+                .populate({
+                    path: 'id_recordClassTaught',
+                    populate: { path: 'id_teacher', model: 'employee' }
+                })
+                .populate({
+                    path: 'id_FinalConcepts',
+                    populate: [
+                        { path: 'id_matter', model: 'matter' },
+                        { path: 'id_student', model: 'student' }
+                    ]
+                })
+                .populate({
+                    path: 'id_individualForm',
+                    populate: [
+                        { path: 'id_student', model: 'student' },
+                        { path: 'id_teacher', model: 'employee' },
+                        { path: 'id_teacher02', model: 'employee' }
+                    ]
+                })
+                .populate('id_student')
+                .populate('transferStudents');
+
+            if (!dailies || dailies.length === 0) {
+                return res.status(404).json({ msg: "Nenhum diário encontrado." });
+            }
+
+            // Separar os dailies por bimestre
+            const result = {
+                firstQuarter: [],
+                secondQuarter: [],
+                thirdQuarter: [],
+                fourthQuarter: []
+            };
+
+            dailies.forEach(daily => {
+                if (daily.id_iStQuarter) result.firstQuarter.push(daily);
+                if (daily.id_iiNdQuarter) result.secondQuarter.push(daily);
+                if (daily.id_iiiRdQuarter) result.thirdQuarter.push(daily);
+                if (daily.id_ivThQuarter) result.fourthQuarter.push(daily);
+            });
+
+            return res.status(200).json({ dailiesByQuarter: result });
+
+        } catch (error) {
+            console.error("Erro ao buscar diário completo:", error);
+            return res.status(500).json({ msg: "Erro interno do servidor." });
+        }
+    }
+
 }
 
 module.exports = new DailyController();
