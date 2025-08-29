@@ -1,5 +1,5 @@
 const IndividualForm = require("../models/IndividualForm")
-const Student = require( "../models/Student")
+const Student = require("../models/Student")
 
 class GradeController {
 
@@ -33,21 +33,21 @@ class GradeController {
         });
 
         try {
-            
+
             const Form = await form.save()
-            
+
             await Student.updateOne({
                 _id: id_student
             }, {
                 $push: {
-                    id_individualForm: Form._id      
+                    id_individualForm: Form._id
                 }
             })
             res.status(200).json({
                 msg: 'Conta profissional cadastrado com sucesso.'
             })
 
-        } catch (err){
+        } catch (err) {
             res.status(500).json({
                 msg: 'Error ao cadastra uma Conta profissional.'
             })
@@ -59,7 +59,7 @@ class GradeController {
         console.log('dados do front', req.body)
         // Cria um objeto de filtro inicial vazio
         const filter = {};
-    
+
         // Adiciona condições ao filtro de acordo com os IDs de bimestres recebidos
         if (id_iStQuarter) filter.id_iStQuarter = id_iStQuarter;
         if (id_iiNdQuarter) filter.id_iiNdQuarter = id_iiNdQuarter;
@@ -67,7 +67,7 @@ class GradeController {
         if (id_ivThQuarter) filter.id_ivThQuarter = id_ivThQuarter;
         if (id_vThQuarter) filter.id_vThQuarter = id_vThQuarter;
         if (id_viThQuarter) filter.id_viThQuarter = id_viThQuarter;
-    
+
         try {
             // Realiza a busca com o filtro construído
             const form = await IndividualForm.find(filter)
@@ -79,12 +79,12 @@ class GradeController {
                 .populate('id_iiNdQuarter')
                 .populate('id_iiiRdQuarter')
                 .populate('id_ivThQuarter')
-    
+
             // Filtra os resultados pela `year` e `id_class`
             const Form = form.map(res => {
-                if(res.year == year) {
-                    if(res.id_class._id == id_class) {
-                        if(res.id_teacher._id == id_teacher) {
+                if (res.year == year) {
+                    if (res.id_class._id == id_class) {
+                        if (res.id_teacher._id == id_teacher) {
                             return res
                         }
                     }
@@ -125,9 +125,9 @@ class GradeController {
                 .populate('id_ivThQuarter')
                 .populate('id_vThQuarter')
                 .populate('id_viThQuarter');
-    
+
             console.log("form", form);
-    
+
             // Verifica se o formulário foi encontrado
             if (form) {
                 return res.json({
@@ -145,28 +145,68 @@ class GradeController {
                 message: 'There was an error on the server side!'
             });
         }
-    }    
+    }
+
+    async getStudentIndividualForm (req, res) {
+        try {
+            const { idStudent, bim, idBim } = req.body;
+
+            console.log( "requisição do front" ,req.body)
+
+            if (!idStudent || !bim || !idBim) {
+                return res.status(400).json({ message: "Dados incompletos" });
+            }
+
+            // Exemplo: bim = "id_iStQuarter"
+            const query = {
+                id_student: idStudent,
+                [bim]: idBim, // chave dinâmica
+            };
+
+            const form = await IndividualForm.findOne(query)
+                .populate({
+                    path:"id_student",
+                    populate:{
+                        path: "id_school",
+                        model: "school"
+                    }
+                })
+                .populate("id_teacher")
+                .populate("id_teacher02")
+                .populate("id_class")
+                .populate(bim); // popula o bimestre específico
+
+            if (!form) {
+                return res.status(404).json({ message: "Ficha não encontrada" });
+            }
+
+            return res.status(200).json(form);
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: "Erro no servidor", error });
+        }
+    };
 
     async update(req, res) {
         try {
             const { update_idForm, editedDescription } = req.body;
-    
+
             // Verifique se o ID está presente
             if (!update_idForm) {
                 return res.status(400).json({ message: 'ID da ficha individual não fornecido' });
             }
-    
+
             // Encontre e atualize o documento
             const form = await IndividualForm.findByIdAndUpdate(
                 update_idForm,
                 { description: editedDescription },
                 { new: true }
             );
-    
+
             if (!form) {
                 return res.status(404).json({ message: 'Ficha individual não encontrada' });
             }
-    
+
             res.json(form);
         } catch (err) {
             console.error(err);
@@ -188,9 +228,9 @@ class GradeController {
         }).populate('id_student')
 
         const idStudent = form.id_student._id
-        
-        console.log("$$",form)
-        console.log("idStudent",idStudent)
+
+        console.log("$$", form)
+        console.log("idStudent", idStudent)
 
         try {
 
@@ -200,13 +240,13 @@ class GradeController {
                 _id: idStudent
             }, {
                 $pull: {
-                    id_individualForm: idForm   
+                    id_individualForm: idForm
                 }
             })
             res.status(200).json({
                 msg: 'Aula removida com sucesso.'
             })
-        } catch (err){
+        } catch (err) {
             res.status(500).json({
                 msg: 'Error ao cadastra uma turma.'
             })

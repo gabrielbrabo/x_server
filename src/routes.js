@@ -233,6 +233,7 @@ routes.post('/remove/matter', MatterController.removeMatter)
 routes.post('/create-individual-form', IndividualFormController.createIndividualForm)
 routes.post('/index-individual-form', IndividualFormController.IndexIndividualForm)
 routes.get('/get-individual-form/:id', IndividualFormController.GetIndividualForm)
+routes.post('/get-studentIndividualForm', IndividualFormController.getStudentIndividualForm)
 routes.post('/form-edit', IndividualFormController.update)
 routes.post('/destroy/form', IndividualFormController.DestroyForm)
 
