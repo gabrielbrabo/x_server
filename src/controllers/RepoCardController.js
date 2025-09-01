@@ -456,7 +456,8 @@ class RepoCardController {
                 {
                     $match: {
                         id_class: new mongoose.Types.ObjectId(idClass),
-                        id_teacher: { $ne: physicalEducationTeacherId ? new mongoose.Types.ObjectId(physicalEducationTeacherId) : null }
+                        //id_teacher: { $ne: physicalEducationTeacherId ? new mongoose.Types.ObjectId(physicalEducationTeacherId) : null }
+                        isPhysicalEducation: { $ne: true } // ✅ só pega chamadas que NÃO são de Ed. Física
                     }
                 },
                 {
@@ -491,7 +492,7 @@ class RepoCardController {
                 }
             ]);
 
-            //console.log("attendance", attendance)
+            console.log("attendance", attendance)
         }
 
         const filter = {};
@@ -639,7 +640,8 @@ class RepoCardController {
                 {
                     $match: {
                         id_class: new mongoose.Types.ObjectId(idClass),
-                        id_teacher: { $ne: physicalEducationTeacherId ? new mongoose.Types.ObjectId(physicalEducationTeacherId) : null }
+                        //id_teacher: { $ne: physicalEducationTeacherId ? new mongoose.Types.ObjectId(physicalEducationTeacherId) : null }
+                        isPhysicalEducation: { $ne: true } // ✅ só pega chamadas que NÃO são de Ed. Física
                     }
                 },
                 {
