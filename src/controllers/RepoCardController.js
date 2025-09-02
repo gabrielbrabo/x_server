@@ -94,7 +94,8 @@ class RepoCardController {
                     {
                         $match: {
                             id_class: new mongoose.Types.ObjectId(idClass),
-                            id_teacher: { $ne: physicalEducationTeacherId ? new mongoose.Types.ObjectId(physicalEducationTeacherId) : null }
+                            //id_teacher: { $ne: physicalEducationTeacherId ? new mongoose.Types.ObjectId(physicalEducationTeacherId) : null }
+                            isPhysicalEducation: { $ne: true } // ✅ só pega chamadas que NÃO são de Ed. Física
                         }
                     },
                     {
@@ -279,7 +280,8 @@ class RepoCardController {
                     {
                         $match: {
                             id_class: new mongoose.Types.ObjectId(idClass),
-                            id_teacher: { $ne: physicalEducationTeacherId ? new mongoose.Types.ObjectId(physicalEducationTeacherId) : null }
+                            //id_teacher: { $ne: physicalEducationTeacherId ? new mongoose.Types.ObjectId(physicalEducationTeacherId) : null }
+                            isPhysicalEducation: { $ne: true } // ✅ só pega chamadas que NÃO são de Ed. Física
                         }
                     },
                     {
@@ -800,7 +802,8 @@ class RepoCardController {
         attendance = await Attendance.find({
             id_class: idClass, // Filtra pela turma
             year: currentYear,
-            id_teacher: { $ne: physicalEducationTeacherId }
+            //id_teacher: { $ne: physicalEducationTeacherId }
+            isPhysicalEducation: { $ne: true } // ✅ só pega chamadas que NÃO são de Ed. Física
         }).populate('id_teacher');
 
         // Para cada aluno, busca suas notas e soma por matéria
