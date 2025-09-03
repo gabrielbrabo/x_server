@@ -79,7 +79,13 @@ class StudentController {
         }
 
         // check if user exists
-        const userExists = await Student.findOne({ name: name, id_school: id });
+        const userExists = await Student.findOne({
+            id_school: id,
+            $or: [
+                { name: name.toUpperCase() },
+                { cpf: cpf }
+            ]
+        });
         console.log("userExists", userExists)
 
         if (userExists) {
