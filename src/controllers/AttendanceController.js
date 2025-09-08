@@ -94,6 +94,39 @@ class AttendanceController {
             })
         }
     }
+    
+    async indexAllAttendance(req, res) {
+        try {
+            const { id_class } = req.body//.id_class; // ou req.params.id_class
+            console.log("🔎 ID recebido:", req.body);
+    
+            // Converter para ObjectId
+            const classId = new mongoose.Types.ObjectId(id_class);
+    
+            // Buscar registros de presença da turma
+            const attendance = await Attendance.find({ id_class: classId })
+                //.populate('id_student');
+    
+            console.log("📌 Resultado da query:", attendance);
+    
+            if (!attendance || attendance.length === 0) {
+                return res.status(404).json({
+                    message: "Nenhum registro de chamada encontrado para esta turma."
+                });
+            }
+    
+            return res.json({
+                data: attendance,
+                message: 'Success'
+            });
+    
+        } catch (err) {
+            console.error("❌ Erro no indexAllAttendance:", err);
+            return res.status(500).json({
+                message: 'There was an error on server side!'
+            });
+        }
+    }      
 
     async testindex(req, res) {
 
