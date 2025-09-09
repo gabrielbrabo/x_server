@@ -168,6 +168,46 @@ class DailyController {
             }
         ]);
 
+        const attendancePhysicalEducationTeacher = await Attendance.aggregate([
+            {
+                $match: {
+                    id_class: new mongoose.Types.ObjectId(idClass),
+                    //id_teacher: { $ne: physicalEducationTeacherId ? new mongoose.Types.ObjectId(physicalEducationTeacherId) : null }
+                    isPhysicalEducation: true // ✅ agora só pega chamadas de Ed. Física
+                }
+            },
+            {
+                $addFields: {
+                    dateOnly: {
+                        $dateFromParts: {
+                            year: { $year: "$date" },
+                            month: { $month: "$date" },
+                            day: { $dayOfMonth: "$date" }
+                        }
+                    }
+                }
+            },
+            {
+                $addFields: {
+                    dateOnly: {
+                        $dateFromParts: {
+                            year: { $year: "$date" },
+                            month: { $month: "$date" },
+                            day: { $dayOfMonth: "$date" }
+                        }
+                    }
+                }
+            },
+            {
+                $match: {
+                    dateOnly: {
+                        $gte: new Date(startDate.toISOString().split("T")[0]),
+                        $lte: new Date(endDate.toISOString().split("T")[0])
+                    }
+                }
+            }
+        ]);
+
 
         console.log("startDate", startDate.toISOString());
         console.log("endDate", endDate.toISOString());
@@ -229,6 +269,7 @@ class DailyController {
             idActivity: activities,
             studentGrade: grades,
             attendance: attendance,
+            attendancePhysicalEducationTeacher: attendancePhysicalEducationTeacher,
             id_recordClassTaught: recordClassTaught,
             id_iStQuarter,
             id_iiNdQuarter,
@@ -380,6 +421,45 @@ class DailyController {
             }
         ]);
 
+        const attendancePhysicalEducationTeacher = await Attendance.aggregate([
+            {
+                $match: {
+                    id_class: new mongoose.Types.ObjectId(idClass),
+                    //id_teacher: { $ne: physicalEducationTeacherId ? new mongoose.Types.ObjectId(physicalEducationTeacherId) : null }
+                    isPhysicalEducation: true // ✅ agora só pega chamadas de Ed. Física
+                }
+            },
+            {
+                $addFields: {
+                    dateOnly: {
+                        $dateFromParts: {
+                            year: { $year: "$date" },
+                            month: { $month: "$date" },
+                            day: { $dayOfMonth: "$date" }
+                        }
+                    }
+                }
+            },
+            {
+                $addFields: {
+                    dateOnly: {
+                        $dateFromParts: {
+                            year: { $year: "$date" },
+                            month: { $month: "$date" },
+                            day: { $dayOfMonth: "$date" }
+                        }
+                    }
+                }
+            },
+            {
+                $match: {
+                    dateOnly: {
+                        $gte: new Date(startDate.toISOString().split("T")[0]),
+                        $lte: new Date(endDate.toISOString().split("T")[0])
+                    }
+                }
+            }
+        ]);
 
         console.log("startDate", startDate.toISOString());
         console.log("endDate", endDate.toISOString());
@@ -446,6 +526,7 @@ class DailyController {
             //studentGrade: grades,
             studentConcept: grades,
             attendance: attendance,
+            attendancePhysicalEducationTeacher: attendancePhysicalEducationTeacher,
             id_recordClassTaught: recordClassTaught,
             id_FinalConcepts: finalConcepts,
             id_individualForm: individualForm,
@@ -544,6 +625,7 @@ class DailyController {
                     ]
                 })
                 .populate('attendance')
+                .populate('attendancePhysicalEducationTeacher')
                 .populate({
                     path: 'id_recordClassTaught',
                     populate: {

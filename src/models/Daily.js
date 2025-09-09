@@ -51,6 +51,10 @@ const Dailyschema = new mongoose.Schema(
             type: mongoose.Types.ObjectId,
             ref: 'attendance'
         }],
+        attendancePhysicalEducationTeacher: [{
+            type: mongoose.Types.ObjectId,
+            ref: 'attendance'
+        }],
         id_recordClassTaught: [
             {
                 type: mongoose.Types.ObjectId,
