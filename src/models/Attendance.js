@@ -38,7 +38,7 @@ const attendance = new mongoose.Schema(
             type: mongoose.Types.ObjectId,
             ref: 'class',
         },
-        isPhysicalEducation: { type: Boolean, default: false }, // novo campo
+        isPhysicalEducation: { type: Boolean, required: true }, // novo campo
 
     },
     {
