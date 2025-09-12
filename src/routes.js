@@ -47,6 +47,7 @@ routes.post('/index-school', EducationDepartmentController.indexSchool)
 routes.post('/updateSchool/:id', SchoolController.update)
 routes.post('/get/school', SchoolController.getSchool)
 routes.post('/get/schoolYear', SchoolController.getSchoolYear)
+routes.post('/hasOpenDiary', SchoolController.hasOpenDiary)
 routes.post('/update/schoolYear', SchoolController.updateSchoolYear)
 
 routes.post('/register/employee/:id', EmployeeController.create)

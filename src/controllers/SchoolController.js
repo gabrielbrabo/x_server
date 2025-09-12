@@ -1,11 +1,12 @@
-const User = require( "../models/School")
-const EducationDepartment = require( "../models/EducationDepartment")
+const User = require("../models/School")
+const EducationDepartment = require("../models/EducationDepartment")
+const ClassModel = require("../models/Class")
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const authConfig = require('../config/auth')
 
 class SchoolController {
-  
+
     async create(req, res) {
         const { name, city, address, assessmentFormat, password, confirmpassword, educationDep } = req.body;
         console.log("dados", req.body)
@@ -14,9 +15,9 @@ class SchoolController {
             return res.status(422).json({ msg: "O nome é obrigatório!" });
         }
 
-       /* if (!email) {
-            return res.status(422).json({ msg: "O email é obrigatório!" });
-        }*/
+        /* if (!email) {
+             return res.status(422).json({ msg: "O email é obrigatório!" });
+         }*/
 
         if (!password) {
             return res.status(422).json({ msg: "A senha é obrigatória!" });
@@ -24,16 +25,16 @@ class SchoolController {
 
         if (password != confirmpassword) {
             return res
-            .status(422)
-            .json({ msg: "A senha e a confirmação precisam ser iguais!" });
+                .status(422)
+                .json({ msg: "A senha e a confirmação precisam ser iguais!" });
         }
 
         // check if user exists
-       /* const userExists = await User.findOne({ email: email });
-
-        if (userExists) {
-            return res.status(422).json({ email, msg: "Por favor, utilize outro e-mail!" });
-        }*/
+        /* const userExists = await User.findOne({ email: email });
+ 
+         if (userExists) {
+             return res.status(422).json({ email, msg: "Por favor, utilize outro e-mail!" });
+         }*/
 
         // create password
         const salt = await bcrypt.genSalt(12);
@@ -47,7 +48,7 @@ class SchoolController {
         const user = new User({
             name,
             //email,
-            city, 
+            city,
             address,
             assessmentFormat,
             type: "school",
@@ -56,7 +57,7 @@ class SchoolController {
             SchoolCode: gerarCodigo(),
         });
 
-        if(user) {
+        if (user) {
             await user.save();
 
             console.log("Atualizando departemento de educação...");
@@ -71,7 +72,7 @@ class SchoolController {
             const { id } = user
 
             return res.json({
-            
+
                 id,
                 //email,
                 name,
@@ -86,16 +87,16 @@ class SchoolController {
         }
     }
 
-    async getSchool (req, res) {
+    async getSchool(req, res) {
 
-        const {idSchool} = req.body;
+        const { idSchool } = req.body;
         console.log("idSchool", idSchool)
         try {
             const school = await User.findById({
                 _id: idSchool
             })
 
-           // console.log()
+            // console.log()
 
             if (school) {
                 return res.json({
@@ -113,7 +114,7 @@ class SchoolController {
 
     async index(req, res) {
 
-        const {idSchool} = req.body;
+        const { idSchool } = req.body;
 
         try {
             const school = await User.findById({
@@ -136,17 +137,17 @@ class SchoolController {
 
     async indexSchools(req, res) {
         const { idSchools } = req.body; // Recebe um array de IDs de escolas
-    
+
         if (!Array.isArray(idSchools)) {
             return res.status(400).json({ message: 'idSchools deve ser um array de IDs' });
         }
-    
+
         try {
             // Busca todas as escolas cujos IDs estão no array 'idSchools'
             const schools = await User.find({
                 _id: { $in: idSchools }
             });
-    
+
             // Verifica se encontrou as escolas
             if (schools && schools.length > 0) {
                 return res.json({
@@ -163,7 +164,7 @@ class SchoolController {
             });
         }
     }
-  
+
     async update(req, res) {
         try {
             const { id } = req.params;
@@ -177,18 +178,18 @@ class SchoolController {
             return res.status(500).json({ error: "Internal Server Error" });
         }
     }
-  
+
     async destroy(req, res) {
         try {
             const { id } = req.params;
             const user = await User.findById(id);
-    
+
             if (!user) {
                 return res.status(404).json();
             }
-    
+
             await user.deleteOne();
-    
+
             return res.status(200).json();
         } catch (err) {
             console.error(err);
@@ -196,16 +197,16 @@ class SchoolController {
         }
     }
 
-    async getLogoSchool (req, res) {
+    async getLogoSchool(req, res) {
 
-        const {idSchool} = req.body;
+        const { idSchool } = req.body;
 
         try {
             const school = await User.findById({
                 _id: idSchool
             })
 
-           // console.log()
+            // console.log()
 
             if (school) {
                 return res.json({
@@ -220,17 +221,17 @@ class SchoolController {
             })
         }
     }
-    
-    async getSchoolYear (req, res) {
 
-        const {idSchool} = req.body;
+    async getSchoolYear(req, res) {
+
+        const { idSchool } = req.body;
 
         try {
             const school = await User.findById({
                 _id: idSchool
             })
 
-           // console.log()
+            // console.log()
 
             if (school) {
                 return res.json({
@@ -245,35 +246,70 @@ class SchoolController {
             })
         }
     }
-    
+
+    async hasOpenDiary(req, res) {
+        const { id_school, year } = req.body;
+        console.log("req.body", req.body);
+
+        try {
+            // Buscar turmas pelo id_school e ano
+            const turmas = await ClassModel.find({ id_school, year });
+
+            if (!turmas || turmas.length === 0) {
+                return res.json({ podeAvancar: true, turmasComDiarioAberto: [] });
+            }
+
+            // Filtrar turmas que ainda têm algum diário aberto
+            const turmasComDiarioAberto = turmas.filter(turma => {
+                if (!turma.dailyStatus) return false;
+
+                return Object.values(turma.dailyStatus).some(bimestre => {
+                    if (!bimestre) return false;
+
+                    return Object.values(bimestre).some(status => status === "aberto");
+                });
+            });
+
+            return res.json({
+                podeAvancar: turmasComDiarioAberto.length === 0, // só avança se nenhuma estiver aberta
+                turmasComDiarioAberto
+            });
+
+        } catch (err) {
+            console.error("Erro ao verificar diários:", err);
+            return res.status(500).json({ error: "Erro ao verificar diários" });
+        }
+    }
+
+
     async updateSchoolYear(req, res) {
         const { idSchool, newSchoolYear } = req.body;
-      
+
         try {
-          const updatedSchool = await User.findByIdAndUpdate(
-            idSchool,
-            { $set: { schoolYear: newSchoolYear } },
-            { new: true }
-          );
-      
-          if (updatedSchool) {
-            return res.json({
-              data: updatedSchool.schoolYear,
-              message: 'Ano letivo atualizado com sucesso!'
-            });
-          } else {
-            return res.status(404).json({
-              message: 'Escola não encontrada!'
-            });
-          }
+            const updatedSchool = await User.findByIdAndUpdate(
+                idSchool,
+                { $set: { schoolYear: newSchoolYear } },
+                { new: true }
+            );
+
+            if (updatedSchool) {
+                return res.json({
+                    data: updatedSchool.schoolYear,
+                    message: 'Ano letivo atualizado com sucesso!'
+                });
+            } else {
+                return res.status(404).json({
+                    message: 'Escola não encontrada!'
+                });
+            }
         } catch (err) {
-          console.log(err);
-          res.status(500).json({
-            message: 'Houve um erro no servidor!'
-          });
+            console.log(err);
+            res.status(500).json({
+                message: 'Houve um erro no servidor!'
+            });
         }
-      }
-      
+    }
+
 }
-  
+
 module.exports = new SchoolController();
