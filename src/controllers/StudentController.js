@@ -79,17 +79,23 @@ class StudentController {
         }
 
         // check if user exists
-        const userExists = await Student.findOne({
-            id_school: id,
-            $or: [
-                { name: name.toUpperCase() },
-                { cpf: cpf }
-            ]
-        });
-        console.log("userExists", userExists)
+        let query = { id_school: id, name: name.toUpperCase() };
+
+        if (cpf) {
+            query = {
+                id_school: id,
+                $or: [
+                    { name: name.toUpperCase() },
+                    { cpf: cpf }
+                ]
+            };
+        }
+
+        const userExists = await Student.findOne(query);
+        console.log("userExists", userExists);
 
         if (userExists) {
-            return res.status(422).json({ msg: "Esse estudante ja esta cadastrado!" });
+            return res.status(422).json({ msg: "Esse estudante já está cadastrado!" });
         }
 
         // create user
