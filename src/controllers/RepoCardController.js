@@ -34,6 +34,7 @@ class RepoCardController {
         const cla$$ = await Class.findOne({ _id: idClass })
             .populate('id_school')
             .populate('id_student')
+            .populate('transferStudents') // ✅ populate dos alunos transferidos
             .populate('classRegentTeacher')
             .populate('physicalEducationTeacher');
 
@@ -63,8 +64,14 @@ class RepoCardController {
             await ReportCard.deleteMany(filter);
         }
 
+        // Junta alunos ativos + transferidos, evitando duplicados
+        const allStudents = [
+            ...cla$$.id_student,
+            ...cla$$.transferStudents.filter(ts => !cla$$.id_student.some(s => String(s._id) === String(ts._id)))
+        ];
+
         await Promise.all(
-            cla$$.id_student.map(async (aluno) => {
+            allStudents.map(async (aluno) => {
 
                 const studentName = aluno.name;
                 const teacherNames = cla$$.classRegentTeacher?.map(t => t.name).join(', ') || "Professor não definido";
@@ -220,6 +227,7 @@ class RepoCardController {
         const cla$$ = await Class.findOne({ _id: idClass })
             .populate('id_school')
             .populate('id_student')
+            .populate('transferStudents') // ✅ populate dos alunos transferidos
             .populate('classRegentTeacher')
             .populate('physicalEducationTeacher');
 
@@ -249,8 +257,14 @@ class RepoCardController {
             await ReportCard.deleteMany(filter);
         }
 
+        // Junta alunos ativos + transferidos, evitando duplicados
+        const allStudents = [
+            ...cla$$.id_student,
+            ...cla$$.transferStudents.filter(ts => !cla$$.id_student.some(s => String(s._id) === String(ts._id)))
+        ];
+
         await Promise.all(
-            cla$$.id_student.map(async (aluno) => {
+            allStudents.map(async (aluno) => {
 
                 const studentName = aluno.name;
                 const teacherNames = cla$$.classRegentTeacher?.map(t => t.name).join(', ') || "Professor não definido";
