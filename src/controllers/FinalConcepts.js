@@ -120,6 +120,30 @@ class finalConcepts {
         }
     }
 
+    async DestroyFinalGrade(req, res) {
+        try {
+            const { id } = req.body;
+            console.log("id", req.body)
+
+            const deletedGrade = await FinalConcepts.findByIdAndDelete(id);
+
+            if (!deletedGrade) {
+                return res.status(404).json({ message: "Grade não encontrada" });
+            }
+
+            return res.status(200).json({
+                message: "Grade deletada com sucesso!",
+                deletedGrade,
+            });
+        } catch (error) {
+            console.error("Erro ao deletar grade:", error);
+            return res.status(500).json({
+                message: "Erro ao deletar grade",
+                error: error.message,
+            });
+        }
+    }
+
     async update(req, res) {
 
         const { update_id_grade, update_studentGrade } = req.body;
