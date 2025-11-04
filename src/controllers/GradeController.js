@@ -158,6 +158,30 @@ class GradeController {
         }
     }
 
+    async DestroyGrade(req, res) {
+        try {
+            const { id } = req.body;
+            console.log("id", req.body)
+
+            const deletedGrade = await Grade.findByIdAndDelete(id);
+
+            if (!deletedGrade) {
+                return res.status(404).json({ message: "Grade não encontrada" });
+            }
+
+            return res.status(200).json({
+                message: "Grade deletada com sucesso!",
+                deletedGrade,
+            });
+        } catch (error) {
+            console.error("Erro ao deletar grade:", error);
+            return res.status(500).json({
+                message: "Erro ao deletar grade",
+                error: error.message,
+            });
+        }
+    }
+
     async GetGradeActivity(req, res) {
         const { id_activity } = req.body;  // Corrigido aqui
         console.log("req.body", req.body.id_activity);

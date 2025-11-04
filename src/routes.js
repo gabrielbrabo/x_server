@@ -13,6 +13,7 @@ const BimonthlyController = require("./controllers/BimonthlyController")
 const GradeController = require("./controllers/GradeController")
 const IndividualFormController = require("./controllers/IndividualFormController")
 const RefreshController = require("./controllers/RefreshController")
+const HistoryController = require("./controllers/HistoryController")
 
 const auth = require("./middlewares/auth")
 
@@ -81,6 +82,8 @@ routes.post('/allTheBulletins-grades', ReportCardController.allTheBulletinsGrade
 //routes.post('/allTheFinalBulletins-grades', ReportCardController.allTheFinalBulletinsGrades)
 routes.post('/allTheBulletins-concept', ReportCardController.allTheBulletinsConcept)
 routes.post('/allTheFinalBulletins-concept', ReportCardController.allTheFinalBulletinsConcept)
+
+routes.post('/register/history', HistoryController.createHistoryGrade)
 
 routes.post('/register/final-concepts', FinalConcepts.create)
 routes.post('/get/final-concepts', FinalConcepts.GetGradeFinalConcepts)
@@ -172,6 +175,7 @@ routes.post('/numerical-grades-card', GradeController.indexNumericalGradesCard)
 routes.post('/grades-card', GradeController.indexGradesCard)
 
 routes.post('/grades', GradeController.indexGrades)
+routes.post('/destroy-grades', GradeController.DestroyGrade)
 
 /*routes.post('/card/I_st_quarter', ReportCardController.I_st_quarter)
 routes.post('/card/II_nd_quarter', ReportCardController.II_nd_quarter)
