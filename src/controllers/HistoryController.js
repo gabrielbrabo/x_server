@@ -23,6 +23,20 @@ class HistoryController {
                 return res.status(404).json({ message: "Escola não encontrada" });
             }
 
+            // 🔍 Verifica se já existem históricos salvos para este ano e escola
+            const existingHistories = await History.find({
+                id_school: idSchool,
+                year: year.toString()
+            });
+
+            if (existingHistories.length > 0) {
+                console.warn(`Históricos existentes encontrados para a escola ${school.name} (${year}). Apagando...`);
+                await History.deleteMany({
+                    id_school: idSchool,
+                    year: year.toString()
+                });
+            }
+
             // Buscar todos os bimestres da escola para o ano solicitado
             const [iStQuarter, iiNdQuarter, iiiRdQuarter, ivThQuarter] = await Promise.all([
                 IStQuarter.find({ id_school: idSchool, year: year.toString() }),
@@ -71,16 +85,39 @@ class HistoryController {
                     year: year.toString()
                 });
 
-                const reportCardIds = reportCards.map(rc => rc._id);
+                // Copiar todos os dados dos reportCards (sem apenas IDs)
+                const reportCardData = reportCards.map(rc => ({
+                    _id: rc._id,
+                    frequencia: rc.frequencia,
+                    nameStudent: rc.nameStudent,
+                    nameTeacher: rc.nameTeacher,
+                    //nameSchool: rc.nameSchool,
+                    year: rc.year,
+                    bimonthly: rc.bimonthly,
+                    totalGrade: rc.totalGrade,
+                    averageGrade: rc.averageGrade,
+                    studentGrade: rc.studentGrade,
+                    id_iStQuarter: rc.id_iStQuarter,
+                    id_iiNdQuarter: rc.id_iiNdQuarter,
+                    id_iiiRdQuarter: rc.id_iiiRdQuarter,
+                    id_ivThQuarter: rc.id_ivThQuarter,
+                    id_student: rc.id_student,
+                    idTeacher: rc.idTeacher,
+                    idTeacher02: rc.idTeacher02,
+                    idClass: rc.idClass,
+                    //createdAt: rc.createdAt,
+                    //updatedAt: rc.updatedAt
+                }));
 
                 const history = {
+                    id_school: idSchool,
                     nameStudent: student.name,
-                    nameTeacher: classData?.classRegentTeacher?.[0]?.name || "",
+                    nameTeacher: classData?.classRegentTeacher?.[0]?.name || "Professor não informado",
                     nameSchool: school.name,
                     year: year.toString(),
                     totalGrade: totalGrade,
                     averageGrade: averageGrade,
-                    reportCard: reportCardIds,
+                    reportCard: reportCardData,
                     id_student: student._id,
                     idTeacher: classData?.classRegentTeacher?.[0]?._id || null,
                     idClass: classData?._id || null
@@ -90,12 +127,12 @@ class HistoryController {
             }
 
             // Salvar todos os históricos
-            //const savedHistories = await History.insertMany(historiesToSave);
+            const savedHistories = await History.insertMany(historiesToSave);
 
             return res.status(201).json({
                 message: "Históricos de todos os alunos da escola criados com sucesso!",
                 total: historiesToSave.length,
-                historiesToSave,
+                histories: savedHistories,
             });
 
         } catch (error) {

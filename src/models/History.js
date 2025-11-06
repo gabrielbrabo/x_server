@@ -26,12 +26,10 @@ const historyschema = new mongoose.Schema(
             type: String,
             //required: true,
         },
-        reportCard: [
-            {
-                type: mongoose.Types.ObjectId,
-                ref: 'report_card'
-            }
-        ],
+        reportCard: {
+            type: [mongoose.Schema.Types.Mixed], // aceita qualquer estrutura de objeto
+            default: [],
+        },
         id_iStQuarter: {
             type: mongoose.Types.ObjectId,
             ref: 'I_stQuarter'
@@ -59,6 +57,10 @@ const historyschema = new mongoose.Schema(
         idClass: {
             type: mongoose.Types.ObjectId,
             ref: 'class'
+        },
+        id_school: {
+            type: mongoose.Types.ObjectId,
+            ref: 'school'
         },
     },
     {
