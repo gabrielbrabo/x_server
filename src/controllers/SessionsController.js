@@ -72,7 +72,7 @@ class SessionController {
         // check if user exists
         const users = await Employee.findOne({ cpf: cpf, password: password })//.populate('id_school');
         const populateLogo = await Employee.findOne({ cpf: cpf }).populate('id_school');
-        console.log("uses", populateLogo)
+        console.log("userName:", populateLogo.name, "id:", populateLogo._id)
         if (!users) {
             return res.status(404).json({ msg: "Cpf ou senha esta errado!" });
         }
