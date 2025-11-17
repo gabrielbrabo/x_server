@@ -9,7 +9,6 @@ class AttendanceController {
     async createAttendance(req, res) {
         const attendances = req.body; // Recebe um array de frequências
 
-        // validations
         if (!Array.isArray(attendances)) {
             return res.status(400).json({ error: 'O corpo da requisição deve ser um array.' });
         }
@@ -17,10 +16,36 @@ class AttendanceController {
         try {
             console.log("attendances", attendances);
 
-            // Insere todas as frequências no banco de dados
-            const insertedAttendances = await Attendance.insertMany(attendances);
+            // --- VALIDA E CORRIGE CADA FREQUÊNCIA ---
+            const preparedAttendances = attendances.map((att) => {
+                const year = parseInt(att.year);
+                const month = parseInt(att.month);
+                const day = parseInt(att.day);
 
-            // Atualiza cada estudante com a respectiva frequência
+                // validação forte
+                if (
+                    !year || year < 1900 || year > 2100 ||
+                    !month || month < 1 || month > 12 ||
+                    !day || day < 1 || day > 31
+                ) {
+                    throw new Error(`Data inválida: ${att.year}-${att.month}-${att.day}`);
+                }
+
+                const date = new Date(year, month - 1, day);
+
+                return {
+                    ...att,
+                    year,
+                    month,
+                    day,
+                    date,
+                };
+            });
+
+            // --- INSERE NO BANCO ---
+            const insertedAttendances = await Attendance.insertMany(preparedAttendances);
+
+            // --- RELACIONA COM O STUDENT ---
             await Promise.all(insertedAttendances.map(async (attendance) => {
                 await Student.updateOne(
                     { _id: attendance.id_student },
@@ -28,10 +53,13 @@ class AttendanceController {
                 );
             }));
 
-            res.status(200).json({ msg: 'Frequências salvas e vinculadas aos estudantes com sucesso!' });
+            res.status(200).json({
+                msg: 'Frequências salvas e vinculadas aos estudantes com sucesso!'
+            });
 
         } catch (err) {
-            res.status(500).json({ error: 'Erro ao salvar as frequências' });
+            console.error(err);
+            res.status(500).json({ error: err.message || 'Erro ao salvar as frequências' });
         }
     }
 
@@ -94,39 +122,39 @@ class AttendanceController {
             })
         }
     }
-    
+
     async indexAllAttendance(req, res) {
         try {
             const { id_class } = req.body//.id_class; // ou req.params.id_class
             console.log("🔎 ID recebido:", req.body);
-    
+
             // Converter para ObjectId
             const classId = new mongoose.Types.ObjectId(id_class);
-    
+
             // Buscar registros de presença da turma
             const attendance = await Attendance.find({ id_class: classId })
-                //.populate('id_student');
-    
+            //.populate('id_student');
+
             console.log("📌 Resultado da query:", attendance);
-    
+
             if (!attendance || attendance.length === 0) {
                 return res.status(404).json({
                     message: "Nenhum registro de chamada encontrado para esta turma."
                 });
             }
-    
+
             return res.json({
                 data: attendance,
                 message: 'Success'
             });
-    
+
         } catch (err) {
             console.error("❌ Erro no indexAllAttendance:", err);
             return res.status(500).json({
                 message: 'There was an error on server side!'
             });
         }
-    }      
+    }
 
     async testindex(req, res) {
 
