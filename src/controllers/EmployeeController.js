@@ -539,7 +539,7 @@ class EmployeeController {
         }
 
         const user = await User.find({ cpf });
-        if (!user) {
+        if (!user || user.length === 0) {
             return res.status(404).send('Usuário não encontrado.');
         }
 
