@@ -147,6 +147,7 @@ routes.post('/get-grade-activity', GradeController.GetGradeActivity)
 
 routes.post('/register/grade', GradeController.createGrade)
 routes.post('/register/numerical-grade', GradeController.createNumericalGrade)
+routes.post('/register/HistoryGrade', GradeController.createHistoryGrade)
 
 routes.post('/update/grade', GradeController.update)
 routes.post('/update/numerical-grade', GradeController.updateNumericalGrade)
@@ -177,6 +178,7 @@ routes.post('/grades-card', GradeController.indexGradesCard)
 
 routes.post('/grades', GradeController.indexGrades)
 routes.post('/destroy-grades', GradeController.DestroyGrade)
+routes.post('/destroy-Numgrades', GradeController.DestroyNumericalGrade)
 
 /*routes.post('/card/I_st_quarter', ReportCardController.I_st_quarter)
 routes.post('/card/II_nd_quarter', ReportCardController.II_nd_quarter)

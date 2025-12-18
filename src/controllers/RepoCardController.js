@@ -163,10 +163,18 @@ class RepoCardController {
 
 
                     if (!totalPorMateria[nomeMateria]) {
-                        totalPorMateria[nomeMateria] = 0;
+                        totalPorMateria[nomeMateria] = {
+                            total: 0,
+                            atividades: []
+                        };
                     }
 
-                    totalPorMateria[nomeMateria] += nota;
+                    totalPorMateria[nomeMateria].total += nota;
+
+                    totalPorMateria[nomeMateria].atividades.push({
+                        idActivity: g.idActivity ?? null,
+                        nota
+                    });
                 });
 
                 const freqAluno = attendance.filter(a => String(a.id_student) === String(aluno._id));
@@ -535,6 +543,7 @@ class RepoCardController {
 
                 const grades = await NumericalGrade.find(filter).populate('id_matter');
 
+                //console.log("totalPorMateria", grades)
                 const totalPorMateria = {};
 
                 grades.forEach((g) => {
@@ -542,12 +551,19 @@ class RepoCardController {
                     const nota = parseFloat(String(g.studentGrade).replace(',', '.')) || 0;
 
                     if (!totalPorMateria[nomeMateria]) {
-                        totalPorMateria[nomeMateria] = 0;
+                        totalPorMateria[nomeMateria] = {
+                            total: 0,
+                            atividades: []
+                        };
                     }
 
-                    totalPorMateria[nomeMateria] += nota;
-                });
+                    totalPorMateria[nomeMateria].total += nota;
 
+                    totalPorMateria[nomeMateria].atividades.push({
+                        idActivity: g.idActivity ?? null,
+                        nota
+                    });
+                });
                 // 🔥 Frequência desse aluno no período filtrado
                 const freqAluno = attendance.filter(
                     (a) => String(a.id_student) === String(aluno._id)

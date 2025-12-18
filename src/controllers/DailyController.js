@@ -109,7 +109,6 @@ class DailyController {
 
         //console.log("schoolNames", schoolNames)
 
-
         let bimonthly = null;
 
         if (id_iStQuarter) bimonthly = await I_stQuarter.findOne({ _id: id_iStQuarter });
@@ -249,7 +248,7 @@ class DailyController {
         let grades = [];
 
         if (filter.id_iStQuarter || filter.id_iiNdQuarter || filter.id_iiiRdQuarter || filter.id_ivThQuarter) {
-            grades = await NumericalGrade.find(filter).populate('id_matter');
+            grades = await NumericalGrade.find(filter).populate('id_matter').populate('idActivity');
         }
 
         const activities = await Activities.find(

@@ -181,6 +181,29 @@ class GradeController {
             });
         }
     }
+    async DestroyNumericalGrade(req, res) {
+        try {
+            const { id } = req.body;
+            console.log("id", req.body)
+
+            const deletedGrade = await NumericalGrade.findByIdAndDelete(id);
+
+            if (!deletedGrade) {
+                return res.status(404).json({ message: "Grade não encontrada" });
+            }
+
+            return res.status(200).json({
+                message: "Grade deletada com sucesso!",
+                deletedGrade,
+            });
+        } catch (error) {
+            console.error("Erro ao deletar grade:", error);
+            return res.status(500).json({
+                message: "Erro ao deletar grade",
+                error: error.message,
+            });
+        }
+    }
 
     async GetGradeActivity(req, res) {
         const { id_activity } = req.body;  // Corrigido aqui
@@ -374,7 +397,7 @@ class GradeController {
                     id_viThQuarter
                 } = gradeData;
 
-                if (!year ) {  // Corrigido para usar 'value' que é a nota
+                if (!year) {  // Corrigido para usar 'value' que é a nota
                     return res.status(422).json({ msg: "Ano e nota do estudante são obrigatórios!" });
                 }
 
@@ -427,10 +450,76 @@ class GradeController {
         }
     }
 
+    async createHistoryGrade(req, res) {
+        try {
+            const {
+                year,
+                bimonthly,
+                studentGrade,
+                id_teacher,
+                id_student,
+                id_matter,
+                id_class,
+                id_iStQuarter,
+                id_iiNdQuarter,
+                id_iiiRdQuarter,
+                id_ivThQuarter,
+                id_vThQuarter,
+                id_viThQuarter
+            } = req.body.year;
+
+            console.log("res", req.body)
+
+            // 🔎 Descobre qual bimestre foi enviado
+            const quarterFilter = {};
+
+            if (id_iStQuarter) quarterFilter.id_iStQuarter = id_iStQuarter;
+            if (id_iiNdQuarter) quarterFilter.id_iiNdQuarter = id_iiNdQuarter;
+            if (id_iiiRdQuarter) quarterFilter.id_iiiRdQuarter = id_iiiRdQuarter;
+            if (id_ivThQuarter) quarterFilter.id_ivThQuarter = id_ivThQuarter;
+            if (id_vThQuarter) quarterFilter.id_vThQuarter = id_vThQuarter;
+            if (id_viThQuarter) quarterFilter.id_viThQuarter = id_viThQuarter;
+
+            // 🚫 Verifica se já existe nota para esse aluno + matéria + bimestre
+            const gradeAlreadyExists = await NumericalGrade.findOne({
+                year,
+                id_student,
+                id_matter,
+                ...quarterFilter
+            });
+
+            if (gradeAlreadyExists) {
+                return res.status(400).json({
+                    message: 'Já existe notas cadastrada para este aluno, nesta disciplina e neste bimestre.'
+                });
+            }
+
+            const historyGrade = await NumericalGrade.create({
+                year,
+                bimonthly,
+                studentGrade,
+                id_teacher,
+                id_student,
+                id_matter,
+                id_class,
+                id_iStQuarter,
+                id_iiNdQuarter,
+                id_iiiRdQuarter,
+                id_ivThQuarter,
+                id_vThQuarter,
+                id_viThQuarter
+            });
+
+            return res.status(201).json(historyGrade);
+        } catch (error) {
+            return res.status(500).json({ error: error.message });
+        }
+    }
 
     async GetGrade(req, res) {
 
         const { year, bimonthly, id_student } = req.body;
+        console.log("res", req.body)
 
         const grade = await Grade.find({
             id_student: id_student
@@ -447,8 +536,8 @@ class GradeController {
                 return res
             }
         })
-        console.log("grade", grade)
-        console.log("grd", grd)
+        //console.log("grade", grade)
+        //console.log("grd", grd)
         try {
             if (grd) {
                 return res.json({
@@ -462,7 +551,7 @@ class GradeController {
                 message: 'there was an error on server side!'
             })
         }
-    } 
+    }
 
     async GetNumericalGrade(req, res) {
         const { id_activity } = req.body;  // Corrigido aqui
@@ -505,9 +594,10 @@ class GradeController {
         }
     }
 
-    async GetNumGrade (req, res) {
+    async GetNumGrade(req, res) {
 
         const { year, bimonthly, id_student } = req.body;
+        console.log("res", req.body)
 
         const grade = await NumericalGrade.find({
             id_student: id_student
@@ -525,7 +615,7 @@ class GradeController {
             }
         })
         //console.log("grade", grade)
-       // console.log("grd", grd)
+        // console.log("grd", grd)
         try {
             if (grd) {
                 return res.json({
@@ -598,7 +688,7 @@ class GradeController {
                 return res
             }
         })
-       // console.log("grd", grd)
+        // console.log("grd", grd)
 
         try {
             if (grd) {
