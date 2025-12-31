@@ -115,6 +115,8 @@ class HistoryController {
                     nameTeacher: classData?.classRegentTeacher?.[0]?.name || "Professor não informado",
                     nameSchool: school.name,
                     year: year.toString(),
+                    serie: classData?.serie || "",
+                    nameClass: classData?.name || "Turma não identificada",
                     totalGrade: totalGrade,
                     averageGrade: averageGrade,
                     reportCard: reportCardData,

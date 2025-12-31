@@ -18,6 +18,10 @@ const Dailyschema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        serie: {
+            type: String,
+            required: true,
+        },
         nameClass: {
             type: String,
             required: true,

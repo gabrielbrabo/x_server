@@ -18,6 +18,12 @@ const historyschema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        serie: {
+            type: String,
+        },
+        nameClass: {
+            type: String,
+        },
         totalGrade: {
             type: String,
             //required: true,

@@ -15,6 +15,10 @@ const classschema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        name: {
+            type: String,
+            required: true,
+        },
         level: {
             type: String,
             required: true,

@@ -9,7 +9,7 @@ const Matter = require("../models/Matter");
 class ClassController {
 
     async create(req, res) {
-        const { year, serie, level, shift, classroom_number } = req.body;
+        const { year, serie, name, level, shift, classroom_number } = req.body;
 
         const { id } = req.params;
 
@@ -20,6 +20,10 @@ class ClassController {
 
         if (!serie) {
             return res.status(422).json({ msg: "A serie da turma é obrigatório!" });
+        }
+        
+        if (!name) {
+            return res.status(422).json({ msg: "O nome da turma é obrigatório!" });
         }
 
         if (!level) {
@@ -74,6 +78,7 @@ class ClassController {
         const newclass = new Class({
             year: year,
             serie: serie.toUpperCase(),
+            name: name.toUpperCase(),
             level: level.toUpperCase(),
             shift: shift.toUpperCase(),
             classroom_number: classroom_number,
