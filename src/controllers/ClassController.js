@@ -387,16 +387,16 @@ class ClassController {
 
         // Check if the student is already registered in a class
         const clss = await Class.find({ _id: id_class });
-        const currentYear = new Date().getFullYear()
+        //const currentYear = new Date().getFullYear()
         if (clss) {
             const cl = clss.map(result => {
                 return result.year
             })
-            if (cl != currentYear) {
+            /*if (cl != currentYear) {
                 return res.status(422).json({ msg: "Essa turma não e atual!" });
             }
             console.log("cl", cl)
-            console.log("currentYear", currentYear)
+            console.log("currentYear", currentYear)*/
             const teacher = clss.find(tchr => {
                 return tchr
             }).id_employee.filter(res => {
@@ -478,16 +478,16 @@ class ClassController {
 
         // Check if the student is already registered in a class
         const clss = await Class.find({ _id: id_class });
-        const currentYear = new Date().getFullYear()
+        //const currentYear = new Date().getFullYear()
         if (clss) {
-            const cl = clss.map(result => {
+            /*const cl = clss.map(result => {
                 return result.year
             })
             if (cl != currentYear) {
                 return res.status(422).json({ msg: "Essa turma não e atual!" });
             }
             console.log("cl", cl)
-            console.log("currentYear", currentYear)
+            console.log("currentYear", currentYear)*/
             const teacher = clss.find(tchr => {
                 return tchr
             }).id_employee.filter(res => {
@@ -557,16 +557,16 @@ class ClassController {
 
         // Check if the student is already registered in a class
         const clss = await Class.find({ _id: id_class });
-        const currentYear = new Date().getFullYear()
+       // const currentYear = new Date().getFullYear()
         if (clss) {
-            const cl = clss.map(result => {
+            /*const cl = clss.map(result => {
                 return result.year
             })
             if (cl != currentYear) {
                 return res.status(422).json({ msg: "Essa turma não e atual!" });
             }
             console.log("cl", cl)
-            console.log("currentYear", currentYear)
+            console.log("currentYear", currentYear)*/
             const teacher = clss.find(tchr => {
                 return tchr
             }).id_employee.filter(res => {
