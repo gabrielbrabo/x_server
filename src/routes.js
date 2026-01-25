@@ -84,6 +84,14 @@ routes.post('/allTheBulletins-concept', ReportCardController.allTheBulletinsConc
 routes.post('/allTheFinalBulletins-concept', ReportCardController.allTheFinalBulletinsConcept)
 
 routes.post('/register/history', HistoryController.createHistoryGrade)
+routes.post('/history/:id_student', HistoryController.GetStudentHistory)
+routes.put('/history/:id', HistoryController.updateHistory)
+routes.post('/history-manual', HistoryController.createManualHistory)
+routes.put('/update-manual-history/:id', HistoryController.updateManualHistory)
+routes.post('/createCertificate', HistoryController.createCertificate)
+routes.get('/certificate/student/:studentId', HistoryController.getByStudentCertificate)
+routes.put('/certificate/:studentId', HistoryController.updateCertificate);
+
 
 routes.post('/register/final-concepts', FinalConcepts.create)
 routes.post('/get/final-concepts', FinalConcepts.GetGradeFinalConcepts)

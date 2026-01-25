@@ -8,13 +8,46 @@ const historyschema = new mongoose.Schema(
         },
         nameTeacher: {
             type: String,
-            required: true,
+            //required: true,
         },
         nameSchool: {
             type: String,
             required: true,
         },
+        municipality: {
+            type: String,
+        },
+        state: {
+            type: String,
+        },
         year: {
+            type: String,
+            required: true,
+        },
+        dailyWorkload: {
+            type: String,
+            required: true,
+        },
+        extraWorkingHours: {
+            type: String,
+        },
+        absencesOvertime: {
+            type: String,
+        },
+        extraSubjects: [
+            {
+                name: {
+                    type: String,
+                },
+                grade: {
+                    type: String,
+                }
+            }
+        ],          
+        studentSituation: {
+            type: String,
+        },
+        annualSchoolDays: {
             type: String,
             required: true,
         },
@@ -68,6 +101,10 @@ const historyschema = new mongoose.Schema(
             type: mongoose.Types.ObjectId,
             ref: 'school'
         },
+        createdManually: {
+            type: Boolean,
+            default: false
+        }        
     },
     {
         timestamps: true
