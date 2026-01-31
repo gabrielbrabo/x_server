@@ -60,6 +60,10 @@ const III_rdQuarter = new mongoose.Schema(
             ref: 'school',
             required: true,
         },
+        assessmentRegime: {
+            type: String,
+            enum: ['BIMESTRAL', 'TRIMESTRAL', 'SEMESTRAL']
+        },
     },
     {
         timestamps: true

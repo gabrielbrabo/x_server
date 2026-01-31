@@ -70,6 +70,10 @@ const schoolschema = new mongoose.Schema(
                 ref: 'student'
             }
         ],
+        assessmentRegime: {
+            type: String,
+            enum: ['BIMESTRAL', 'TRIMESTRAL', 'SEMESTRAL']
+        },
         id_iStQuarter: {
             type: mongoose.Types.ObjectId,
             ref: 'I_stQuarter'
