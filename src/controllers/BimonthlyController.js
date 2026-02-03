@@ -10,7 +10,7 @@ const Class = require("../models/Class")
 class BimonthlyController {
 
     async createI_stQuarter(req, res) {
-        const { year, startday, startmonth, startyear, endday, endmonth, endyear, /*totalGrade, averageGrade,*/ id_school } = req.body;
+        const { year, startday, startmonth, startyear, endday, endmonth, endyear, /*totalGrade, averageGrade,*/ id_school, assessmentRegime, schoolDays } = req.body;
 
         // validations
         if (!startday) {
@@ -28,6 +28,13 @@ class BimonthlyController {
         if (!averageGrade) {
             return res.status(422).json({ msg: "A media é obrigatória!" });
         }*/
+
+        if (!schoolDays || !Array.isArray(schoolDays) || schoolDays.length === 0) {
+            return res.status(422).json({
+                msg: "É obrigatório informar os dias letivos do período."
+            });
+        }
+
 
         const startDate = new Date(startyear, startmonth - 1, startday); // Note que os meses no objeto Date são baseados em zero (0 para Janeiro, 11 para Dezembro)
         const endDate = new Date(endyear, endmonth - 1, endday);
@@ -68,9 +75,11 @@ class BimonthlyController {
             endday: endday,
             endmonth: endmonth,
             endyear: endyear,
+            schoolDays: schoolDays,
             status: 'aberto',
             statusSupervisor: 'aberto',
-            id_school: id_school
+            id_school: id_school,
+            assessmentRegime: assessmentRegime
         });
 
         try {
@@ -85,7 +94,7 @@ class BimonthlyController {
                 }
             })
             res.status(200).json({
-                msg: 'Conta profissional cadastrado com sucesso.'
+                msg: '1º período cadastrado com sucesso.'
             })
 
         } catch (err) {
@@ -95,7 +104,7 @@ class BimonthlyController {
         }
     }
     async createI_stQuarter$$grade(req, res) {
-        const { year, startday, startmonth, startyear, endday, endmonth, endyear, totalGrade, averageGrade, id_school } = req.body;
+        const { year, startday, startmonth, startyear, endday, endmonth, endyear, totalGrade, averageGrade, id_school, assessmentRegime, schoolDays } = req.body;
 
         // validations
         if (!startday) {
@@ -113,6 +122,13 @@ class BimonthlyController {
         if (!averageGrade) {
             return res.status(422).json({ msg: "A media é obrigatória!" });
         }*/
+
+        if (!schoolDays || !Array.isArray(schoolDays) || schoolDays.length === 0) {
+            return res.status(422).json({
+                msg: "É obrigatório informar os dias letivos do período."
+            });
+        }
+
 
         const startDate = new Date(startyear, startmonth - 1, startday); // Note que os meses no objeto Date são baseados em zero (0 para Janeiro, 11 para Dezembro)
         const endDate = new Date(endyear, endmonth - 1, endday);
@@ -153,11 +169,13 @@ class BimonthlyController {
             endday: endday,
             endmonth: endmonth,
             endyear: endyear,
+            schoolDays: schoolDays,
             totalGrade: totalGrade,
             averageGrade: averageGrade,
             status: 'aberto',
             statusSupervisor: 'aberto',
-            id_school: id_school
+            id_school: id_school,
+            assessmentRegime: assessmentRegime
         });
 
         try {
@@ -172,7 +190,7 @@ class BimonthlyController {
                 }
             })
             res.status(200).json({
-                msg: 'Conta profissional cadastrado com sucesso.'
+                msg: '1º período cadastrado com sucesso.'
             })
 
         } catch (err) {
@@ -231,10 +249,36 @@ class BimonthlyController {
     async updateI_stQuarter(req, res) {
         try {
             const { id } = req.params;
-            const i_stQuarter = await I_stQuarter.findByIdAndUpdate(id, req.body, { new: true });
+            const {
+                startday,
+                startmonth,
+                endday,
+                endmonth,
+                totalGrade,
+                averageGrade,
+                schoolDays,
+                assessmentRegime
+            } = req.body;
+
+            const i_stQuarter = await I_stQuarter.findByIdAndUpdate(
+                id,
+                {
+                    startday,
+                    startmonth,
+                    endday,
+                    endmonth,
+                    totalGrade,
+                    averageGrade,
+                    schoolDays,
+                    assessmentRegime // 👈 AGORA ATUALIZA
+                },
+                { new: true }
+            );
+
             if (!i_stQuarter) {
-                return res.status(404).json({ error: 'Employee not found' });
+                return res.status(404).json({ error: 'Registro não encontrado' });
             }
+
             res.json(i_stQuarter);
         } catch (err) {
             console.error(err);
@@ -243,7 +287,7 @@ class BimonthlyController {
     }
 
     async createII_ndQuarter(req, res) {
-        const { year, startday, startmonth, startyear, endday, endmonth, endyear, /*totalGrade, averageGrade,*/ id_school } = req.body;
+        const { year, startday, startmonth, startyear, endday, endmonth, endyear, /*totalGrade, averageGrade,*/ id_school, assessmentRegime, schoolDays } = req.body;
 
         // validations
         if (!startday) {
@@ -254,7 +298,11 @@ class BimonthlyController {
             return res.status(422).json({ msg: "A data do fim é obrigatório!" });
         }
 
-
+        if (!schoolDays || !Array.isArray(schoolDays) || schoolDays.length === 0) {
+            return res.status(422).json({
+                msg: "É obrigatório informar os dias letivos do período."
+            });
+        }
 
         const startDate = new Date(startyear, startmonth - 1, startday); // Note que os meses no objeto Date são baseados em zero (0 para Janeiro, 11 para Dezembro)
         const endDate = new Date(endyear, endmonth - 1, endday);
@@ -305,9 +353,11 @@ class BimonthlyController {
             endday: endday,
             endmonth: endmonth,
             endyear: endyear,
+            schoolDays: schoolDays,
             status: 'aberto',
             statusSupervisor: 'aberto',
-            id_school: id_school
+            id_school: id_school,
+            assessmentRegime: assessmentRegime
         });
 
         try {
@@ -333,7 +383,7 @@ class BimonthlyController {
     }
 
     async createII_ndQuarter$$grade(req, res) {
-        const { year, startday, startmonth, startyear, endday, endmonth, endyear, totalGrade, averageGrade, id_school } = req.body;
+        const { year, startday, startmonth, startyear, endday, endmonth, endyear, totalGrade, averageGrade, id_school, assessmentRegime, schoolDays } = req.body;
 
         // validations
         if (!startday) {
@@ -344,7 +394,11 @@ class BimonthlyController {
             return res.status(422).json({ msg: "A data do fim é obrigatório!" });
         }
 
-
+        if (!schoolDays || !Array.isArray(schoolDays) || schoolDays.length === 0) {
+            return res.status(422).json({
+                msg: "É obrigatório informar os dias letivos do período."
+            });
+        }
 
         const startDate = new Date(startyear, startmonth - 1, startday); // Note que os meses no objeto Date são baseados em zero (0 para Janeiro, 11 para Dezembro)
         const endDate = new Date(endyear, endmonth - 1, endday);
@@ -395,11 +449,13 @@ class BimonthlyController {
             endday: endday,
             endmonth: endmonth,
             endyear: endyear,
+            schoolDays: schoolDays,
             totalGrade: totalGrade,
             averageGrade: averageGrade,
             status: 'aberto',
             statusSupervisor: 'aberto',
-            id_school: id_school
+            id_school: id_school,
+            assessmentRegime: assessmentRegime
         });
 
         try {
@@ -471,7 +527,31 @@ class BimonthlyController {
     async updateII_ndQuarter(req, res) {
         try {
             const { id } = req.params;
-            const ii_ndQuarter = await II_ndQuarter.findByIdAndUpdate(id, req.body, { new: true });
+            const {
+                startday,
+                startmonth,
+                endday,
+                endmonth,
+                totalGrade,
+                averageGrade,
+                schoolDays,
+                assessmentRegime
+            } = req.body;
+
+            const ii_ndQuarter = await II_ndQuarter.findByIdAndUpdate(id,
+                {
+                    startday,
+                    startmonth,
+                    endday,
+                    endmonth,
+                    totalGrade,
+                    averageGrade,
+                    schoolDays,
+                    assessmentRegime // 👈 AGORA ATUALIZA
+                },
+                { new: true }
+            );
+
             if (!ii_ndQuarter) {
                 return res.status(404).json({ error: 'Employee not found' });
             }
@@ -483,7 +563,7 @@ class BimonthlyController {
     }
 
     async createIII_rdQuarter(req, res) {
-        const { year, startday, startmonth, startyear, endday, endmonth, endyear, /*totalGrade, averageGrade,*/ id_school } = req.body;
+        const { year, startday, startmonth, startyear, endday, endmonth, endyear, /*totalGrade, averageGrade,*/ id_school, assessmentRegime, schoolDays } = req.body;
 
         // validations
         if (!startday) {
@@ -494,7 +574,11 @@ class BimonthlyController {
             return res.status(422).json({ msg: "A data do fim é obrigatório!" });
         }
 
-
+        if (!schoolDays || !Array.isArray(schoolDays) || schoolDays.length === 0) {
+            return res.status(422).json({
+                msg: "É obrigatório informar os dias letivos do período."
+            });
+        }
 
         const startDate = new Date(startyear, startmonth - 1, startday); // Note que os meses no objeto Date são baseados em zero (0 para Janeiro, 11 para Dezembro)
         const endDate = new Date(endyear, endmonth - 1, endday);
@@ -546,9 +630,11 @@ class BimonthlyController {
             endday: endday,
             endmonth: endmonth,
             endyear: endyear,
+            schoolDays: schoolDays,
             status: 'aberto',
             statusSupervisor: 'aberto',
-            id_school: id_school
+            id_school: id_school,
+            assessmentRegime: assessmentRegime
         });
 
         try {
@@ -573,7 +659,7 @@ class BimonthlyController {
         }
     }
     async createIII_rdQuarter$$grade(req, res) {
-        const { year, startday, startmonth, startyear, endday, endmonth, endyear, totalGrade, averageGrade, id_school } = req.body;
+        const { year, startday, startmonth, startyear, endday, endmonth, endyear, totalGrade, averageGrade, id_school, assessmentRegime, schoolDays } = req.body;
 
         // validations
         if (!startday) {
@@ -584,7 +670,11 @@ class BimonthlyController {
             return res.status(422).json({ msg: "A data do fim é obrigatório!" });
         }
 
-
+        if (!schoolDays || !Array.isArray(schoolDays) || schoolDays.length === 0) {
+            return res.status(422).json({
+                msg: "É obrigatório informar os dias letivos do período."
+            });
+        }
 
         const startDate = new Date(startyear, startmonth - 1, startday); // Note que os meses no objeto Date são baseados em zero (0 para Janeiro, 11 para Dezembro)
         const endDate = new Date(endyear, endmonth - 1, endday);
@@ -636,11 +726,13 @@ class BimonthlyController {
             endday: endday,
             endmonth: endmonth,
             endyear: endyear,
+            schoolDays: schoolDays,
             totalGrade: totalGrade,
             averageGrade: averageGrade,
             status: 'aberto',
             statusSupervisor: 'aberto',
-            id_school: id_school
+            id_school: id_school,
+            assessmentRegime: assessmentRegime
         });
 
         try {
@@ -712,10 +804,35 @@ class BimonthlyController {
     async updateIII_rdQuarter(req, res) {
         try {
             const { id } = req.params;
-            const iii_rdQuarter = await III_rdQuarter.findByIdAndUpdate(id, req.body, { new: true });
+            const {
+                startday,
+                startmonth,
+                endday,
+                endmonth,
+                totalGrade,
+                averageGrade,
+                schoolDays,
+                assessmentRegime
+            } = req.body;
+            const iii_rdQuarter = await III_rdQuarter.findByIdAndUpdate(
+                id,
+                {
+                    startday,
+                    startmonth,
+                    endday,
+                    endmonth,
+                    totalGrade,
+                    averageGrade,
+                    schoolDays,
+                    assessmentRegime // 👈 AGORA ATUALIZA
+                },
+                { new: true }
+            );
+
             if (!iii_rdQuarter) {
                 return res.status(404).json({ error: 'Employee not found' });
             }
+
             res.json(iii_rdQuarter);
         } catch (err) {
             console.error(err);
@@ -724,7 +841,7 @@ class BimonthlyController {
     }
 
     async createIV_thQuarter(req, res) {
-        const { year, startday, startmonth, startyear, endday, endmonth, endyear, /*totalGrade, averageGrade,*/ id_school } = req.body;
+        const { year, startday, startmonth, startyear, endday, endmonth, endyear, /*totalGrade, averageGrade,*/ id_school, assessmentRegime, schoolDays } = req.body;
 
         // validations
         if (!startday) {
@@ -733,6 +850,12 @@ class BimonthlyController {
 
         if (!endday) {
             return res.status(422).json({ msg: "A data do fim é obrigatório!" });
+        }
+
+        if (!schoolDays || !Array.isArray(schoolDays) || schoolDays.length === 0) {
+            return res.status(422).json({
+                msg: "É obrigatório informar os dias letivos do período."
+            });
         }
 
         const startDate = new Date(startyear, startmonth - 1, startday); // Note que os meses no objeto Date são baseados em zero (0 para Janeiro, 11 para Dezembro)
@@ -785,9 +908,11 @@ class BimonthlyController {
             endday: endday,
             endmonth: endmonth,
             endyear: endyear,
+            schoolDays: schoolDays,
             status: 'aberto',
             statusSupervisor: 'aberto',
-            id_school: id_school
+            id_school: id_school,
+            assessmentRegime: assessmentRegime
         });
 
         try {
@@ -812,7 +937,7 @@ class BimonthlyController {
         }
     }
     async createIV_thQuarter$$grade(req, res) {
-        const { year, startday, startmonth, startyear, endday, endmonth, endyear, totalGrade, averageGrade, id_school } = req.body;
+        const { year, startday, startmonth, startyear, endday, endmonth, endyear, totalGrade, averageGrade, id_school, assessmentRegime, schoolDays } = req.body;
 
         // validations
         if (!startday) {
@@ -821,6 +946,12 @@ class BimonthlyController {
 
         if (!endday) {
             return res.status(422).json({ msg: "A data do fim é obrigatório!" });
+        }
+
+        if (!schoolDays || !Array.isArray(schoolDays) || schoolDays.length === 0) {
+            return res.status(422).json({
+                msg: "É obrigatório informar os dias letivos do período."
+            });
         }
 
         const startDate = new Date(startyear, startmonth - 1, startday); // Note que os meses no objeto Date são baseados em zero (0 para Janeiro, 11 para Dezembro)
@@ -873,11 +1004,13 @@ class BimonthlyController {
             endday: endday,
             endmonth: endmonth,
             endyear: endyear,
+            schoolDays: schoolDays,
             totalGrade: totalGrade,
             averageGrade: averageGrade,
             status: 'aberto',
             statusSupervisor: 'aberto',
-            id_school: id_school
+            id_school: id_school,
+            assessmentRegime: assessmentRegime
         });
 
         try {
@@ -949,10 +1082,34 @@ class BimonthlyController {
     async updateIV_thQuarter(req, res) {
         try {
             const { id } = req.params;
-            const iv_thQuarter = await IV_thQuarter.findByIdAndUpdate(id, req.body, { new: true });
+            const {
+                startday,
+                startmonth,
+                endday,
+                endmonth,
+                totalGrade,
+                averageGrade,
+                schoolDays,
+                assessmentRegime
+            } = req.body;
+            const iv_thQuarter = await IV_thQuarter.findByIdAndUpdate(id,
+                {
+                    startday,
+                    startmonth,
+                    endday,
+                    endmonth,
+                    totalGrade,
+                    averageGrade,
+                    schoolDays,
+                    assessmentRegime // 👈 AGORA ATUALIZA
+                },
+                { new: true }
+            );
+
             if (!iv_thQuarter) {
                 return res.status(404).json({ error: 'Employee not found' });
             }
+            
             res.json(iv_thQuarter);
         } catch (err) {
             console.error(err);

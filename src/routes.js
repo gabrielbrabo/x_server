@@ -256,6 +256,9 @@ routes.post('/destroy/form', IndividualFormController.DestroyForm)
 
 routes.post('/delete/matter', MatterController.deleteMatter)
 
+routes.put('/school/assessment-regime', SchoolController.updateAssessmentRegime)
+routes.get('/school/assessment-regime/:idSchool', SchoolController.getAssessmentRegime)
+
 //Rotas de controle de imagens
 
 const postFileLogo = require("./models/postFileLogo");

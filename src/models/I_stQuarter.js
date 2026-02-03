@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 
 const I_stQuarter = new mongoose.Schema(
     {
-       
+
         year: {
             type: String,
             required: true,
@@ -35,6 +35,15 @@ const I_stQuarter = new mongoose.Schema(
             type: String,
             required: true,
         },
+        // 👇 DIAS LETIVOS (DATA POR DATA)
+        schoolDays: [
+            {
+                date: {
+                    type: Date,
+                    required: true
+                }
+            }
+        ],
         totalGrade: {
             type: String,
             //required: true,
@@ -56,7 +65,7 @@ const I_stQuarter = new mongoose.Schema(
             }
         ],
         id_school: {
-            type: mongoose.Types.ObjectId, 
+            type: mongoose.Types.ObjectId,
             ref: 'school',
             required: true,
         },

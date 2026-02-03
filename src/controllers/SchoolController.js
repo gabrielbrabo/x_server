@@ -1,5 +1,6 @@
 const User = require("../models/School")
 const EducationDepartment = require("../models/EducationDepartment")
+const IV_thQuarter = require("../models/IV_thQuarter")
 const ClassModel = require("../models/Class")
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
@@ -307,6 +308,87 @@ class SchoolController {
             res.status(500).json({
                 message: 'Houve um erro no servidor!'
             });
+        }
+    }
+
+    async updateAssessmentRegime(req, res) {
+        const { idSchool, assessmentRegime } = req.body
+
+        try {
+            if (!assessmentRegime) {
+                return res.status(400).json({
+                    message: 'Regime de avaliação é obrigatório'
+                })
+            }
+
+            const allowed = ['BIMESTRAL', 'TRIMESTRAL', 'SEMESTRAL']
+            if (!allowed.includes(assessmentRegime)) {
+                return res.status(400).json({
+                    message: 'Regime de avaliação inválido'
+                })
+            }
+
+            const school = await User.findById(idSchool)
+
+            if (!school) {
+                return res.status(404).json({
+                    message: 'Escola não encontrada'
+                })
+            }
+
+            const previousRegime = school.assessmentRegime
+            const schoolYear = school.schoolYear
+
+            // 🔴 regra: remover 4º bimestre
+            if (
+                previousRegime === 'BIMESTRAL' &&
+                assessmentRegime === 'TRIMESTRAL'
+            ) {
+                await IV_thQuarter.deleteOne({
+                    id_school: idSchool,
+                    year: schoolYear
+                })
+            }
+
+            // ✅ ATUALIZA SOMENTE O CAMPO NECESSÁRIO
+            await User.updateOne(
+                { _id: idSchool },
+                { $set: { assessmentRegime } }
+            )
+
+            return res.json({
+                message: 'Regime de avaliação atualizado com sucesso'
+            })
+
+        } catch (err) {
+            console.error(err)
+            return res.status(500).json({
+                message: 'Erro interno do servidor'
+            })
+        }
+    }
+
+    async getAssessmentRegime(req, res) {
+        const { idSchool } = req.params
+
+        try {
+            const school = await User.findById(idSchool)
+
+            if (!school) {
+                return res.status(404).json({
+                    message: 'Escola não encontrada'
+                })
+            }
+
+            return res.json({
+                data: school.assessmentRegime || null,
+                message: 'Success'
+            })
+        } catch (err) {
+            console.log(err)
+            return res.status(500).json({
+                message: 'There was an error on server side!'
+            })
         }
     }
 

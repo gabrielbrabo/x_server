@@ -35,6 +35,15 @@ const IV_thQuarter = new mongoose.Schema(
             type: String,
             required: true,
         },
+        // 👇 DIAS LETIVOS (DATA POR DATA)
+        schoolDays: [
+            {
+                date: {
+                    type: Date,
+                    required: true
+                }
+            }
+        ],
         totalGrade: {
             type: Number,
             //required: true,
