@@ -86,6 +86,7 @@ routes.post('/allTheFinalBulletins-concept', ReportCardController.allTheFinalBul
 routes.post('/register/history', HistoryController.createHistoryGrade)
 routes.post('/history/:id_student', HistoryController.GetStudentHistory)
 routes.put('/history/:id', HistoryController.updateHistory)
+routes.put('/history/:id/frequency', HistoryController.updateHistoryFrequency)
 routes.post('/history-manual', HistoryController.createManualHistory)
 routes.put('/update-manual-history/:id', HistoryController.updateManualHistory)
 routes.post('/createCertificate', HistoryController.createCertificate)

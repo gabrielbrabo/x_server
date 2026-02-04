@@ -219,6 +219,46 @@ class HistoryController {
         }
     }
 
+    async updateHistoryFrequency(req, res) {
+        try {
+            const { id } = req.params
+            const { frequencias } = req.body
+    
+            const history = await History.findById(id)
+            if (!history) {
+                return res.status(404).json({ message: 'Histórico não encontrado' })
+            }
+    
+            frequencias.forEach(({ reportCardId, frequencia }) => {
+                const reportCard = history.reportCard.find(
+                    rc => rc._id.toString() === reportCardId
+                )
+    
+                if (!reportCard) return
+    
+                reportCard.frequencia = {
+                    totalPresencas: Number(frequencia.totalPresencas) || 0,
+                    totalFaltas: Number(frequencia.totalFaltas) || 0,
+                    totalFaltasJustificadas:
+                        Number(frequencia.totalFaltasJustificadas) || 0,
+                    totalAulas: Number(frequencia.totalAulas) || 0
+                }
+            })
+    
+            console.log(history.reportCard.map(rc => rc.frequencia))
+
+            // 🔥 ESSENCIAL
+            history.markModified('reportCard')
+            await history.save()
+    
+            return res.json({ message: 'Frequências atualizadas com sucesso' })
+        } catch (err) {
+            console.error(err)
+            return res.status(500).json({ message: 'Erro ao atualizar frequências' })
+        }
+    }
+    
+
     async createManualHistory(req, res) {
         try {
             /* ===============================
@@ -659,7 +699,7 @@ class HistoryController {
     async updateCertificate(req, res) {
         try {
             const { studentId } = req.params;
-    
+
             const {
                 studentName,
                 nationality,
@@ -679,51 +719,51 @@ class HistoryController {
                 legalBasis,
                 observations
             } = req.body;
-    
+
             // 🔒 validação mínima
             if (!studentId) {
                 return res.status(400).json({
                     message: 'ID do aluno não informado'
                 });
             }
-    
+
             const certificate = await Certificate.findOne({ student: studentId });
-    
+
             if (!certificate) {
                 return res.status(404).json({
                     message: 'Certificado não encontrado para este aluno'
                 });
             }
-    
+
             // 🔄 Atualização dos campos
-            certificate.studentName   = studentName   ?? certificate.studentName;
-            certificate.nationality   = nationality   ?? certificate.nationality;
-            certificate.gender        = gender        ?? certificate.gender;
-            certificate.birthDate     = birthDate     ?? certificate.birthDate;
-            certificate.birthCity     = birthCity     ?? certificate.birthCity;
-            certificate.birthState    = birthState    ?? certificate.birthState;
-            certificate.motherName    = motherName    ?? certificate.motherName;
-            certificate.fatherName    = fatherName    ?? certificate.fatherName;
-    
-            certificate.course        = course        ?? certificate.course;
-            certificate.conclusionDate= conclusionDate?? certificate.conclusionDate;
-    
-            certificate.schoolName    = schoolName    ?? certificate.schoolName;
-            certificate.legalStatus   = legalStatus   ?? certificate.legalStatus;
-            certificate.address       = address       ?? certificate.address;
-            certificate.city          = city          ?? certificate.city;
-            certificate.state         = state         ?? certificate.state;
-    
-            certificate.legalBasis    = legalBasis    ?? certificate.legalBasis;
-            certificate.observations  = observations  ?? certificate.observations ?? '';
-    
+            certificate.studentName = studentName ?? certificate.studentName;
+            certificate.nationality = nationality ?? certificate.nationality;
+            certificate.gender = gender ?? certificate.gender;
+            certificate.birthDate = birthDate ?? certificate.birthDate;
+            certificate.birthCity = birthCity ?? certificate.birthCity;
+            certificate.birthState = birthState ?? certificate.birthState;
+            certificate.motherName = motherName ?? certificate.motherName;
+            certificate.fatherName = fatherName ?? certificate.fatherName;
+
+            certificate.course = course ?? certificate.course;
+            certificate.conclusionDate = conclusionDate ?? certificate.conclusionDate;
+
+            certificate.schoolName = schoolName ?? certificate.schoolName;
+            certificate.legalStatus = legalStatus ?? certificate.legalStatus;
+            certificate.address = address ?? certificate.address;
+            certificate.city = city ?? certificate.city;
+            certificate.state = state ?? certificate.state;
+
+            certificate.legalBasis = legalBasis ?? certificate.legalBasis;
+            certificate.observations = observations ?? certificate.observations ?? '';
+
             await certificate.save();
-    
+
             return res.status(200).json({
                 message: 'Certificado atualizado com sucesso',
                 certificate
             });
-    
+
         } catch (error) {
             console.error(error);
             return res.status(500).json({
@@ -732,7 +772,7 @@ class HistoryController {
             });
         }
     }
-    
+
 }
 
 module.exports = new HistoryController();
