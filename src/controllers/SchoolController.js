@@ -336,11 +336,11 @@ class SchoolController {
                 })
             }
 
-            const previousRegime = school.assessmentRegime
+            /* const previousRegime = school.assessmentRegime
             const schoolYear = school.schoolYear
 
             // 🔴 regra: remover 4º bimestre
-            if (
+           if (
                 previousRegime === 'BIMESTRAL' &&
                 assessmentRegime === 'TRIMESTRAL'
             ) {
@@ -348,7 +348,7 @@ class SchoolController {
                     id_school: idSchool,
                     year: schoolYear
                 })
-            }
+            }*/
 
             // ✅ ATUALIZA SOMENTE O CAMPO NECESSÁRIO
             await User.updateOne(
