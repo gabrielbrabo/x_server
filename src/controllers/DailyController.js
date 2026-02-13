@@ -667,6 +667,11 @@ class DailyController {
                 })
                 .populate('id_student')
                 .populate('transferStudents')
+                .populate('id_iStQuarter')
+                .populate('id_iiNdQuarter')
+                .populate('id_iiiRdQuarter')
+                .populate('id_ivThQuarter')
+
 
             if (!dailies || dailies.length === 0) {
                 return res.status(404).json({ msg: "Nenhum diário encontrado para os critérios informados." });

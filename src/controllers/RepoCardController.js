@@ -608,6 +608,7 @@ class RepoCardController {
                 bimestre: {
                     totalGrade: bimonthly.totalGrade,
                     averageGrade: bimonthly.averageGrade,
+                    assessmentRegime: bimonthly.assessmentRegime,
                 }
             }
         });
@@ -790,10 +791,9 @@ class RepoCardController {
                         nome: teacher.name
                     })),
                 },
-                /*bimestre: {
-                    totalGrade: bimonthly.totalGrade,
-                    averageGrade: bimonthly.averageGrade,
-                }*/
+                bimestre: {
+                    assessmentRegime: bimonthly.assessmentRegime,
+                }
             }
         });
 
