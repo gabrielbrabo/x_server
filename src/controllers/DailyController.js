@@ -629,10 +629,16 @@ class DailyController {
                 .populate('attendancePhysicalEducationTeacher')
                 .populate({
                     path: 'id_recordClassTaught',
-                    populate: {
-                        path: 'id_teacher',
-                        model: 'employee' // ou o nome correto do seu model de professor
-                    }
+                    populate: [
+                        {
+                            path: 'id_teacher',
+                            model: 'employee'
+                        },
+                        {
+                            path: 'id_teacher02',
+                            model: 'employee'
+                        }
+                    ]
                 })
                 .populate({
                     path: 'id_FinalConcepts',

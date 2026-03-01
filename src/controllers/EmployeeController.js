@@ -255,7 +255,7 @@ class EmployeeController {
     }
 
     async RecordClassTaught(req, res) {
-        const { day, month, year, description, id_teacher, /*id_teacher02,*/ id_class } = req.body;
+        const { day, month, year, description, id_teacher, id_teacher02, id_class } = req.body;
 
         // validations
         if (!day) {
@@ -287,6 +287,13 @@ class EmployeeController {
 
         console.log("id_teacher", id_teacher)
         console.log("physicalEducationTeacherId", physicalEducationTeacherId)
+
+        let teacher_type = 'REGENTE';
+
+        if (String(id_teacher) === physicalEducationTeacherId) {
+            teacher_type = 'ED_FISICA';
+        }
+
         if (existingRecordClassTaught) {
             const result = existingRecordClassTaught.map(Res => {
                 if (Res.year == year) {
@@ -316,8 +323,9 @@ class EmployeeController {
             year,
             description,
             id_teacher,
-            //id_teacher02: String(id_teacher) === physicalEducationTeacherId ? null : id_teacher02,
-            id_class
+            id_teacher02: String(id_teacher) === physicalEducationTeacherId ? null : id_teacher02,
+            id_class,
+            teacher_type
         });
 
         try {

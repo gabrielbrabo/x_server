@@ -34,6 +34,12 @@ const RecordClassTaught = new mongoose.Schema(
             type: mongoose.Types.ObjectId,
             ref: 'class'
         },
+        teacher_type: {
+            type: String,
+            enum: ["REGENTE", "ED_FISICA"],
+            default: null
+        }
+
     },
     {
         timestamps: true
