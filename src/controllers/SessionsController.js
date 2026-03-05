@@ -85,7 +85,30 @@ class SessionController {
             if (activeUsers.length === 0) {
                 return res.status(403).json({ msg: "Usuário inativo em todas as escolas." });
             }
+            
+            // 🔹 SE TIVER APENAS UMA ATIVA → LOGIN DIRETO
+            if (activeUsers.length === 1) {
 
+                const user = activeUsers[0];
+
+                return res.json({
+                    id: user._id,
+                    CPF: user.cpf,
+                    name: user.name,
+                    position_at_school: user.position_at_school,
+                    type: user.type,
+                    id_school: user.id_school,
+                    id_matter: user.id_matter,
+                    id_class: user.id_class,
+                    id_reporter_card: user.id_reporter_card,
+
+                    token: jwt.sign({ id: user._id }, authConfig.secret, {
+                        expiresIn: authConfig.expiresIn,
+                    })
+                });
+            }
+
+            // 🔹 MAIS DE UMA ATIVA → MOSTRAR ESCOLAS
             const schools = activeUsers.map(user => user.id_school);
 
             return res.json({
