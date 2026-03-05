@@ -43,7 +43,7 @@ class SessionController {
         return res.json({
 
             _id,
-           // email,
+            // email,
             name,
             type,
             id_employee,
@@ -79,17 +79,27 @@ class SessionController {
         const usersWithSameCpf = await Employee.find({ cpf: cpf });
 
         if (usersWithSameCpf.length > 1) {
-            if (usersWithSameCpf.length > 1) {
-                const schools = usersWithSameCpf.map(user => user.id_school); // Adapte conforme necessário para pegar informações da escola
-                console.log("schools", schools);
-                return res.json({
-                    msg: "Você tem mais de uma escola registrada.",
-                    schools: schools.map(school => ({
-                        id: school,
-                        name: school.name // Substitua pelo nome real da escola que você terá em seu banco de dados
-                    })),
-                });
+            // filtrar usuários ativos
+            const activeUsers = usersWithSameCpf.filter(user => user.status !== "inactive");
+
+            if (activeUsers.length === 0) {
+                return res.status(403).json({ msg: "Usuário inativo em todas as escolas." });
             }
+
+            const schools = activeUsers.map(user => user.id_school);
+
+            return res.json({
+                msg: "Você tem mais de uma escola registrada.",
+                schools: schools.map(school => ({
+                    id: school,
+                    name: school.name
+                })),
+            });
+        }
+
+        // 🔹 SE EXISTIR APENAS UM USUÁRIO
+        if (users.status === "inactive") {
+            return res.status(403).json({ msg: "Usuário inativo. Procure a administração." });
         }
 
         // Se o usuário tiver apenas um registro
@@ -187,7 +197,7 @@ class SessionController {
 
         console.log(user)
         const name = user.name
-        const _id  = user._id
+        const _id = user._id
         const id_employee = user.id_employee
         const type = user.type
         const schools = user.id_school

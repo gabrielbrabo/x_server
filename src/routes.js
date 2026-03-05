@@ -208,6 +208,7 @@ routes.post('/update-record-class', EmployeeController.updateRecordClassTaught)
 routes.post('/update-record-class/adm', EmployeeController.updateRecordClassTaughtADM)
 routes.post('/record-class-daily', EmployeeController.RecordClassTaughtDaily)
 routes.get('/check-employee/:cpf', EmployeeController.EmpExist)
+routes.patch("/employee/:id/status", EmployeeController.updateEmployeeStatus);
 
 routes.get('/student-details/:id', StudentController.getStudentById)
 routes.post('/student-update/:id', StudentController.updateStudent)
