@@ -21,7 +21,7 @@ class ClassController {
         if (!serie) {
             return res.status(422).json({ msg: "A serie da turma é obrigatório!" });
         }
-        
+
         if (!name) {
             return res.status(422).json({ msg: "O nome da turma é obrigatório!" });
         }
@@ -40,38 +40,23 @@ class ClassController {
                 .json({ msg: "Id da escola e obrigatorio!" });
         }
 
-        // check if class exists
-        const school = await School.findOne({ _id: id });
+        // verifica se já existe uma turma igual
+        const classExists = await Class.findOne({
+            year: year,
+            serie: serie.toUpperCase(),
+            name: name.toUpperCase(),
+            id_school: id
+        });
 
-        const clss = await modelClass.find({ _id: school.id_class });
-
-        if (clss) {
-
-            const Res = clss.map(result => {
-                if (result.serie == serie.toUpperCase()) {
-                    return result.year
-                }
-            })
-
-            if (Res) {
-                const fil = Res.filter((fill) => {
-                    if (fill == year) {
-                        return fill
-                    }
-                })
-                console.log("filter", fil)
-                if (fil.length > 0) {
-                    return res.status(422).json({ msg: "Essa truma ja esta cadastrada!" });
-                }
-            }
-
+        if (classExists) {
+            return res.status(422).json({ msg: "Essa turma já está cadastrada!" });
         }
         // Função para gerar o código da turma (ex: 20254821)
         const gerarClassCode = (ano) => {
             const aleatorio = Math.floor(1000 + Math.random() * 9000); // Gera 4 dígitos
             return `${ano}${aleatorio}`;
         };
-        
+
         // create user
         const classCode = gerarClassCode(year);
 
@@ -557,7 +542,7 @@ class ClassController {
 
         // Check if the student is already registered in a class
         const clss = await Class.find({ _id: id_class });
-       // const currentYear = new Date().getFullYear()
+        // const currentYear = new Date().getFullYear()
         if (clss) {
             /*const cl = clss.map(result => {
                 return result.year
