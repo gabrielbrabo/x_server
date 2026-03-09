@@ -50,6 +50,9 @@ const employeeschema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        position_at_school_secondary: {
+            type: String,
+        },
         id_school: {
             type: mongoose.Types.ObjectId,
             ref: 'school',

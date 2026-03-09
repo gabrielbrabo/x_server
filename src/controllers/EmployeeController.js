@@ -204,6 +204,21 @@ class EmployeeController {
     async updateEmployee(req, res) {
         try {
             const { id } = req.params;
+
+            if (req.body.position_at_school_secondary === "") {
+                req.body.position_at_school_secondary = null;
+            }
+    
+            if (
+                req.body.position_at_school &&
+                req.body.position_at_school_secondary &&
+                req.body.position_at_school === req.body.position_at_school_secondary
+            ) {
+                return res.status(400).json({
+                    error: "Cargo primário e secundário não podem ser iguais"
+                });
+            }
+            
             const employee = await Employee.findByIdAndUpdate(id, req.body, { new: true });
             if (!employee) {
                 return res.status(404).json({ error: 'Employee not found' });
