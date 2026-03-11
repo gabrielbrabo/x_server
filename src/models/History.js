@@ -43,10 +43,21 @@ const historyschema = new mongoose.Schema(
                     type: String,
                 }
             }
-        ],          
+        ],
         studentSituation: {
             type: String,
         },
+        finalConcepts: [
+            {
+                id_matter: {
+                    type: mongoose.Types.ObjectId,
+                    ref: "matter"
+                },
+                concept: {
+                    type: String
+                }
+            }
+        ],
         annualSchoolDays: {
             type: String,
             required: true,
@@ -104,7 +115,7 @@ const historyschema = new mongoose.Schema(
         createdManually: {
             type: Boolean,
             default: false
-        }        
+        }
     },
     {
         timestamps: true
